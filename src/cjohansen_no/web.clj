@@ -59,13 +59,6 @@
 (def app (-> (stasis/serve-pages get-pages)
              (optimus/wrap get-assets optimizations/all serve-live-assets)))
 
-
-(def app
-  (optimus/wrap (stasis/serve-pages get-pages)
-                get-assets
-                optimizations/all
-                serve-live-assets))
-
 (def export-dir "dist")
 
 (defn export []
