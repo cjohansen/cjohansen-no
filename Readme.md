@@ -12,7 +12,7 @@ Clojure and these libraries:
 * [Midje](https://github.com/marick/Midje)
 
 The hows and whys are explained in thorough detail in
-[this post](http://cjohansen.no/building-static-sites-with-stasis.html).
+[this post](http://cjohansen.no/building-static-sites-with-stasis).
 
 This repo will eventually evolve into my new website.
 
