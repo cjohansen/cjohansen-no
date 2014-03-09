@@ -14,7 +14,7 @@
 (defn link-valid? [pages link]
   (let [href (get-in link [:attrs :href])]
     (or
-     (not (re-find #"^/" href))
+     (not (.startsWith href "/"))
      (contains? pages href)
      (contains? pages (str href "index.html")))))
 
