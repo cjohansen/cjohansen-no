@@ -22,10 +22,10 @@
  "All links are valid"
 
  (let [pages (get-pages)]
-   (doseq [url (keys (get-pages))]
-     (doseq [link (-> (:body (app {:uri url}))
+   (doseq [url (keys (get-pages))
+           link (-> (:body (app {:uri url}))
                       java.io.StringReader.
                       enlive/html-resource
                       (enlive/select [:a]))]
-       (let [href (get-in link [:attrs :href])]
-         [url href (link-valid? pages link)] => [url href true])))))
+     (let [href (get-in link [:attrs :href])]
+       [url href (link-valid? pages link)] => [url href true]))))
