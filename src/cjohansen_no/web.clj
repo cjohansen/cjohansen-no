@@ -41,7 +41,7 @@
 
 (defn get-raw-pages []
   (stasis/merge-page-sources
-   {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js|png|jpg)$")
+   {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
     :partials (partial-pages (stasis/slurp-directory "resources/partials" #".*\.html$"))
     :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))}))
 
