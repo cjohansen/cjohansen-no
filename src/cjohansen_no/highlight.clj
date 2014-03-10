@@ -22,4 +22,4 @@
 (defn highlight-code-blocks [page]
   (enlive/sniptest page
                    [:pre :code] highlight
-                   [:pre] #(assoc-in % [:attrs :class] "codehilite")))
+                   [:pre :code] #(assoc-in % [:attrs :class] "codehilite")))
