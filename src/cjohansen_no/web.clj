@@ -5,12 +5,26 @@
             [optimus.optimizations :as optimizations]
             [optimus.prime :as optimus]
             [optimus.strategies :refer [serve-live-assets]]
+            [ring.middleware.content-type :refer [wrap-content-type]]
             [cjohansen-no.highlight :refer [highlight-code-blocks]]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [hiccup.page :refer [html5]]
             [me.raynes.cegdown :as md]
             [stasis.core :as stasis]))
+
+(defn wrap-utf-8
+  "This function works around the fact that Ring simply chooses the default JVM
+  encoding for the response encoding. This is not desirable, we always want to
+  send UTF-8."
+  [handler]
+  (fn [request]
+    (when-let [response (handler request)]
+      (if (.contains (get-in response [:headers "Content-Type"]) ";")
+        response
+        (if (string? (:body response))
+          (update-in response [:headers "Content-Type"] #(str % "; charset=utf-8"))
+          response)))))
 
 (defn get-assets []
   (assets/load-assets "public" [#".*"]))
@@ -35,6 +49,9 @@
           (map #(fn [req] (layout-page req (md/to-html % pegdown-options)))
                (vals pages))))
 
+(defn archived-pages [pages]
+  pages)
+
 (defn get-raw-pages []
   (stasis/merge-page-sources
    {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
@@ -49,10 +66,14 @@
           (map #(partial prepare-page %) (vals pages))))
 
 (defn get-pages []
-  (prepare-pages (get-raw-pages)))
+  (stasis/merge-page-sources
+   {:new-pages (prepare-pages (get-raw-pages))
+    :wget-archive (archived-pages (stasis/slurp-directory "resources/wget-archive" #".*\..*"))}))
 
 (def app (-> (stasis/serve-pages get-pages)
-             (optimus/wrap get-assets optimizations/all serve-live-assets)))
+             (optimus/wrap get-assets optimizations/all serve-live-assets)
+             wrap-content-type
+             wrap-utf-8))
 
 (def export-dir "dist")
 

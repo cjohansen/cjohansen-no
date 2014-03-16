@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta http-equiv="X-UA-Compatible" content="edge">
+    <title>An introduction to Emacs Lisp</title>
+    <meta name="author" content="Christian Johansen">
+    <meta name="robots" content="all">
+    <link href="http://feeds.feedburner.com/cjno-en" rel="alternate" type="application/rss+xml" title="cjohansen.no blog-feed">
+    <link rel="Shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/cjohansen.css">
+  </head>
+  <body>
+    <div class="banner masthead">
+      <p>
+        <a href="/"><strong>cjohansen.no</strong> Programming, TDD, Open source</a>
+        <a class="rss" href="http://feeds.feedburner.com/cjno-en">RSS</a>
+      </p>
+    </div>
+    <div class="article">
+      <h1>An introduction to Emacs Lisp</h1>
+      <p>
+        As a long-time passionate Emacs user, I've been curious about Lisp in
+        general and Emacs Lisp in particular for quite some time. Until recently
+        I had not written any Lisp apart from
+        <a href="http://github.com/cjohansen/.emacs.d">my .emacs.d setup</a>,
+        despite having read
+        both <a href="http://www.amazon.com/Introduction-Programming-Emacs-Lisp/dp/1882114566/ref=sr_1_1?s=books&ie=UTF8&qid=1311627046&sr=1-1">An
+        introduction to programming in Emacs Lisp</a>
+        and <a href="http://www.amazon.com/Little-Schemer-Daniel-P-Friedman/dp/0262560992/ref=sr_1_1?s=books&ie=UTF8&qid=1311627085&sr=1-1">The
+        Little Schemer</a> last summer. A year later, I have finally written
+        some Lisp, and I thought I'd share the code as an introduction to others
+        out there curious about Lisp and extending Emacs.
+      </p>
+      <p>
+        A word of warning: The code ahead is written by an absolute beginner in
+        Lisp, and may violate any number of best-practices and idioms, but it is
+        somewhat working code. If you spot something that's wrong or something
+        you just don't like, please tell me what and why so I can improve.
+      </p>
+      <h2>Who is this for?</h2>
+      <p>
+        This article is intended to help you get started with 1) Lisp, and 2)
+        extending Emacs using Emacs Lisp (elisp). My hope is that it will help
+        you go from being unable to even read Lisp to have a basic knowledge of
+        how to use elisp to extend Emacs. If you are curious about the code we
+        will develop, check out the <a href="#full-code-listing">full
+        code-listing</a> at the end of this article.
+      </p>
+      <div class="toc" id="toc"></div>
+      <h2 id="task">The task</h2>
+      <p>
+        The task I set out to solve was to make Emacs slightly more intelligent
+        when working with tests written in
+        <a href="http://busterjs.org">Buster.JS</a>, which is a test framework
+        for JavaScript I'm working on with <a href="http://augustl.com/">August
+        Lilleaas</a>. In particular I wanted Emacs to help me with Buster's
+        concept of deferred tests. Given a test like this:
+      </p>
+      <pre class="highlight javascript"><code>buster.testCase("Some object", {
+    "should do something nice": function () {
+        // ...
+    }
+});</code></pre>
+      <p>You can "comment out" the name to defer its execution:</p>
+      <pre class="highlight javascript"><code>buster.testCase("Some object", {
+    "//should do something nice": function () {
+        // ...
+    }
+});</code></pre>
+      <p>
+        When a test is deferred, it will still appear in the test report so you
+        don't forget about it, but it will not run (perhaps because you want to
+        isolate some other test, don't know how to pass it yet, or whatever).
+      </p>
+      <p>Using simple key-bindings, I want Emacs to help me:</p>
+      <ul>
+        <li>toggle the deferred state</li>
+        <li>defer all tests but the current one</li>
+        <li>enable all tests in the current buffer</li>
+      </ul>
+      <p>
+        Turns out, this isn't particularly hard, and it will introduce us to
+        some core Emacs Lisp concepts. In this article, we will cover some
+        navigational issues and toggling the deferred state. In a later article,
+        I will cover the remaining two issues on the list.
+      </p>
+      <h2 id="idea">The basic idea</h2>
+      <p>
+        Like so much else in Emacs, I am going to base my extension on regular
+        expression searches. The code that follows has obvious defeciencies, as
+        I learn more I intend make it clever-er, but for now, this will do. The
+        core of the solution is this expression:
+      </p>
+      <pre class="highlight lisp"><code>(defvar buster-test-regexp
+  "^\s+\"\.+\s\.+\":\s?fun"
+  "Regular expression that finds the beginning of a test function")</code></pre>
+      <p>
+        The regular expression targets a quoted string (double quotes only) that
+        contains at least one space, and that is followed by a colon and the
+        word "fun". Hopefully this will be specific enough to target a line
+        where a test starts, given that Buster does not mandate the test start
+        with "test" or include any other special words.
+      </p>
+      <h2 id="variables">Defining variables</h2>
+      <p>
+        The expression above creates a documented global variable
+        <code>buster-test-regexp</code>. It does so using a list that is also a function
+        call.  Lists are important in Lisp. After all, it does take its name from
+        "List processor". The expression is processed as follows:
+      </p>
+      <pre class="highlight lisp"><code>(function arg1 arg2 ...)</code></pre>
+      <p>
+        The list is space-separated. The first symbol is the function name, and
+        the following ones are arguments. Emacs Lisp comes with a bunch of
+        built-in functions, and you can look them up by pressing
+        <kbd>C-h f &lt;function-name&gt;</kbd>.
+      </p>
+      <p>
+        If you look up <code>defvar</code> you will find that it defines the
+        variable named by the first argument with the optional initial value
+        provided by the second argument. Finally there is the optional
+        documentation string provided by the last argument. You can evaluate
+        this particular expression by placing the cursor right after the closing
+        parenthesis and hitting <kbd>C-x C-e</kbd>
+        (<code>eval-last-sexp</code>). The documentation string can be looked up
+        with <kbd>C-h v buster-test-regexp &lt;Enter&gt;</kbd>.
+      </p>
+      <h2 id="save-excursion">Moving and restoring point</h2>
+      <p>
+        In order to toggle the deferred switch for tests, we need to know where
+        a test starts. We can break this task up into several sub-tasks. The
+        simplest case is to locate the exact point where the test begins,
+        assuming it begins somewhere on the current line:
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-test-name-pos ()
+  "Return the position where the test name starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward "\"" (point-at-eol))
+    (1- (point))))</code></pre><!-- " -->
+      <p>
+        This example exposes a very central concept in elisp along with a few
+        new functions. Let's tackle the concept of "point" first.
+      </p>
+      <h3 id="point">Point</h3>
+      <p>
+        Imagine a buffer (in Emacs, a buffer is a space of editable text,
+        usually the contents of a file) as a string of characters on a single
+        line. This string would be indexed from 1 (the very first character) to
+        N (the very last character). Line breaks count as a single
+        character. Point is the position of the cursor in this string of
+        characters.
+      </p>
+      <p>
+        Assume a file with 3 lines, each with 10 characters:
+      </p>
+      <pre><code>0123456789
+0123456789
+0123456789</code></pre>
+      <p>
+        If you place the cursor after the last character on the third line and
+        press <kbd>M-: (point) &lt;Enter&gt;</kbd>
+        (that's <code>eval-expression</code> with an expression that calls the
+        <code>point</code> function), you will see "33" displayed in the
+        minibuffer. Count yourself, starting from 1, including line-breaks
+        (i.e. 11 characters per line).
+      </p>
+      <h3 id="looking-about">Looking about without moving</h3>
+      <p>
+        One of the things that surprised me the most when reading up on elisp is
+        the fact that many functions actually have side-effects. The most common
+        side-effect is moving point (that is, relocating the cursor).
+      </p>
+      <p>
+        You will often need to use functions that move point to look around the
+        buffer, but without physically moving the cursor. That's
+        where <code>save-excursion</code> comes in. This function works as a
+        transaction wrapper for point (and others), making sure they are reset
+        after the body is executed. Its signature is:
+      </p>
+      <pre class="highlight lisp"><code>(save-excursion &rest BODY)</code></pre>
+      <p>
+        This means that you can pass any number of expressions
+        to <code>save-excursion</code>, and it will execute each one of them,
+        then restore point and return the value of the last expression.
+      </p>
+      <p>
+        Let us look at the three expressions passed
+        to <code>save-excursion</code> in the example above:
+      </p>
+      <pre class="highlight lisp"><code>(save-excursion
+    (beginning-of-line)
+    (search-forward "\"" (point-at-eol))
+    (1- (point)))</code></pre><!-- " -->
+      <p>
+        The first expression is a call to the
+        function <code>beginning-of-line</code>, which moves point to the
+        beginning of the current line. The second expression is a call
+        to <code>search-forward</code>. Its two arguments are the string
+        <code>"\""</code><!-- " --> (an escaped quote) and the result of calling
+        the function <code>point-at-eol</code>. <code>point-at-eol</code>
+        returns the position of point at the end of the line, but does not
+        actually move point. This second argument to <code>search-forward</code>
+        is a <em>bound</em>, i.e. we only want to find the first quote on the
+        current line.
+      </p>
+      <p>
+        The <code>search-forward</code> function moves point to just after the
+        match. The third expression takes advantage of this by returning the
+        position of point minus one - in other words, the position before
+        the leading quote.
+      </p>
+      <p>
+        To summarize: this piece of code returns the position of the first quote
+        on the current line, without moving point. It was originally seen in
+        this context:
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-test-name-pos ()
+  "Return the position where the test name starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward "\"" (point-at-eol))
+    (1- (point))))</code></pre><!-- " -->
+      <p>
+        The <code>defun</code> function defines a function. Its name is
+        <code>buster-test-name-pos</code>. Note the leading "buster-", which it
+        shares with the regular expression from before. This is just a very
+        lo-fi way of namespacing our code. The function takes no arguments (thus
+        the empty list as the second argument), has a documentation string, and
+        one expression (the call to <code>save-excursion</code>, which itself
+        has three expressions) that makes up its body.
+      </p>
+      <p>
+        In summary, the <code>buster-test-name-pos</code> function assumes that
+        the current line holds the start of a test, and returns the position of
+        the leading quote.
+      </p>
+      <h2 id="beginning-of-testp">Is the current line the beginning of a test?</h2>
+      <p>
+        If we have one function that assumes that the current line contains the
+        start of a test, we will also need a function to verify that assumption:
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-beginning-of-test-curr-linep ()
+  "Return t if a test starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward-regexp buster-test-regexp (point-at-eol) t)))</code></pre>
+      <p>
+        Note the trailing p in the name. It stands for <em>predicate</em>, and
+        is a common way of naming functions that return booleans in Emacs. This
+        function calls <code>beginning-of-line</code> and
+        <code>search-forward-regexp</code>, both of which move point, so the
+        body is yet again wrapped in a call to <code>save-excursion</code>.
+      </p>
+      <p>
+        The <code>search-forward-regexp</code> function works just
+        like <code>search-forward</code>, except with regular expressions. This
+        time we also pass it a third argument - <code>t</code> (true). If
+        you look up the function with <kbd>C-h f search-forward-regexp</kbd>,
+        you will find that this argument indicates that we don't want the
+        function to throw an error if no result is found. Instead, it will just
+        return <code>nil</code>, which works like false.
+      </p>
+      <h2 class="interactive">Interactively moving to the start of a test</h2>
+      <p>
+        It is time to put our two functions to work and try them out
+        <em>interactively</em> in an Emacs buffer. Whenever you call an Emacs
+        Lisp function through a key binding (e.g. <kbd>C-f</kbd>,
+        <code>forward-char</code>) or by hitting
+        <kbd>M-x func-name &lt;Enter&gt;</kbd>, you are calling it
+        interactively, which is different from regular function calls. Functions
+        have to explicitly declare themselves interactive for this to work. If
+        you type <kbd>M-x buster-</kbd> and hit tab, you will note that none of
+        our two functions show up, because they are not interactive.
+      </p>
+      <h3 id="interactive-function">The interactive function</h3>
+      <p>
+        Let us make an interactive function that moves to the beginning of the
+        test name if point is currently at a line where a test is declared:
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-goto-beginning-of-test ()
+  "Move point to the beginning of the current test function.
+Does nothing if point is not currently on a line where a test is declared."
+  (interactive)
+  (if (buster-beginning-of-test-curr-linep)
+    (goto-char (buster-test-name-pos))))</code></pre>
+      <p>
+        This function is declared interactive by calling
+        the <code>interactive</code> function. It can also take some arguments
+        to control how it receives input, but we will leave that for later.
+      </p>
+      <p>
+        The function then calls the <code>if</code> <em>special form</em> (a
+        function implemented in C in elisp core) with two arguments: the test,
+        which is a call to buster-beginning-of-test-curr-linep, and the
+        expression to evaluate if the test returns <code>t</code>. The
+        expression is a call to <code>goto-char</code> with the position
+        returned by <code>buster-test-name-pos</code> as argument. There is no
+        call to <code>save-excursion</code>, because we actually mean to move
+        point this time.
+      </p>
+      <p>
+        Place the following code in your Emacs' scratch buffer:
+      </p>
+      <pre class="highlight lisp"><code>(defvar buster-test-regexp
+  "^\s+\"\.+\s\.+\":\s?fun"
+  "Regular expression that finds the beginning of a test function")
+
+(defun buster-test-name-pos ()
+  "Return the position where the test name starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward "\"" (point-at-eol))
+    (1- (point))))
+
+(defun buster-beginning-of-test-curr-linep ()
+  "Return t if a test starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward-regexp buster-test-regexp (point-at-eol) t)))
+
+(defun buster-goto-beginning-of-test ()
+  "Move point to the beginning of the current test function.
+Does nothing if point is not currently on a line where a test is declared."
+  (interactive)
+  (if (buster-beginning-of-test-curr-linep)
+    (goto-char (buster-test-name-pos))))
+
+;; buster.el key-binding
+(global-set-key (kbd "C-c t") 'buster-goto-beginning-of-test)</code></pre><!-- " -->
+      <p>
+        Mark it all and hit <kbd>M-x eval-region &lt;Enter></kbd>. Then place the
+        following into a buffer:
+      </p>
+      <pre class="highlight javascript"><code>buster.testCase("Graph", {
+    setUp: function () {
+        this.graph = capillary.graph.create();
+        this.formatter = capillary.formatters.ascii.bindGraph(this.graph);
+    },
+
+    "should emit dot for commit": function () {
+        var commit = { seqId: 0, id: "1234567", message: "Ok" };
+        var listener = this.spy();
+        this.graph.on("graph:dot", listener);
+
+        this.graph.graphBranch(C.branch.create([commit]));
+
+        var args = listener.args[0];
+        assert.calledOnce(listener);
+        assert.calledWith(listener, [0, 0]);
+    }
+});</code></pre>
+      <p>
+        Place your cursor anywhere on the line with the test name, hit
+        <kbd>C-c t</kbd> and watch the cursor move to the beginning of the
+        test name. Magic! If you try it on any other line, the function will do
+        nothing and fail silently.
+      </p>
+      <h2 id="goto-current-test">Recognizing the current test</h2>
+      <p>
+        Being able to move to where the test name starts from within the same
+        line is nice, but not very useful. We will improve it by recognizing
+        which test currently "has focus" (i.e. point is inside it).
+      </p>
+      <p>
+        We don't have a parser at hand, and ideally we would like to process a
+        minimal part of the buffer to determine what test we are in. That way
+        our utility will stay fast and usable.
+      </p>
+      <h3 id="goto-algorithm">The "algorithm"</h3>
+      <p>
+        To figure out the start position of the current test, we will:
+      </p>
+      <ul>
+        <li>
+          Search backward for the closest match of
+          of <code>buster-test-regexp</code>. Store the position
+          as <code>start</code>.
+        </li>
+        <li>
+          Find the bracket that closes this function by counting <code>{</code>
+          and <code>}</code>. (When the number of forward-brackets and
+          backward-brackets are the same, the function is closed). Store the
+          position as <code>end</code>.
+        </li>
+        <li>
+          If <code>start &lt; point &lt; end</code>, then <code>start</code> is
+          the starting position of the current test. Otherwise, we are not
+          currently inside a test.
+        </li>
+      </ul>
+      <p>
+        Implementing this algorithm will introduce use to a few things:
+      </p>
+      <ul>
+        <li>Local variables</li>
+        <li>The commonly used <code>cond</code> and <code>progn</code> functions</li>
+        <li>Optional function arguments</li>
+      </ul>
+      <h3 id="local-variables">Local variables</h3>
+      <p>
+        Local variables are defined with the <code>let</code> function. It takes
+        two arguments - a list of variables and their (optional) initial
+        value, and one or more "body" expressions. The variables are only
+        defined within the body. The following snippet initializes our three
+        variables. <code>curr</code> holds the current position (retrieved by
+        calling the <code>point</code> function), and <code>start-pos</code>
+        and <code>end-pos</code> are both set to 0 initially.
+      </p>
+      <pre class="highlight lisp"><code>(let ((curr (point))
+      (start-pos 0)
+      (end-pos 0))
+  BODY...)</code></pre>
+      <h3 id="start-position">Finding the start position</h3>
+      <p>
+        To find the start position, we search backwards for the closest match
+        for <code>buster-test-regexp</code> and call <code>point</code>. We
+        use <code>setq</code> assigns a new value to an existing variable.
+      </p>
+      <pre class="highlight lisp"><code>(search-backward-regexp buster-test-regexp)
+(setq start-pos (point))</code></pre>
+      <p>
+        Finding the end position is a little more work, we will defer it for now
+        by delegating to another function. It involves counting brackets and
+        moving forward in the buffer until we find the closing one.
+      </p>
+      <p>
+        When all the variables are set, we check if the current position is
+        inside the test we found. If so we return the start position.
+        Otherwise, we return the current position.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-beginning-of-test-pos ()
+  "Return the start position of the current test"
+  (let ((curr (point))
+        (start-pos 0)
+        (end-pos 0))
+    (save-excursion
+      (search-backward-regexp buster-test-regexp)
+      (setq start-pos (point))
+      (setq end-pos (buster-goto-eoblock))
+      (if (and (< start-pos curr)
+               (< curr end-pos))
+          start-pos curr))))</code></pre>
+      <h3 id="closing-bracket">Finding the closing bracket</h3>
+      <p>
+        The function above calls <code>buster-goto-eoblock</code>,
+        which moves point to the closing bracket for the current
+        block. Let's take a stab that function now. The algorithm we
+        will implement is once again very manual and straight-forward
+        (and I'm sure smarter people than me has better ways to do
+        this).
+      </p>
+      <ul>
+        <li>
+          In the first pass, find the closest "{" and set the parens counter to
+          1
+        </li>
+        <li>
+          In subsequent passes, find the next "{" and "}", and move to the
+          closest one
+        </li>
+        <li>For each "{", increment the counter</li>
+        <li>For each "}", decrement the counter</li>
+        <li>When the counter is 0, return <code>(point)</code></li>
+      </ul>
+      <p>
+        Iterative problems like this can be solved fairly elegantly using
+        recursion. We will make the function accept an optional argument which
+        provides the parens counter. If it is not set, we initialize it
+        according to the description above.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-goto-eoblock (&optional open-paren-pairs-count)
+  "Move point to the end of the next block"
+  (if (null open-paren-pairs-count)
+      (progn
+        (search-forward "{")
+        (setq open-paren-pairs-count 1))))</code></pre>
+      <p>
+        Every argument that follows the <code>&optional</code> keyword is
+        optional. This piece of code introduces the <code>progn</code>
+        function. To understand it, consider the <code>if</code> special form's
+        signature, seen below.
+      </p>
+      <pre class="highlight lisp"><code>(if COND THEN ELSE...)</code></pre>
+      <p>
+        <code>if</code> can take multiple "else" expressions, but only one
+        "then" expression. We can work around this by using
+        the <code>progn</code> function, which simply evaluates all its operands
+        and returns the result of the last one. <code>progn</code> works pretty
+        much exactly like JavaScript's comma operator.
+      </p>
+      <h4>Finding the next bracket</h4>
+      <p>
+        To complete the <code>buster-goto-eoblock</code> function, we need a way to
+        find the position of the next "{" or "}". We will use a small helper to
+        search forward to a character and return its position.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-find-next-pos (char)
+  "Return the position at the next occurrence of `char`"
+  (save-excursion
+    (if (not (search-forward char nil t)) (end-of-buffer))
+    (point)))</code></pre>
+      <p>
+        Once again we make use of the <code>save-excursion</code> function to
+        search forward without actually moving point. Note that if we can't find
+        a character, we move to the end of the buffer. This isn't entirely
+        ideal, but it avoids leaving point in the same position, possibly
+        causing us to recursively look for the same characer in the same spot
+        indefinately.  With the <code>buster-find-next-pos</code> function in place,
+        we can complete the rest of <code>buster-goto-eoblock</code>.
+      </p>
+      <pre class="highlight lisp"><code>(cond
+ ((eq 0 open-paren-pairs-count) (point))
+ (t ...))</code></pre>
+      <p>
+        The <code>cond</code> function takes multiple lists. It moves through
+        each list and evaluates the first expression in them until it finds one
+        that returns a non-<code>nil</code> value. When it does, it evaluates
+        the following expressions in that list and returns the value of the last
+        one. The first case in our <code>cond</code> expression is the case
+        where the number of brackets is 0, meaning that we are done, so we
+        return point.
+      </p>
+      <p>
+        If we are not done, we find the next "{" and "}" and move to the closest
+        one. This can be considered the default case, so our modifier is simply
+        the value <code>t</code> (true).
+      </p>
+      <pre class="highlight lisp"><code>(cond
+ ((eq 0 open-paren-pairs-count) (point))
+ (t (let ((open (buster-find-next-pos "{"))
+        (close (buster-find-next-pos "}"))))))</code></pre>
+      <p>
+        We use <code>let</code> once more to define local variables holding the
+        position of the two next brackets. Next up, we figure out which one is
+        closest using a new call to <code>cond</code>.
+      </p>
+      <pre class="highlight lisp"><code>(let ((open (buster-find-next-pos "{"))
+      (close (buster-find-next-pos "}")))
+  (cond
+   ((< open close)
+    (goto-char open)
+    (buster-goto-eoblock (1+ open-paren-pairs-count)))
+   ((< close open)
+    (goto-char close)
+    (buster-goto-eoblock (1- open-paren-pairs-count)))))</code></pre>
+      <p>
+        After moving to the closest bracket, we
+        call <code>buster-goto-eoblock</code> recursively, passing in the adjusted
+        parens count - incremented if the "{" was closest, decremented if "}"
+        was closest. Note that in addition to passing the parens counter to the
+        recursive call, the function relies on point moving, meaning that it
+        cannot use <code>save-restriction</code>. We could have worked around
+        this by passing the position to go from too, but it seemed more
+        appropriate to move point (given my limited experience with built-in
+        Emacs Lisp functions).
+      </p>
+      <h4>The complete function</h4>
+      <p>
+        Putting all the pieces together results in an 18 line Lisp function, the
+        longest one I have ever written (in my very short Lisp adventure).
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-goto-eoblock (&optional open-paren-pairs-count)
+  "Move point to the end of the next block"
+  (if (not open-paren-pairs-count)
+      (progn
+        (search-forward "{")
+        (setq open-paren-pairs-count 1)))
+  (cond
+   ((eq 0 open-paren-pairs-count) (point))
+   (t (let ((open (buster-find-next-pos "{"))
+          (close (buster-find-next-pos "}")))
+      (cond
+       ((< open close)
+        (goto-char open)
+        (buster-goto-eoblock (1+ open-paren-pairs-count)))
+       ((< close open)
+        (goto-char close)
+        (buster-goto-eoblock (1- open-paren-pairs-count))))))))</code></pre>
+      <h2 class="goto-beginning-redux">Moving to the start of the test - redux</h2>
+      <p>
+        Now that we can move to the beginning of a test from anywhere inside it,
+        we can update our interactive function from before so it does something
+        useful.
+      </p>
+      <p>
+        If the cursor is not currently on a line where a test starts, we call
+        our new function to move to the position (the <code>goto-char</code>
+        function moves point to the position specified by its argument). Finally
+        we move to the exact position where the quoted test name starts.
+      </p>
+      <p>
+        The <code>buster-beginning-of-test-pos</code> function will throw an
+        error if called before all tests. The reason is our call
+        to <code>search-backward-regexp</code>, which throws an error if no
+        result is found. Not having any test to move to isn't a big problem, and
+        we can silently fail that case in the interactive function.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-goto-beginning-of-test ()
+  "Move point to the beginning of the current test function.
+Does nothing if point is not currently inside a test function."
+  (interactive)
+  (condtion-case nil
+      (progn
+        (if (not (buster-beginning-of-test-curr-linep))
+            (goto-char (buster-beginning-of-test-pos)))
+        (goto-char (buster-test-name-pos)))
+    (error nil)))</code></pre>
+      <p>
+        The updated function conveniently introduces
+        the <code>condition-case</code> function, which is more or less
+        elisp's <code>try-catch</code>. Its first argument is a variable that
+        will have the error bound to it if one is thrown. We don't need it. The
+        second argument is the expression to catch errors from. Any other
+        arguments are error handlers. In the example above, we only have one,
+        for the "error" type, which does nothing.
+      </p>
+      <p>
+        Note again the use of the <code>progn</code> function to have two
+        expressions evaluated where Emacs expects one.
+      </p>
+      <p>
+        <strong>Update:</strong> Rolando Pereira emailed me to inform me of the
+        function <code>ignore-errors</code>, which is convenient in cases like
+        the above, where we really only want to ignore the error and rather
+        return <code>nil</code>. It's docstring is "Execute BODY; if an error
+        occurs, return nil. Otherwise, return result of last form in BODY."
+        Using this function gives us a slightly shorter result:
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-goto-beginning-of-test ()
+  "Move point to the beginning of the current test function.
+Does nothing if point is not currently inside a test function."
+  (interactive)
+  (ignore-errors
+      (if (not (buster-beginning-of-test-curr-linep))
+          (goto-char (buster-beginning-of-test-pos)))
+      (goto-char (buster-test-name-pos))))</code></pre>
+      <p>
+        To try out our new Emacs functionality, put the following code in a
+        buffer, mark it all and evaluate it using
+        <kbd>M-x eval-region &lt;Enter&gt;</kbd>.
+      </p>
+      <pre class="highlight lisp"><code>(defvar buster-test-regexp
+  "^\s+\"\.+\s\.+\":\s?fun"
+  "Regular expression that finds the beginning of a test function")
+
+(defun buster-find-next-pos (char)
+  "Return the position at the next occurrence of `char`"
+  (save-excursion
+    (search-forward char nil t)
+    (point)))
+
+(defun buster-test-name-pos ()
+  "Return the position where the test name starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward "\"" (point-at-eol))
+    (1- (point))))
+
+(defun buster-beginning-of-test-curr-linep ()
+  "Return t if a test starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward-regexp buster-test-regexp (point-at-eol) t)))
+
+(defun buster-goto-eoblock (&optional open-paren-pairs-count)
+  "Move point to the end of the next block"
+  (if (null open-paren-pairs-count)
+      (progn
+        (search-forward "{")
+        (setq open-paren-pairs-count 1)))
+  (cond
+   ((eq 0 open-paren-pairs-count) (point))
+   (t (let ((open (buster-find-next-pos "{"))
+          (close (buster-find-next-pos "}")))
+      (cond
+       ((< open close)
+        (goto-char open)
+        (buster-goto-eoblock (1+ open-paren-pairs-count)))
+       ((< close open)
+        (goto-char close)
+        (buster-goto-eoblock (1- open-paren-pairs-count))))))))
+
+(defun buster-beginning-of-test-pos ()
+  "Return the start position of the current test"
+  (let ((curr (point))
+        (start-pos 0)
+        (end-pos 0))
+    (save-excursion
+      (search-backward-regexp buster-test-regexp)
+      (setq start-pos (point))
+      (setq end-pos (buster-goto-eoblock))
+      (if (and (< start-pos curr)
+               (< curr end-pos))
+          start-pos curr))))
+
+(defun buster-goto-beginning-of-test ()
+  "Move point to the beginning of the current test function.
+Does nothing if point is not currently inside a test function."
+  (interactive)
+  (ignore-errors
+      (if (not (buster-beginning-of-test-curr-linep))
+          (goto-char (buster-beginning-of-test-pos)))
+      (goto-char (buster-test-name-pos))))
+
+;; buster.el key bindings
+(global-set-key (kbd "C-c t") 'buster-goto-beginning-of-test)</code></pre><!-- " -->
+      <p>
+        Once again we can try this out on the following JavaScript. Place the
+        cursor somewhere in the body of the test function and hit
+        <kbd>C-c t &lt;Enter></kbd>. The cursor should move to the beginning of
+        the quoted test name.
+      </p>
+      <pre class="highlight javascript"><code>buster.testCase("Graph", {
+    setUp: function () {
+        this.graph = capillary.graph.create();
+        this.formatter = capillary.formatters.ascii.bindGraph(this.graph);
+    },
+
+    "should emit dot for commit": function () {
+        var commit = { seqId: 0, id: "1234567", message: "Ok" };
+        var listener = this.spy();
+        this.graph.on("graph:dot", listener);
+
+        this.graph.graphBranch(C.branch.create([commit]));
+
+        var args = listener.args[0];
+        assert.calledOnce(listener);
+        assert.calledWith(listener, [0, 0]);
+    }
+});</code></pre>
+      <h2 id="disable-test">Disabling tests</h2>
+      <p>
+        With the navigation in place, we can finally attempt the initial
+        problem - disabling tests by adding two slashes in front of their name.
+        To do this, we move to the beginning of the current test, move past the
+        quote character, and insert the string "//". Simple enough.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-disable-test ()
+  "Disables a single test by using the 'comment out' feature of
+Buster.JS xUnit style tests. Finds test to disable using
+buster-goto-beginning-of-test"
+  (interactive)
+  (save-excursion
+    (buster-goto-beginning-of-test)
+    (forward-char)
+    (insert "//")))
+
+(global-set-key (kbd "C-c C-d") 'buster-disable-test)</code></pre>
+      <p>
+        To avoid actually moving the cursor, we wrap the function body in a call
+        to <code>save-excursion</code>. Evaluate the code above and place the
+        cursor inside the test from before, and hit <kbd>C-c C-d</kbd>. The test
+        name should have the two slashes added.
+      </p>
+      <h3 id="disable-test-error">Disabling tests outside a test</h3>
+      <p>
+        What happens if we call the new <code>buster-disable-test</code>
+        function when the cursor is not inside a test? As you might remember,
+        <code>buster-goto-beginning-of-test</code> will simply leave point at
+        the current position if it is not inside a test. This means that we need
+        to make sure we are inside a test before doing anything else.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-disable-test ()
+  "Disables a single test by using the 'comment out' feature of
+Buster.JS xUnit style tests. Finds test to disable using
+buster-goto-beginning-of-test"
+  (interactive)
+  (save-excursion
+    (buster-goto-beginning-of-test)
+    (if (buster-beginning-of-test-curr-linep)
+        (progn (forward-char)
+               (insert "//")))))</code></pre>
+      <p>
+        This avoids adding "//" in random places. If we are not inside a test,
+        the function will simply do nothing. The last thing to consider is what
+        to do if attempting to disable an already disabled test. As is, the
+        function will just keep adding "//". We can fix this by searching for
+        existing slashes before adding new ones.
+      </p>
+      <p>
+        In this last version of the function, we will rely on the fact that
+        <code>search-forward</code> returns point (i.e. non-nil) after finding a
+        match. If we pass <code>t</code> as the third argument, it will return
+        <code>nil</code> if no match is found. We will only add new slashes if
+        the search fails.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-disable-test ()
+  "Disables a single test by using the 'comment out' feature of
+Buster.JS xUnit style tests. Finds test to disable using
+buster-goto-beginning-of-test"
+  (interactive)
+  (save-excursion
+    (buster-goto-beginning-of-test)
+    (if (buster-beginning-of-test-curr-linep)
+        (progn
+          (forward-char)
+          (if (not (search-forward "//" (+ (point) 2) t))
+              (insert "//"))))))</code></pre>
+      <p>
+        The search for the slashes is bounded by <code>(+ (point) 2)</code>. In
+        other words, we only look for them directly after the quote. This final
+        version can be called any number of times but will only ever add two
+        slashes to the test name.
+      </p>
+      <h2 id="enable-test">Enabling tests</h2>
+      <p>
+        When a test is disabled, we need a way to enable it again.
+        <code>buster-enable-test</code> is simpler than its couterpart. It will
+        move to the start of the current test, search for the slashes in the
+        test name and remove them if found. Otherwise it does nothing.
+      </p>
+      <pre class="highlight lisp"><code>(defun buster-enable-test ()
+  "Ensables a single test by removing the 'comment' inserted by
+buster-disable-test"
+  (interactive)
+  (save-excursion
+    (buster-goto-beginning-of-test)
+    (if (search-forward "\"//" (+ (point) 3) t)
+        (delete-region (- (point) 2) (point)))))
+
+(global-set-key (kbd "C-c C-e") 'buster-enable-test)</code></pre><!-- " -->
+      <h2 id="wrap-up">Wrapping up</h2>
+      <p>
+        With both <code>buster-disable-test</code>
+        and <code>buster-enable-test</code> in place, we have reached our
+        initial goal. If you made it all the way down here, then thanks for your
+        attention. Hopefully you learned a little about both Emacs and Lisp.
+      </p>
+      <p>
+        To summarize, we have seen basic Lisp syntax in use, and we have
+        succesfully built several functions on our own, using multiple built-in
+        Emacs Lisp functions. Below you will find a list of all the functions we
+        used along with a short description of each. Note that many of these
+        accept optional arguments that we have not discussed. You can find usage
+        examples throughout the article, and more information in Emacs by typing
+        <kbd>M-h f func-name &lt;Enter&gt;</kbd> (many of the explanations below
+        were lifted right from the Emacs documentation).
+      </p>
+      <h2 id="function-reference">Elisp function reference</h2>
+      <dl>
+        <dt><code>(+ &amp;rest NUMBERS-OR-MARKERS)</code></dt>
+        <dd>Return the sum of the arguments.</dd>
+        <dt><code>(- &amp;optional NUMBER-OR-MARKER &amp;rest MORE-NUMBERS-OR-MARKERS)</code></dt>
+        <dd>Return <code>NUMBER-OR-MARKER</code> subtracted by remaining arguments</dd>
+        <dt><code>(1+ NUMBER)</code></dt>
+        <dd>Return <code>NUMBER</code> incremented by one</dd>
+        <dt><code>(1- NUMBER)</code></dt>
+        <dd>Return <code>NUMBER</code> decremented by one</dd>
+        <dt><code>(< NUM1 NUM2)</code></dt>
+        <dd>Return <code>t</code> if the first argument is less than the second</dd>
+        <dt><code>(and CONDITIONS...)</code></dt>
+        <dd>
+          Evaluate arguments until one of them yields nil, then return
+          nil. Otherwise return value of last argument
+        </dd>
+        <dt><code>(beginning-of-line &amp;optional N)</code></dt>
+        <dd>Move point to the beginning of the current line</dd>
+        <dt><code>(cond CLAUSES...)</code></dt>
+        <dd>Try each clause until one succeeds</dd>
+        <dt><code>(condition-case VAR BODYFORM &amp;rest HANDLERS)</code></dt>
+        <dd>Catch errors thrown by <code>BODYFORM</code></dd>
+        <dt><code>(ignore-errors &amp;rest BODY)</code></dt>
+        <dd>Execute <code>BODY</code>; if an error occurs, return nil. Otherwise, return result of last form in <code>BODY</code>.</dd>
+        <dt><code>(defun NAME ARGLIST [DOCSTRING] BODY...)</code></dt>
+        <dd>Define a function</dd>
+        <dt><code>(defvar SYMBOL &amp;optional INITVALUE DOCSTRING)</code></dt>
+        <dd>Define a variable</dd>
+        <dt><code>(delete-region START END)</code></dt>
+        <dd>Delete text in the current buffer from <code>START</code> to <code>END</code></dd>
+        <dt><code>(eq OBJ1 OBJ2)</code></dt>
+        <dd>Return <code>t</code> if the arguments are equal</dd>
+        <dt><code>(forward-char &amp;optional N)</code></dt>
+        <dd>Move point <code>N</code> (default one) character(s) ahead</dd>
+        <dt><code>(goto-char POSITION)</code></dt>
+        <dd>Move point to the exact <code>POSITION</code></dd>
+        <dt><code>(if COND THEN ELSE...)</code></dt>
+        <dd>
+          Evaluate <code>THEN</code> if <code>COND</code> is
+          non-nil, <code>ELSE</code> otherwise
+        </dd>
+        <dt><code>(insert &amp;rest ARGS)</code></dt>
+        <dd>
+          Insert text into the current buffer and move point to the end of the
+          inserted text
+        </dd>
+        <dt><code>(interactive &amp;optional ARGS)</code></dt>
+        <dd>
+          Mark function as interactive. Also control how arguments can be passed
+          to an interactive function (not covered here)
+        </dd>
+        <dt><code>(let VARLIST BODY...)</code></dt>
+        <dd>Define scoped variables and execute expressions in scope</dd>
+        <dt><code>(not OBJECT)</code></dt>
+        <dd>Return <code>t</code> if <code>OBJECT</code> is nil</dd>
+        <dt><code>(point)</code></dt>
+        <dd>Return the current position of point</dd>
+        <dt><code>(point-at-eol &amp;optional N)</code></dt>
+        <dd>Return the position of point at the end of the current line</dd>
+        <dt><code>(progn BODY...)</code></dt>
+        <dd>
+          Eval <code>BODY</code> forms sequentially and return value of last
+          one
+        </dd>
+        <dt><code>(save-excursion &amp;rest BODY)</code></dt>
+        <dd>
+          Save point, mark, and current buffer; execute <code>BODY</code>;
+          restore those things
+        </dd>
+        <dt><code>(search-backward-regexp REGEXP &amp;optional BOUND NOERROR COUNT)</code></dt>
+        <dd>
+          Search backward from point for match for regular
+          expression <code>REGEXP</code>
+        </dd>
+        <dt><code>(search-forward STRING &amp;optional BOUND NOERROR COUNT)</code></dt>
+        <dd>
+          Search forward from point for match for <code>STRING</code>
+        </dd>
+        <dt><code>(search-forward-regexp REGEXP &amp;optional BOUND NOERROR COUNT)</code></dt>
+        <dd>
+          Search forward from point for match for regular
+          expression <code>REGEXP</code>
+        </dd>
+        <dt><code>(setq [SYM VAL]...)</code></dt>
+        <dd>
+          Set each <code>SYM</code> to the value of its <code>VAL</code>.
+        </dd>
+      </dl>
+      <p>
+        In an upcoming article, I will show how to write interactive functions
+        that take arguments, operate on regions and other segments of the
+        current buffer.
+      </p>
+      <h2 id="full-code-listing">Full code-listing</h2>
+      <pre class="highlight lisp"><code>(defvar buster-test-regexp
+  "^\s+\"\.+\s\.+\":\s?fun"
+  "Regular expression that finds the beginning of a test function")
+
+(defun buster-find-next-pos (char)
+  "Return the position at the next occurrence of `char`"
+  (save-excursion
+    (search-forward char nil t)
+    (point)))
+
+(defun buster-test-name-pos ()
+  "Return the position where the test name starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward "\"" (point-at-eol))
+    (1- (point))))
+
+(defun buster-beginning-of-test-curr-linep ()
+  "Return t if a test starts on the current line"
+  (save-excursion
+    (beginning-of-line)
+    (search-forward-regexp buster-test-regexp (point-at-eol) t)))
+
+(defun buster-goto-eoblock (&optional open-paren-pairs-count)
+  "Move point to the end of the next block"
+  (if (null open-paren-pairs-count)
+      (progn
+        (search-forward "{")
+        (setq open-paren-pairs-count 1)))
+  (cond
+   ((eq 0 open-paren-pairs-count) (point))
+   (t (let ((open (buster-find-next-pos "{"))
+          (close (buster-find-next-pos "}")))
+      (cond
+       ((< open close)
+        (goto-char open)
+        (buster-goto-eoblock (1+ open-paren-pairs-count)))
+       ((< close open)
+        (goto-char close)
+        (buster-goto-eoblock (1- open-paren-pairs-count)))))))
+
+(defun buster-beginning-of-test-pos ()
+  "Return the start position of the current test"
+  (let ((curr (point))
+        (start-pos 0)
+        (end-pos 0))
+    (save-excursion
+      (search-backward-regexp buster-test-regexp)
+      (setq start-pos (point))
+      (setq end-pos (buster-goto-eoblock))
+      (if (and (< start-pos curr)
+               (< curr end-pos))
+          start-pos curr))))
+
+(defun buster-goto-beginning-of-test ()
+  "Move point to the beginning of the current test function.
+Does nothing if point is not currently inside a test function."
+  (interactive)
+  (ignore-errors
+      (if (not (buster-beginning-of-test-curr-linep))
+          (goto-char (buster-beginning-of-test-pos)))
+      (goto-char (buster-test-name-pos))))
+
+(defun buster-disable-test ()
+  "Disables a single test by using the 'comment out' feature of
+Buster.JS xUnit style tests. Finds test to disable using
+buster-goto-beginning-of-test"
+  (interactive)
+  (save-excursion
+    (buster-goto-beginning-of-test)
+    (if (buster-beginning-of-test-curr-linep)
+        (progn
+          (forward-char)
+          (if (not (search-forward "//" (+ (point) 2) t))
+              (insert "//"))))))
+
+(defun buster-enable-test ()
+  "Ensables a single test by removing the 'comment' inserted by
+buster-disable-test"
+  (interactive)
+  (save-excursion
+    (buster-goto-beginning-of-test)
+    (if (search-forward "\"//" (+ (point) 3) t)
+        (delete-region (- (point) 2) (point)))))
+
+;; buster.el key bindings
+(global-set-key (kbd "C-c C-d") 'buster-disable-test)
+(global-set-key (kbd "C-c C-e") 'buster-enable-test)
+(global-set-key (kbd "C-c t") 'buster-goto-beginning-of-test)</code></pre>
+      <h2>Update 2013-05-14</h2>
+      <p>
+        Big thanks to Ala'a Mohammad for cleaning up/improving several
+        aspects of this article.
+      </p>
+      <div class="meta">
+        <div class="social">
+          <p class="tweet"><a href="http://twitter.com/share" data-lang="en" data-via="cjno" class="twitter-share-button">Tweet this</a></p>
+          <div class="faith-plus-one"><g:plusone size="medium"></g:plusone></div>
+          <p><a class="rss" href="http://feeds.feedburner.com/cjno-en">Subscribe</a></p>
+        </div>
+        <p class="twitter"><a href="http://twitter.com/cjno">Follow me (@cjno) on Twitter</a></p>
+        <div class="contribute">
+          <h2>Discuss and contribute</h2>
+          <ul>
+            <li class="source">
+              Full site and article source on
+              <a class="gitorious" href="http://gitorious.org/cjohansen-no">Gitorious</a> and
+              <a class="github" href="http://github.com/cjohansen/cjohansen-no">Github</a></li>
+            <li class="hackernews"><a href="">Hacker News discussion</a></li>
+            <li class="reddit"><a href="">Reddit discussion</a></li>
+          </ul>
+        </div>
+        <div class="comments hidden" id="comments" data-comments-for="elisp-intro">
+          <h2>Comments</h2>
+          <ol></ol>
+          <form action="" method="post">
+            <h2>Got something to say?</h2>
+            <fieldset>
+              <div class="field">
+                <label for="name">Name: <span class="required">*</span></label>
+                <input type="text" class="required" name="name" id="name" required>
+              </div>
+              <div class="field">
+                <label for="url">Email: <span class="required">*</span></label>
+                <input type="email" class="required email" name="email" id="email" required>
+              </div>
+              <div class="field">
+                <label for="url">URL:</label>
+                <input type="url" class="url" name="url" id="url">
+              </div>
+              <div class="field">
+                <label for="comment">Comment:</label>
+                <textarea class="required" name="comment" id="comment" cols="30" rows="5"></textarea>
+              </div>
+            </fieldset>
+            <div class="button"><input type="submit" value="Send"></div>
+            <div class="help">
+              All markup will be escaped. URLs are auto linked.
+            </div>
+          </form>
+        </div>
+        <div id="tweets" class="comments"></div>
+      </div>
+    </div>
+    <div class="banner footer">
+      <p>
+        <span>
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="Creative Commons License">
+            <img alt="Creative Commons License" src="/images/cc-by-nc-sa.png">
+          </a>
+          2006 - 2011 <a href="mailto:christian@cjohansen.no">Christian Johansen</a>
+        </span>
+      </p>
+    </div>
+    <script src="/javascript/dist/cjohansen.js"></script>
+    <script type="text/javascript">var _gaq=_gaq||[];_gaq.push(["_setAccount","UA-20457026-1"]);_gaq.push(["_trackPageview"]);(function(b){var c=b.createElement("script");c.type="text/javascript";c.async=true;c.src="http://www.google-analytics.com/ga.js";var a=b.getElementsByTagName("script")[0];a.parentNode.insertBefore(c,a)})(document);</script>
+  </body>
+</html>
