@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta http-equiv="X-UA-Compatible" content="edge">
+    <title>Clojure to die for</title>
+    <meta name="author" content="Christian Johansen">
+    <meta name="robots" content="all">
+    <link href="http://feeds.feedburner.com/cjno-en" rel="alternate" type="application/rss+xml" title="cjohansen.no blog-feed">
+    <link rel="Shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="/stylesheets/cjohansen.css">
+  </head>
+  <body>
+    <div class="banner masthead">
+      <p>
+        <a href="/"><strong>cjohansen.no</strong> Programming, Free software</a>
+      </p>
+    </div>
+    <div class="article">
+      <h1>Clojure to die for</h1>
+      <p>
+        There are many reasons to love <a href="http://clojure.org">Clojure</a>;
+        <a href="http://en.wikipedia.org/wiki/Homoiconicity">homoiconicity</a>,
+        <a href="http://en.wikipedia.org/wiki/Persistent_data_structure">persistent data structures</a>,
+        <a href="http://clojure.org/macros">macros</a>, and the list goes on. In this
+        post, I want to focus on a few "details" in the language that really
+        puts the icing on the cake, and clears up many common situations for me.
+      </p>
+      <h2 id="maps">Map access</h2>
+      <p>
+        In Clojure, you can access map entries in a number of useful ways.
+        First, a map can be called as a function with a key as the only
+        argument. It will return the value associated with the key,
+        or <code>nil</code>, if there are none:
+      </p>
+      <pre class="highlight lisp"><code>(def person {:name "Christian"})
+(person :name) ;=> "Christian"
+(person :age) ;=> nil</code></pre>
+      <p>
+        Usually, maps use keywords for keys. Keywords can also be used as
+        functions, taking a map as their only argument:
+      </p>
+      <pre class="highlight lisp"><code>(def person {:name "Christian"})
+(:name person) ;=> "Christian"
+(:age person) ;=> nil</code></pre>
+      <p>
+        This may be subjective, but to me this reads better. However, the real
+        reason why this is cool is because of this:
+      </p>
+      <pre class="highlight lisp"><code>user> (nil :key)
+CompilerException java.lang.IllegalArgumentException: Can't call nil, compiling:(/private/var/folders/56/h3kfyd9n0r16f42bf4swkszm0000gn/T/form-init2716363333658506112.clj:1:1)
+user> (:key nil)
+nil</code></pre>
+      <p>
+        In other words, using keywords to access map items produces nil if your
+        map is actually <code>nil</code>. This turns out to be very practical.
+      </p>
+      <p>
+        Here's another wicked cool thing about keywords-as-functions:
+      </p>
+      <pre class="highlight lisp"><code>(def people [{:name "John Doe"}
+             {:name "Jane Doe"}])
+(map :name people)
+["John Doe" "Jane Doe"]</code></pre>
+      <h3>Deep access</h3>
+      <p>
+        Whenever you have nested maps (or vectors in maps in vectors for that
+        matter), Clojure offers multiple functions to make life easier. The
+        first is <code>get-in</code>:
+      </p>
+      <pre class="highlight lisp"><code>(def person {:name "Christian"
+             :address {:country "Norway" :city "Oslo"}})
+
+user> (get-in person [:name])
+"Christian"
+user> (get-in person [:address :country])
+"Norway"
+user> (get-in person [:address :street])
+nil
+user> (get-in nil [:address :street])
+nil</code></pre>
+      <p>
+        <code>get-in</code> also sorta works when maps and vectors mix:
+      </p>
+      <pre class="highlight lisp"><code>(def people [{:name "Christian" :hobbies [{:name "Beer"}
+                                          {:name "Food"}
+                                          {:name "Music"}]}])
+
+(get-in people [0 :hobbies 1 :name])</code></pre>
+      <p>
+        Beware though! Using <code>get-in</code> on a lazy sequence will not
+        work as expected.
+      </p>
+      <p>
+        There are functions available to help you "set" nested map entries as
+        well. <code>assoc-in</code> is used to put a value into the map/vector
+        structure somewhere, while <code>update-in</code> can be used to set a
+        value based on the old one (e.g. you provide a function that receives
+        the old value as its argument, and may return the "new" value):
+      </p>
+      <pre class="highlight lisp"><code>(assoc-in person [:address :street] "Street-o-rama")
+{:name "Christian",
+ :address {:country "Norway", :city "Oslo", :street "Street-o-rama"}}
+
+(update-in person [:name] (fn [name] (.toUpperCase name)))
+{:name "CHRISTIAN", :address {:country "Norway", :city "Oslo"}}</code></pre>
+      <h2 id="anon-fn">The anonymous function literal</h2>
+      <p>
+        The anonymous function literal is
+        a <a href="http://clojure.org/reader#toc2">dispatch macro</a>.
+        Basically, it is a very compact way of creating functions, perfect for
+        those cases where you need a quick one-off function. It is perfect for
+        use with the aforementioned <code>update-in</code>.
+      </p>
+      <pre class="highlight lisp"><code>;; This:
+(update-in person [:name] (fn [name] (.toUpperCase name)))
+{:name "CHRISTIAN", :address {:country "Norway", :city "Oslo"}}
+
+;; ...can be more succinctly written like this:
+(update-in person [:name] #(.toUpperCase %))
+{:name "CHRISTIAN", :address {:country "Norway", :city "Oslo"}}</code></pre>
+      <p>
+        By using the anonymous function literal, we avoid one nested form. If
+        the function only receives one argument, you can refer to it as
+        <code>%</code>. If the function should take more arguments, refer to
+        them with <code>%1</code>, <code>%2</code> etc. <code>%</code> is the
+        same as <code>%1</code>, but I prefer not to mix (e.g. <code>%</code>
+        and <code>%2</code> in the same form looks inconsistent and unappealing
+        to me).
+      </p>
+      <p>
+        The anonymous function literal is also a good match for map. Let's say
+        you are looking for the number of leading spaces on each line in a block
+        of text. You might write it like so:
+      </p>
+      <pre class="highlight lisp"><code>(map (fn [line] (count (re-find #"^ +" line))) lines)</code></pre>
+      <p>
+        In short concise code snippets like this, the function contributes
+        unnecessary amounts of noise. The anonymous function literal can clean it up:
+      </p>
+      <pre class="highlight lisp"><code>(map #(count (re-find #"^ +" %)) lines)</code></pre>
+      <p>
+        This has less noise, and communicates the mapping much clearer.
+      </p>
+      <h2 id="thread-first">The thread-first macro</h2>
+      <p>
+        The thread-first macro is a feature that is designed to help you
+        untangle stuff like this:
+      </p>
+      <pre class="highlight lisp"><code>(prepare-pages
+ (pages/get-pages
+  (content/cultivate-content
+   (validate-raw-content
+    (content/load-content)))))</code></pre>
+      <p>
+        Using the thread-first macro, we can break up this deeply nested
+        structure and represent it as a pipeline instead:
+      </p>
+      <pre class="highlight lisp"><code>(-> (content/load-content)
+      validate-raw-content
+      content/cultivate-content
+      pages/get-pages
+      prepare-pages)</code></pre>
+      <p>
+        This is easier to read because it is sequential instead of nested. It is
+        also easier to manipulate.
+      </p>
+      <p>
+        The thread-first macro gets its name from the fact that it threads the
+        previous value in as the first argument to the next form. This becomes
+        clear if any of the forms actually take arguments:
+      </p>
+      <pre class="highlight lisp"><code>(-> person
+    :address
+    (assoc :street "Street-o-rama")
+    (assoc :city "Gotham"))</code></pre>
+      <p>
+        Here we're also using keywords-as functions. This form means the same as
+        this:
+      </p>
+      <pre class="highlight lisp"><code>(assoc (assoc (:address person) :street "Street-o-rama") :city "Gotham")</code></pre>
+      <p>
+        I think it is fairly uncontroversial to say that the thread-first form
+        is way easier to understand.
+      </p>
+      <p>
+        Remember the not-so-optimal example of using <code>get-in</code> on a
+        potentially lazy sequence? We can do the same thing using the threading macro for an
+        elegant solution that is also performant:
+      </p>
+      <pre class="highlight lisp"><code>;; Original example
+(get-in people [0 :hobbies 1 :name])
+
+;; Respects lazy sequences
+(-> people first :hobbies second :name)</code></pre>
+      <p>
+        This will still silently return <code>nil</code> if for instance this
+        person has no hobbies.
+      </p>
+      <h2 id="thread-last">The thread-last macro</h2>
+      <p>
+        The thread-last macro is just like the thread-first, except it threads
+        values as the last argument to next form:
+      </p>
+      <pre class="highlight lisp"><code>(->> lines
+     (remove empty?)
+     (map #(count (re-find #"^ +" %)))
+     (min*))
+
+;; Which is the same as
+(min* (map #(count (re-find #"^ +" %)) (remove empty? lines)))</code></pre>
+      <p>
+        If you like these, you'll be pleased to know
+        that <a href="https://github.com/clojure/clojure/blob/master/changes.md">Clojure
+        1.5</a> shipped with even more threading macros, such
+        as <code>as-&gt;</code>, which allows you to choose and position the
+        placeholder yourself.
+      </p>
+      <p>
+        These are just some of the details I love about Clojure, but I use them
+        a lot, and they are for me a big part of what makes Clojure so
+        effortless to work with.
+      </p>
+      <div class="meta">
+        <p class="twitter"><a href="http://twitter.com/cjno">Follow me (@cjno) on Twitter</a></p>
+      </div>
+      <div class="contribute">
+        <h2>Discuss</h2>
+        <ul>
+          <li class="hackernews"><a href="https://news.ycombinator.com/item?id=7377684">Hacker News discussion</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="banner footer">
+      <p>
+        <span>
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/" title="Creative Commons License">
+            <img alt="Creative Commons License" src="/images/cc-by-nc-sa.png">
+          </a>
+          2006 - 2014 <a href="mailto:christian@cjohansen.no">Christian Johansen</a>
+        </span>
+      </p>
+    </div>
+    <script src="/javascript/dist/cjohansen.js"></script>
+    <script type="text/javascript">var _gaq=_gaq||[];_gaq.push(["_setAccount","UA-20457026-1"]);_gaq.push(["_trackPageview"]);(function(b){var c=b.createElement("script");c.type="text/javascript";c.async=true;c.src="http://www.google-analytics.com/ga.js";var a=b.getElementsByTagName("script")[0];a.parentNode.insertBefore(c,a)})(document);</script>
+  </body>
+</html>
