@@ -30,10 +30,6 @@
 (def pegdown-options ;; https://github.com/sirthias/pegdown
   [:autolinks :fenced-code-blocks :strikethrough])
 
-(defn partial-pages [pages]
-  (zipmap (keys pages)
-          (map #(fn [req] (layout-page req %)) (vals pages))))
-
 (defn markdown-pages [pages]
   (zipmap (map #(str/replace % #"\.md$" "") (keys pages))
           (map #(fn [req] (layout-page req (md/to-html % pegdown-options)))
@@ -42,7 +38,6 @@
 (defn get-raw-pages []
   (stasis/merge-page-sources
    {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
-    :partials (partial-pages (stasis/slurp-directory "resources/partials" #".*\.html$"))
     :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))}))
 
 (defn prepare-page [page req]
