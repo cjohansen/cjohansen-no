@@ -29,23 +29,43 @@
 (defn get-assets []
   (assets/load-assets "public" [#".*"]))
 
+(defn- current-year []
+  (+ 1900 (.getYear (java.util.Date.))))
+
 (defn layout-page [request page]
   (html5
    [:head
     [:meta {:charset "utf-8"}]
     [:meta {:name "viewport"
             :content "width=device-width, initial-scale=1.0"}]
+    [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
+    [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
+    [:meta {:name "author" :content "Christian Johansen"}]
     [:title "Tech blog"]
-    [:link {:rel "stylesheet" :href (link/file-path request "/styles/main.css")}]]
+    [:link {:rel "stylesheet" :href (link/file-path request "/stylesheets/cjohansen.css")}]]
    [:body
-    [:div.logo "cjohansen.no"]
-    [:div.body page]]))
+    [:div.banner.masthead
+     [:p
+      [:a {:href "/"}
+       [:strong "cjohansen.no"]
+       "Programming, free software"]]]
+    [:div.article page]
+    [:div.banner.footer
+     [:p [:span
+          [:a {:rel "license"
+               :href "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+               :title "Creative Commons License"}
+           [:img {:alt "Creative Commons License" :src "/images/cc-by-nc-sa.png"}]]
+          "2006 - "
+          (current-year)
+          [:a {:href "mailto:christian@cjohansen.no"} "Christian Johansen"]]]]
+    [:script "var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-20457026-1']);_gaq.push(['_trackPageview']);(function(b){var c=b.createElement('script');c.type='text/javascript';c.async=true;c.src='http://www.google-analytics.com/ga.js';var a=b.getElementsByTagName('script')[0];a.parentNode.insertBefore(c,a)})(document);"]]))
 
 (def pegdown-options ;; https://github.com/sirthias/pegdown
   [:autolinks :fenced-code-blocks :strikethrough])
 
 (defn markdown-pages [pages]
-  (zipmap (map #(str/replace % #"\.md$" "") (keys pages))
+  (zipmap (map #(str/replace % #"\.md$" "/") (keys pages))
           (map #(fn [req] (layout-page req (md/to-html % pegdown-options)))
                (vals pages))))
 
