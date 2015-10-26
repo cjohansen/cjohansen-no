@@ -95,7 +95,7 @@
              wrap-content-type
              wrap-utf-8))
 
-(def export-dir "dist")
+(def export-dir "build")
 
 (defn export []
   (let [assets (optimizations/all (get-assets) {})]
