@@ -1,0 +1,23 @@
+{
+  "name": "four-in-a-row",
+  "version": "0.0.0",
+  "description": "The classic game of four in a row",
+  "main": "index.js",
+  "dependencies": {
+    "react-dom": "~0.14.1"
+  },
+  "devDependencies": {
+    "browserify": "~12.0.1",
+    "mochify": "~2.14.0",
+    "formatio": "~1.1.2",
+    "referee": "~1.1.1",
+    "watchify": "~3.5.0"
+  },
+  "scripts": {
+    "test": "mochify -R progress test/*.js",
+    "autotest": "mochify -R progress --watch test/*.js",
+    "watch": "watchify -o bundle.js index.js"
+  },
+  "author": "Christian Johansen (christian@kodemaker.no)",
+  "license": "ISC"
+}
