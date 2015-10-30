@@ -4,7 +4,8 @@
   "description": "The classic game of four in a row",
   "main": "index.js",
   "dependencies": {
-    "react-dom": "~0.14.1"
+    "react-dom": "~0.14.1",
+    "react": "~0.14.1"
   },
   "devDependencies": {
     "browserify": "~12.0.1",
@@ -16,7 +17,8 @@
   "scripts": {
     "test": "mochify -R progress test/*.js",
     "autotest": "mochify -R progress --watch test/*.js",
-    "watch": "watchify -o bundle.js index.js"
+    "watch": "watchify -o bundle.js index.js",
+    "watch": "browserify -o bundle.js index.js"
   },
   "author": "Christian Johansen (christian@kodemaker.no)",
   "license": "ISC"
