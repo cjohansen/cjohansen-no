@@ -387,7 +387,7 @@ refers to the first argument. In the above example, the following are identical:
 ```
 
 I wrote more on the anonymous function literal in
-[a separate post](/clojure-to-die-for).
+[a separate post](/clojure-to-die-for/).
 
 The final step is to add the new page source to our map:
 
