@@ -15,4 +15,5 @@
   :aliases {"build-site" ["run" "-m" "cjohansen-no.web/export"]}
   :profiles {:dev {:plugins [[lein-ring "0.8.10"]]}
              :test {:dependencies [[midje "1.6.0"]]
-                    :plugins [[lein-midje "3.1.3"]]}})
+                    :plugins [[lein-midje "3.1.3"]]}}
+  :jvm-opts ["-Djava.awt.headless=true"])
