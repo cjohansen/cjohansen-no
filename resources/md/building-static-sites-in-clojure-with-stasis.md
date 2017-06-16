@@ -104,18 +104,18 @@ relative to `resources/public`. For example,
 Put the following in resources/public/index.html:
 
 ```html
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-  &lt;head&gt;
-    &lt;title&gt;My blog&lt;/title&gt;
-  &lt;/head&gt;
-  &lt;body&gt;
-    &lt;h1&gt;My blog&lt;/h1&gt;
-    &lt;p&gt;
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My blog</title>
+  </head>
+  <body>
+    <h1>My blog</h1>
+    <p>
       Welcome to it.
-    &lt;/p&gt;
-  &lt;/body&gt;
-&lt;/html&gt;
+    </p>
+  </body>
+</html>
 ```
 
 As Stasis is a "no batteries included" framework, we need to do some work to
@@ -160,6 +160,7 @@ src/cjohansen-no/web.clj file:
 
 ```clj
 (def app (stasis/serve-pages get-pages))
+```
 
 Run the server:
 
@@ -180,10 +181,10 @@ one central place saves us some work.
 Add a partial page to resources/partials/about.html
 
 ```html
-&lt;h1&gt;About this site&lt;/h1&gt;
-&lt;p&gt;
+<h1>About this site</h1>
+<p>
   It is a web page.
-&lt;/p&gt;
+</p>
 ```
 
 Rather than using HTML manually to create the layout, we will use the popular
@@ -476,7 +477,7 @@ couple of other useful extensions as well:
 Reloading the blog post will show you how the fenced code blocks are rendered:
 
 ```html
-&lt;pre&gt;&lt;code class="clj"&gt;...&lt;/code&gt;&lt;/pre&gt;
+<pre><code class="clj">...</code></pre>
 ```
 
 We will now use enlive to extract this piece of markup and replace it with the
@@ -1157,14 +1158,9 @@ hope you will consider Clojure and Stasis for your next semi-static web project.
 
 Big thanks to Magnar Sveen for proof-reading and correcting this post.
 
-<div class="meta">
-  <p class="twitter">[Follow me (@cjno) on Twitter](http://twitter.com/cjno)</p>
-  <div class="contribute">
-    <h2>Discuss</h2>
-    <ul>
-      <li class="hackernews">[Hacker News discussion](https://news.ycombinator.com/item?id=7375425)</li>
-      <li class="reddit">[Reddit discussion](http://www.reddit.com/r/Clojure/comments/202qs2/building_static_sites_in_clojure_with_stasis/)</li>
-    </ul>
-  </div>
-  <div id="tweets" class="comments"></div>
- </div>
+[Follow me (@cjno) on Twitter](http://twitter.com/cjno)
+
+## Discuss
+
+- [Hacker News discussion](https://news.ycombinator.com/item?id=7375425)
+- [Reddit discussion](http://www.reddit.com/r/Clojure/comments/202qs2/building_static_sites_in_clojure_with_stasis/)

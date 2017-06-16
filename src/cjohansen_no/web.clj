@@ -1,16 +1,17 @@
 (ns cjohansen-no.web
-  (:require [optimus.assets :as assets]
+  (:require [cjohansen-no.highlight :refer [highlight-code-blocks]]
+            [clojure.java.io :as io]
+            [clojure.string :as str]
+            [hiccup.page :refer [html5]]
+            [me.raynes.cegdown :as md]
+            [net.cgrand.enlive-html :as enlive]
+            [optimus.assets :as assets]
             [optimus.export]
             [optimus.link :as link]
             [optimus.optimizations :as optimizations]
             [optimus.prime :as optimus]
             [optimus.strategies :refer [serve-live-assets]]
             [ring.middleware.content-type :refer [wrap-content-type]]
-            [cjohansen-no.highlight :refer [highlight-code-blocks]]
-            [clojure.java.io :as io]
-            [clojure.string :as str]
-            [hiccup.page :refer [html5]]
-            [me.raynes.cegdown :as md]
             [stasis.core :as stasis]))
 
 (defn wrap-utf-8
@@ -41,24 +42,28 @@
     [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
     [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
     [:meta {:name "author" :content "Christian Johansen"}]
-    [:title "Tech blog"]
-    [:link {:rel "stylesheet" :href (link/file-path request "/stylesheets/cjohansen.css")}]]
+    [:title (or (-> page
+                    java.io.StringReader.
+                    enlive/html-resource
+                    (enlive/select [:h1])
+                    first
+                    :content) "Tech blog")]
+    [:link {:rel "stylesheet" :href (link/file-path request "/styles/main.css")}]]
    [:body
-    [:div.banner.masthead
+    [:div.banner.masthead.main-content.vs-s
      [:p
-      [:a {:href "/"}
-       [:strong "cjohansen.no"]
-       "Programming, free software"]]]
-    [:div.article page]
-    [:div.banner.footer
-     [:p [:span
-          [:a {:rel "license"
-               :href "http://creativecommons.org/licenses/by-nc-sa/3.0/"
-               :title "Creative Commons License"}
-           [:img {:alt "Creative Commons License" :src "/images/cc-by-nc-sa.png"}]]
-          "2006 - "
-          (current-year)
-          [:a {:href "mailto:christian@cjohansen.no"} "Christian Johansen"]]]]
+      [:a.banner-link {:href "/"} "Christian Johansen"]]
+     [:hr]]
+    [:div.main-content page]
+    [:div.banner.footer.main-content
+     [:hr]
+     [:p.related
+      [:a.item {:rel "license"
+                :href "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+                :title "Creative Commons License"}
+       [:img {:alt "Creative Commons License" :src "/images/cc-by-nc-sa.png"}]]
+      [:span.item "2006 - " (current-year)]
+      [:a.item {:href "mailto:christian@cjohansen.no"} "Christian Johansen"]]]
     [:script "var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-20457026-1']);_gaq.push(['_trackPageview']);(function(b){var c=b.createElement('script');c.type='text/javascript';c.async=true;c.src='http://www.google-analytics.com/ga.js';var a=b.getElementsByTagName('script')[0];a.parentNode.insertBefore(c,a)})(document);"]]))
 
 (def pegdown-options ;; https://github.com/sirthias/pegdown
