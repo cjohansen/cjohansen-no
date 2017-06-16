@@ -15,9 +15,14 @@
 (defn- highlight [node]
   (let [code (->> node :content (apply str))
         lang (->> node :attrs :class keyword)]
-    (assoc node :content (-> code
-                             (pygments/highlight lang :html)
-                             extract-code))))
+    (println lang)
+    (try
+      (assoc node :content (-> code
+                               (pygments/highlight lang :html)
+                               extract-code))
+      (catch Throwable e
+        (println "Failed to highlight code snippet!")
+        (println code)))))
 
 (defn highlight-code-blocks [page]
   (enlive/sniptest page

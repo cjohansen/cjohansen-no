@@ -74,9 +74,6 @@
           (map #(fn [req] (layout-page req (md/to-html % pegdown-options)))
                (vals pages))))
 
-(defn archived-pages [pages]
-  pages)
-
 (defn get-raw-pages []
   (stasis/merge-page-sources
    {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
@@ -92,8 +89,7 @@
 
 (defn get-pages []
   (stasis/merge-page-sources
-   {:new-pages (prepare-pages (get-raw-pages))
-    :wget-archive (archived-pages (stasis/slurp-directory "resources/wget-archive" #".*\..*"))}))
+   {:new-pages (prepare-pages (get-raw-pages))}))
 
 (def app (-> (stasis/serve-pages get-pages)
              (optimus/wrap get-assets optimizations/all serve-live-assets)
