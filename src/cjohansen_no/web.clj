@@ -75,19 +75,25 @@
                (vals pages))))
 
 (defn get-raw-pages []
+  (println (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$")))
   (stasis/merge-page-sources
    {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
-    :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))}))
+    :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))
+    :frontpage {"/index.html" #(layout-page % (md/to-html (slurp (io/resource "index.md")) pegdown-options))}}))
 
 (defn prepare-page [page req]
+  (println "prep page")
+  (println page)
   (-> (if (string? page) page (page req))
       highlight-code-blocks))
 
 (defn prepare-pages [pages]
+  (println "prep pages")
   (zipmap (keys pages)
           (map #(partial prepare-page %) (vals pages))))
 
 (defn get-pages []
+  (println "get pages")
   (stasis/merge-page-sources
    {:new-pages (prepare-pages (get-raw-pages))}))
 
