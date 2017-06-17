@@ -9,6 +9,10 @@ I sometimes write about software.
 - [Building static sites in Clojure with Stasis](/building-static-sites-in-clojure-with-stasis/)
 - [Clojure to die for](/clojure-to-die-for/)
 
+## Datomic
+
+- [Querying across Datomic databases](/querying-across-datomic-databases/)
+
 ## Emacs Lisp
 
 - [An introduction to elisp](/an-introduction-to-elisp/)
