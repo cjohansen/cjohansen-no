@@ -1,16 +1,16 @@
 # Referentially transparent CRUD
 
-Side-effects makes software harder to manage. They bring in external
-dependencies, represent an unknown that is hard to reason about, and is a source
-of instability that can be hard to control. Testing side-effecting code is
-*much* harder than testing pure functions. For these reasons I tend to prefer to
-write as many pure functions as possible, and contain side-effects in as few
-functions as possible.
+Side-effects makes software hard to manage. They bring in external dependencies,
+represent an unknown that is hard to reason about, and is a source of
+instability that can be hard to control. Testing side-effecting code is *much*
+harder than testing pure functions. For these reasons I prefer to write as many
+pure functions as possible, and contain side-effects in as few functions as
+possible.
 
-Clojure and its persistent data structures has helped me a lot increasing the
-amount of pure functions in my code bases. However, I/O invariably rears its
-ugly head and ruins the party. Luckily, [Datomic](http://www.datomic.com/)
-has several features that go a long way in enabling you to write referentially
+Clojure and its persistent data structures has helped me increase the amount of
+pure functions in my code bases a lot. However, I/O invariably rears its ugly
+head and ruins the party. Luckily, [Datomic](http://www.datomic.com/) has
+several features that go a long way in enabling you to write referentially
 transparent code, even when you're I/O-ing.
 
 ## Reading data
@@ -18,7 +18,7 @@ transparent code, even when you're I/O-ing.
 When you read data from Datomic, you need "a database". "A database" is
 different from "the database" (which I guess is called "the catalog" in Datomic
 lingo). "A database", in Datomic terms, is an immutable value representing
-some sub set of the facts in your database. Typically, you will use the view
+some subset of the facts in your database. Typically, you will use the view
 provided by `(d/db conn)`, which is a compressed view of the current state of
 your database. It's compressed because facts that have been overwritten are
 excluded from it.
@@ -38,18 +38,15 @@ operations to become pure. For instance, consider the following function:
 
 This function accepts a database value and the id (or lookup ref) of a user, and
 tells you whether or not that user has ever been a tenant. The function is
-referentially transparent, because it computes it answer solely from its
+referentially transparent, because it computes its answer solely from its
 arguments, and both the arguments are immutable values. Score!
 
 ## Writing data
 
 Writing data in Datomic means calling `(d/transact conn)`, and the peer
-connection is _not_ an immutable value. For instance, running `(d/db conn)` will
-produce different values at different points in time. So for writes, we must
-solve the problem another way.
-
-Datomic transactions consist of a sequence of either database functions or
-entity maps. You compile everything that goes in a transaction, and send it off
+connection is _not_ an immutable value. Datomic transactions consist of a
+sequence of either transactor function invocations or entity maps. You compile
+everything that goes into a transaction into one data structure, and send it off
 in one go. This means that all the work that goes into putting data into the
 database actually goes into building an immutable data structure that is put
 into the database with one function call. By moving that last function call out
@@ -73,7 +70,7 @@ validation failures.
 Let's define a contract:
 
 ```clj
-{:command/success? true|false
+{:command/success? true ;; or false
  :command/validation-data {}
  :command/tx-data []
  :command/error {}}
@@ -135,11 +132,11 @@ confer with the current database:
                                              :user/email])]})))
 ```
 
-This function reads from the _immutable database value_ to figure out if the
+This function reads from the **immutable database value** to figure out if the
 email is taken, and is still referentially transparent. It is however, not
 atomic. If you need this check to happen atomically, it needs to happen inside
-the transaction. Users likely won't be signing up in such a tempo as to make
-that worth it, so we won't worry about it.
+the transaction with a transactor function. Users likely won't be signing up in
+such a tempo as to make that worth it, so we won't worry about it.
 
 ## Multi pass writes
 
@@ -229,7 +226,7 @@ extracted, leaving us with a clean way of composing commands. Let's start with a
 function that assumes commands are not dependent on each other's resulting
 transaction data. The function will take a sequence of functions that return
 commands. It will then execute the functions sequentially, and stop on the first
-one that fails. If all of them succeeds, the function returns their combined
+one that fails. If all of them succeed, the function returns their combined
 result.
 
 ```clj
@@ -267,9 +264,10 @@ user:
                                            :user/email])]}))
 
 (defn add-foos [db input]
-  (if-let [user-id (:db/id (d/entity db [:user/email (:user/email input)]))]
+  (if-let [lookup-ref [:user/email (:user/email input)]
+           user-id (:db/id (d/entity db lookup-ref))]
     {:command/success? true
-     :command/tx-data [[:db/add user-id :user/foo (:user/foo input)]]}
+     :command/tx-data [[:db/add lookup-ref :user/foo (:user/foo input)]]}
     {:command/success? false}))
 
 (defn create-user-with-foos [db input]
@@ -377,9 +375,9 @@ passed to a function that generates annotations:
 
 When we've designed such a nice streamlined API for handling side-effects, we
 need to make sure that API endpoints in the app use them as well. In the app
-where these ideas originated, we don't have a REST API for the client to use.
-When the server is only serving its own client, we can afford ourselves a
-network API with less ceremony than REST.
+where these ideas originated, we don't have a full-featured REST API for the
+client to use. When the server is only serving its own client, we can afford
+ourselves a network API with less ceremony than REST.
 
 Our app has a single endpoint for enacting side-effects, and that is the command
 endpoint, `/api/command/:command-id`. The client posts a command here, the
@@ -423,7 +421,7 @@ for creating users over HTTP, we would do something like this:
 
 I guess you noticed the log statement in `execute`. In our code-base we have a
 similar log statement in `process-result`, which was all that was needed to have
-the input *and resulting side-effects* of every single command in our logs.
+**the input and resulting side-effects of every single command in our logs**.
 
 ### The HTTP response
 
@@ -466,12 +464,12 @@ so we also support the `:command/session` key:
     (when-not (:command/success? result)
       (log/warn "Unsuccessful command" command result))
     (if-let [session (:command/session result)]
-      (assoc resp :command/session session)
+      (assoc resp :session session)
       resp)))
 ```
 
-The observant reader will notice the call to `http-response-body` in there. This
-is yet another multimethod, which allows us to implement a separate function to
+The observant reader will notice the call to `http-response-body`. This is yet
+another multimethod, which allows us to implement a separate function to
 calculate the response body for certain commands.
 
 Here is an actual example of one of our commands:
@@ -499,7 +497,7 @@ created a system for completely referentially transparent CRUD.
 
 So there you have it. I'm sure you can create referentially transparent
 CRUD-functions in most any language, but Clojure and Datomic both bring features
-to the table that make doing so easy. In fact, they even encourage this style of
+to the table that make doing so easy. In fact, they both encourage this style of
 programming. The result is that testing I/O functions is really straight
 forwards and fast. Because it's all just pure functions, reasoning about the
 code is quite easy, and it's just damn fun to work with.
