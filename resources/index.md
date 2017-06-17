@@ -12,6 +12,7 @@ I sometimes write about software.
 ## Datomic
 
 - [Querying across Datomic databases](/querying-across-datomic-databases/)
+- [Annotating Datomic transactions](/annotating-datomic-transactions/)
 
 ## Emacs Lisp
 
