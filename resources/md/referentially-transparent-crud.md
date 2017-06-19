@@ -47,7 +47,7 @@ in one go. This means that all the work that goes into putting data into the
 database actually goes into building an immutable data structure that is put
 into the database with a single function call. By moving that last function call
 out of the various functions that create and edit data, they can all become
-referentially transparent, and we can contain side-effects in one place.
+referentially transparent, and side-effects can be contained in one place.
 
 ### The data processing contract
 
@@ -101,13 +101,13 @@ user:
                                              :user/email])]})))
 ```
 
-We use `clojure.spec` for validation. If the input fails validation, we return
-the spec explain data as the validation data. This could be further transformed
-into human-digestible validation messages on the caller side.
+This uses `clojure.spec` for validation. If the input fails validation, it
+returns the spec explain data as the validation data. This could be further
+transformed into human-digestible validation messages on the caller side.
 
 If the command finds nothing wrong with the passed in user, it generates the
-tx-data. But what if there already is a user with that email address? We need to
-confer with a database:
+tx-data. But what if there already is a user with that email address? It needs
+to confer with a database:
 
 ```clj
 (defn create-user [db input]
@@ -139,9 +139,9 @@ that worth it, so we won't worry about it.
 What about those functions that create some data, perform some more logic, then
 creates more data? How can we break those apart? Datomic to the rescue again.
 
-Let's say we have two functions that create a command result like above, and the
-second one needs to consider the results from the first one. Datomic provides
-the `with` function for speculatively applying transaction data to a database
+Imagine two functions that create a command result like above, and the second
+one needs to consider the results from the first one. Datomic provides the
+`with` function for speculatively applying transaction data to a database
 without commiting it to the transaction log:
 
 ```clj
@@ -241,7 +241,7 @@ result.
           (recur (rest xs) (conj res command-res)))))))
 ```
 
-We can use this function to break up our user creation example into three
+This function can be used to break up the user creation example into three
 separate commands: validate the user, create the user, and add "foo" to the
 user:
 

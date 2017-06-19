@@ -13,6 +13,7 @@ I sometimes write about software.
 
 - [Querying across Datomic databases](/querying-across-datomic-databases/)
 - [Annotating Datomic transactions](/annotating-datomic-transactions/)
+- [Referentially transparent CRUD](/referentially-transparent-crud/)
 
 ## Emacs Lisp
 

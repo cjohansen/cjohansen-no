@@ -121,6 +121,9 @@ bunch of other useful information. Along with Datomic's historic data record, we
 could for instance include the database in a `git bisect` to track down
 problems. Quite useful indeed.
 
-I will be writing another post on how we process "commands" in our system.
+I have written another post on how we
+[process commands](/referentially-transparent-crud/) in our system.
+
+June 17th 2017
 
 [Follow me (@cjno) on Twitter](http://twitter.com/cjno)
