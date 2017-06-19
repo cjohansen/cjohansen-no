@@ -1,11 +1,8 @@
 # Referentially transparent CRUD
 
-Side-effects makes software hard to manage. They bring in external dependencies,
-represent an unknown that is hard to reason about, and is a source of
-instability that can be hard to control. Testing side-effecting code is *much*
-harder than testing pure functions. For these reasons I prefer to write as many
-pure functions as possible, and contain side-effects in as few functions as
-possible.
+Side-effects: can't live with 'em, can't live without 'em. But you can contain
+them to a small part of your code-base, making the rest of it pleasant to work
+with.
 
 Clojure and its persistent data structures has helped me increase the amount of
 pure functions in my code bases a lot. However, I/O invariably rears its ugly
@@ -20,11 +17,10 @@ different from "the database" (which I guess is called "the catalog" in Datomic
 lingo). "A database", in Datomic terms, is an immutable value representing
 some subset of the facts in your database. Typically, you will use the view
 provided by `(d/db conn)`, which is a compressed view of the current state of
-your database. It's compressed because facts that have been overwritten are
-excluded from it.
+your database.
 
 Representing the database with an immutable value allows all your read
-operations to become pure. For instance, consider the following function:
+operations to become pure. As an example, consider the following function:
 
 ```clj
 (defn tenant?
@@ -49,8 +45,8 @@ sequence of either transactor function invocations or entity maps. You compile
 everything that goes into a transaction into one data structure, and send it off
 in one go. This means that all the work that goes into putting data into the
 database actually goes into building an immutable data structure that is put
-into the database with one function call. By moving that last function call out
-of the various domain functions that create data, they can all become
+into the database with a single function call. By moving that last function call
+out of the various functions that create and edit data, they can all become
 referentially transparent, and we can contain side-effects in one place.
 
 ### The data processing contract
@@ -111,7 +107,7 @@ into human-digestible validation messages on the caller side.
 
 If the command finds nothing wrong with the passed in user, it generates the
 tx-data. But what if there already is a user with that email address? We need to
-confer with the current database:
+confer with a database:
 
 ```clj
 (defn create-user [db input]
@@ -134,21 +130,19 @@ confer with the current database:
 
 This function reads from the **immutable database value** to figure out if the
 email is taken, and is still referentially transparent. It is however, not
-atomic. If you need this check to happen atomically, it needs to happen inside
-the transaction with a transactor function. Users likely won't be signing up in
-such a tempo as to make that worth it, so we won't worry about it.
+atomic. If you need this check to happen atomically, it must be made with a
+transactor function. Users likely won't be signing up in such a tempo as to make
+that worth it, so we won't worry about it.
 
-## Multi pass writes
+## Multi-pass writes
 
-Ok, so far so good. But what about those functions that create some data,
-perform some more logic, then creates some more data? How can we break those
-apart? Datomic to the rescue again.
+What about those functions that create some data, perform some more logic, then
+creates more data? How can we break those apart? Datomic to the rescue again.
 
-Let's say we have two functions that create a command result like above, and we
-want to exercise them one after another, but the second one needs to consider
-the results of the first one. Datomic provides the `with` function for
-speculatively applying transaction data to a database without commiting it to
-the transaction log:
+Let's say we have two functions that create a command result like above, and the
+second one needs to consider the results from the first one. Datomic provides
+the `with` function for speculatively applying transaction data to a database
+without commiting it to the transaction log:
 
 ```clj
 (def res1 (create-user db input))
@@ -172,10 +166,10 @@ but it is a little bit finicky:
            :command/tx-data (mapcat :command/tx-data [res res2])})))))
 ```
 
-This has the unfortunate limitation that you need to know what temporary ids
-`create-user` operates with, so would only be appropriate functions that are
-locally private to eachother. In most cases the use of `:tempids` can be avoided
-with unique lookups:
+This causes some nasty coupling as you need to know what temporary ids
+`create-user` uses, so would only be appropriate for functions that are locally
+private to eachother. In most cases the use of `:tempids` can be avoided with
+unique lookups:
 
 ```clj
 (defn create-user-with-foos [db input]
@@ -216,7 +210,9 @@ first result to convert entity ids in the second result set back to tempids:
 
 This *still* has a pitfall though. In order for this to work right, you need to
 use explicit tempids for new entities, or you might still end up with an entity
-id in the transaction that won't exist when transacting the data.
+id in the transaction that won't exist when transacting the data. I generally
+try to use lookups with unique attributes in place of entity ids as much as
+possible, both for reads and writes.
 
 ## Composing commands
 
@@ -323,12 +319,13 @@ using unique lookup refs instead of entity ids, e.g.:
 [[:db/add [:user/email "christian@kodemaker.no"] :some/attr "Some value"]]
 ```
 
-Still, this function does feature a few traps, while the previous does not.
+Still, this function does feature a few traps, while the previous one does not.
 
 ## Processing command results
 
-Ok, so we have some tools for generating side-effects, but we are not really
-applying those effects yet. To transact the data, this should do the trick:
+We now have some tools for generating "side-effects to be", but they must be
+applied to have any significance. To transact the data, this should do the
+trick:
 
 ```clj
 (defn process-result
@@ -374,16 +371,17 @@ passed to a function that generates annotations:
 ## A command web handler
 
 When we've designed such a nice streamlined API for handling side-effects, we
-need to make sure that API endpoints in the app use them as well. In the app
-where these ideas originated, we don't have a full-featured REST API for the
-client to use. When the server is only serving its own client, we can afford
-ourselves a network API with less ceremony than REST.
+need to make sure that API endpoints in the app use them as well. Our app has a
+single endpoint for enacting side-effects, and that is the command endpoint,
+`/api/command/:command-id` (this API only serves our frontend and is
+intentionally not a REST API). It works like this:
 
-Our app has a single endpoint for enacting side-effects, and that is the command
-endpoint, `/api/command/:command-id`. The client posts a command here, the
-backend checks that the current user is authorized to execute the named command
-on the provided parameters, and the command function is called, the results are
-processed, and finally an HTTP response is compiled and sent back to the client.
+1. The client posts a command
+2. The backend checks that the current user is authorized to execute the named command with the provided parameters
+3. The command function is called
+4. Results are processed and committed
+5. An HTTP response is compiled and sent back to the client
+
 This endpoint is used for validations, creating stuff, editing stuff, you name
 it.
 
@@ -409,8 +407,8 @@ We saw `process-result` before. `execute` looks like this:
     (:command/id command)))
 ```
 
-This is a multimethod that dispatches on the `:command/id`. To expose a command
-for creating users over HTTP, we would do something like this:
+This is a multimethod that dispatches on `:command/id`. To expose a command for
+creating users over HTTP, we would do something like this:
 
 ```clj
 (require '[myapp.command :as command])
@@ -419,9 +417,10 @@ for creating users over HTTP, we would do something like this:
   (create-user-with-foos (d/db conn) params))
 ```
 
-I guess you noticed the log statement in `execute`. In our code-base we have a
-similar log statement in `process-result`, which was all that was needed to have
-**the input and resulting side-effects of every single command in our logs**.
+As you might have noticed, there is a log statement in `execute`. In our
+code-base we have a similar log statement in `process-result`, which was all
+that was needed to have **the input and resulting side-effects of every single
+command in our logs**.
 
 ### The HTTP response
 
@@ -490,20 +489,17 @@ Here is an actual example of one of our commands:
                       format-contact-tel)})
 ```
 
-I have not included all the details, but the main point here is how we've
-created a system for completely referentially transparent CRUD.
-
 ## In summary
 
 So there you have it. I'm sure you can create referentially transparent
 CRUD-functions in most any language, but Clojure and Datomic both bring features
 to the table that make doing so easy. In fact, they both encourage this style of
-programming. The result is that testing I/O functions is really straight
-forwards and fast. Because it's all just pure functions, reasoning about the
-code is quite easy, and it's just damn fun to work with.
+programming. The result is that testing I/O functions is really straight forward,
+and fast. Because it's all just pure functions, reasoning about the code is
+quite easy, and it's just damn fun to work with.
 
 Did I mention that our app handles emails and sms messages the same way? Add
-stuff to `:command/emails`, and `process-results` will send it off for you.
+stuff to `:command/emails`, and `process-results` will send 'em off for you.
 
 Clojure. Datomic. You gotta love 'em.
 
