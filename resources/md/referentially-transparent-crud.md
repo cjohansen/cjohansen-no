@@ -347,7 +347,7 @@ so we also support the `:command/session` key:
 ```clj
 (defn http-response [req command result]
   (let [resp (if (:command/success? result)
-               {:status (or (:command/http-status result) 200)
+               {:status (:command/http-status result 200)
                 :body (http-response-body command result)}
                {:status (cond
                           (:command/http-status result) (:command/http-status result)
