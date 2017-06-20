@@ -149,75 +149,16 @@ without commiting it to the transaction log:
 (def res2 (create-other-entity (:db-after (d/with db (:tx-data res1))) other-input))
 ```
 
-If you need to cross-reference entities between these two result sets, you can,
-but it is a little bit finicky:
-
-
-```clj
-(defn create-user-with-foos [db input]
-  (let [res (create-user db input)]
-    (if-not (:command/success? res)
-      res
-      (let [{:keys [db-after tempids]} (d/with db (:command/tx-data res))
-            res2 (add-foos db-after (get tempids "user") input)]
-        (if-not (:command/success? res2)
-          res2
-          {:command/success? true
-           :command/tx-data (mapcat :command/tx-data [res res2])})))))
-```
-
-This causes some nasty coupling as you need to know what temporary ids
-`create-user` uses, so would only be appropriate for functions that are locally
-private to eachother. In most cases the use of `:tempids` can be avoided with
-unique lookups:
-
-```clj
-(defn create-user-with-foos [db input]
-  (let [res (create-user db input)]
-    (if-not (:command/success? res)
-      res
-      (let [{:keys [db-after]} (d/with db (:command/tx-data res))
-            res2 (add-foos db-after [:user/email (:user/email input)] input)]
-        (if-not (:command/success? res2)
-          res2
-          {:command/success? true
-           :command/tx-data (mapcat :command/tx-data [res res2])})))))
-```
-
-This version uses the `:user/email` attribute to lookup the newly created user
-in the database that speculatively contains the recent user transaction.
-
-There is still the pitfall that if the second command uses an entity id created
-in the `d/with` "speculation", it may not be a valid id in the resulting
-transaction. This can be partially mitigated by using the `:tempids` from the
-first result to convert entity ids in the second result set back to tempids:
-
-```clj
-(defn create-user-with-foos [db input]
-  (let [res (create-user db input)]
-    (if-not (:command/success? res)
-      res
-      (let [{:keys [db-after tempids]} (d/with db (:command/tx-data res))
-            res2 (add-foos db-after [:user/email (:user/email input)] input)]
-        (if-not (:command/success? res2)
-          res2
-          (let [id->tmp (into {} (map (fn [[k v]] [v k]) tempids))]
-            {:command/success? true
-             :command/tx-data (clojure.walk/postwalk
-                               #(or (id->tmp %) %)
-                               (mapcat :command/tx-data [res res2]))}))))))
-```
-
-This *still* has a pitfall though. In order for this to work right, you need to
-use explicit tempids for new entities, or you might still end up with an entity
-id in the transaction that won't exist when transacting the data. I generally
-try to use lookups with unique attributes in place of entity ids as much as
-possible, both for reads and writes.
+Be warned though, if you end up referencing entity ids created by the `with`
+speculation in the second set of tx-data, you're going to have a bad time. It
+can be mitigated to some degree, but for the most part, avoid this pattern if
+you can (and you usually can). I'll share some insight on this in a separate
+post.
 
 ## Composing commands
 
-In the previous example, you can see that there is a bit of mechanic "noise"
-associated with the serial execution of commands. The mechanics can be
+It can be useful to break larger commands into smaller ones that can either be
+used by themselves, or composed back together. The mechanics of this can be
 extracted, leaving us with a clean way of composing commands. Let's start with a
 function that assumes commands are not dependent on each other's resulting
 transaction data. The function will take a sequence of functions that return
@@ -276,50 +217,6 @@ user:
 This is pretty nice. We've broken the user creation process into three short,
 focused, and reusable functions. In the process we've done away with all nested
 branching.
-
-We could device a similar function that feeds the `tx-data` from one command
-into the next, and resolve all the tempids in the end:
-
-```clj
-(defn exec-commands-incrementally
-  "Executes a seq of commands in sequence, applying the tx-data from one command
-  to the database passed to the next. Returns either the first failure, or the
-  combination of all successes"
-  [xs db & args]
-  (loop [xs xs
-         db db
-         all-tempids {}
-         res []]
-    (if (empty? xs)
-      (let [id->tmp (into {} (map (fn [[k v]] [v k]) all-tempids))]
-        {:command/success? true
-         :command/tx-data (clojure.walk/postwalk #(or (id->tmp %) %)
-                                                 (mapcat :command/tx-data res))})
-      (let [command-res (apply (first xs) db args)]
-        (if-not (:command/success? command-res)
-          command-res
-          (let [{:keys [db-after tempids]} (d/with db (:command/tx-data command-res))]
-            (recur (rest xs)
-                   db-after
-                   (merge all-tempids tempids)
-                   (conj res command-res))))))))
-```
-
-Now this function comes with two major caveats that should make you think twice
-before using it (I don't, but I do use the previous one a lot):
-
-1. All commands must accept the db as their first argument
-2. If you use `:db/id` on existing entities when building transactions, *all*
-   new entities must have an explicit tempid
-
-The first caveat isn't so bad, and the second one can be mitigated by always
-using unique lookup refs instead of entity ids, e.g.:
-
-```clj
-[[:db/add [:user/email "christian@kodemaker.no"] :some/attr "Some value"]]
-```
-
-Still, this function does feature a few traps, while the previous one does not.
 
 ## Processing command results
 
