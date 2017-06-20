@@ -146,7 +146,7 @@ without commiting it to the transaction log:
 
 ```clj
 (def res1 (create-user db input))
-(def res2 (create-other-entity (:db-after (d/with db (:tx-data))) other-input))
+(def res2 (create-other-entity (:db-after (d/with db (:tx-data res1))) other-input))
 ```
 
 If you need to cross-reference entities between these two result sets, you can,
