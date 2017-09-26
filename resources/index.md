@@ -4,8 +4,9 @@ if you're interested in my work, or would consider hiring me for your project.
 
 I sometimes write about software.
 
-## Clojure
+## Clojure / ClojureScript
 
+- [A unified specification](/a-unified-specification/)
 - [Building static sites in Clojure with Stasis](/building-static-sites-in-clojure-with-stasis/)
 - [Clojure to die for](/clojure-to-die-for/)
 
