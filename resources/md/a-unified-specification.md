@@ -265,7 +265,7 @@ The macro goes into `unified-schema/macros.cljc`:
 Now the specs will be defined, and `example-schema` will refer to our schema
 data.
 
-## Step 2: Extract Datascript schema
+## Step 3: Extract Datascript schema
 
 To extract the schema, we'll start by simply preserving all the keys in the `db`
 namespace:
@@ -347,7 +347,7 @@ in the `db` namespace:
          (apply dissoc schema))))
 ```
 
-## Step 3: Automate data transformations
+## Step 4: Automate data transformations
 
 We've unified the Datascript schema and specs. What about the mapping from API
 data to schema data? It would be neat if we could achieve that declaratively as
