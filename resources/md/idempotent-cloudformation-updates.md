@@ -1,8 +1,9 @@
 # Idempotent Cloudformation Updates
 
-Having worked a lot with Ansible, I came to Cloudformation thinking (or, at
-least hoping) it would be "Ansible for AWS": a declarative definition of a
-desired state, which it is quite not:
+Having worked a lot with Ansible, I came to
+[Cloudformation](https://aws.amazon.com/cloudformation/) thinking (or, at least
+hoping) it would be "Ansible for AWS": a declarative definition of a desired
+state, which it is quite not:
 
 - Cloudformation clearly separates creation and updates (no ["upsert"](https://en.wiktionary.org/wiki/upsert))
 - Cloudformation is *not* idempotent
