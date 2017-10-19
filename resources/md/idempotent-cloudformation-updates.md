@@ -193,7 +193,7 @@ input_hash=$(echo $(echo "$parameters$tags$stack_name$region" | shasum --text | 
 aws cloudformation $command --client-request-token=$template_hash$input_hash $*
 ```
 
-The whole thing is available on [my GitHub](https://github.com/cjohansen/cf-apply-stack):
+The whole thing is available on [my GitHub](https://github.com/cjohansen/cf-apply-template):
 
 ```sh
 #!/bin/bash
