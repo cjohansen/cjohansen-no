@@ -16,6 +16,10 @@ I sometimes write about software.
 - [Annotating Datomic transactions](/annotating-datomic-transactions/)
 - [Referentially transparent CRUD](/referentially-transparent-crud/)
 
+## Amazon Web Services (AWS)
+
+- [Idempotent Cloudformation Updates](/idempotent-cloudformation-updates/)
+
 ## Emacs Lisp
 
 - [An introduction to elisp](/an-introduction-to-elisp/)
