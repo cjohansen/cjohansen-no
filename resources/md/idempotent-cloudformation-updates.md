@@ -1,25 +1,26 @@
 # Idempotent Cloudformation Updates
 
 Having worked a lot with Ansible, I came to
-[Cloudformation](https://aws.amazon.com/cloudformation/) thinking (or, at least
+[Cloudformation](https://aws.amazon.com/cloudformation/) thinking (or at least
 hoping) it would be "Ansible for AWS": a declarative definition of a desired
-state, which it is quite not:
+state, which it is not quite:
 
 - Cloudformation clearly separates creation and updates (no ["upsert"](https://en.wiktionary.org/wiki/upsert))
 - Cloudformation is *not* idempotent
 - Cloudformation only touches what Cloudformation already touched
 
 The last point is actually not so bad, since it means that being serious about
-automation on AWS also means you need to step away from hitting buttons in the
-console. This is a good thing. The first two points though, need fixing.
+automation on AWS also means you need to lay off point-and-click in the console.
+This is ultimately a good thing (point-and-click is fine for learning,
+automation is good for production). The first two points though, need fixing.
 
 ## Disclaimer: Amateur at work
 
 Let's be clear: I am no Cloudformation expert. Maybe you're reading this and
 thinking that I'm being the [expert
 beginner](https://www.daedtech.com/how-developers-stop-learning-rise-of-the-expert-beginner/),
-thinking I have "a better way", solving the wrong problems. If that's the case,
-[please let me know](https://twitter.com/cjno/).
+thinking I have "a better way" and solving the wrong problems. If that's the
+case [please let me know](https://twitter.com/cjno/).
 
 ## Idempotency
 
@@ -36,7 +37,7 @@ token](http://docs.aws.amazon.com/AWSCloudFormation/latest/APIReference/API_Crea
 This is an arbitrary string you pass to `create-stack` and `update-stack`, and
 Cloudformation will only ever process _one_ request with the same client request
 token. If you make a second pass with the same token, Cloudformation *fails*. I
-guess I would've preferred a silent noop, but I'll take what I can get. This
+guess I would've preferred a silent no-op, but I'll take what I can get. This
 means that if you build a hash of your template and the parameters (and any
 tags set on the stack), we can basically make Cloudformation apply templates in
 an idempotent manner.
@@ -48,7 +49,7 @@ readily available:
 template_hash=`shasum template.yml | awk '{ print $1 }'`
 ```
 
-`shasum` also outputs the file name, so I'm using `awk` to get rid of it.
+`shasum` also outputs the filename, so I'm using `awk` to get rid of it.
 
 The parameters can be hashed the same way:
 
@@ -59,7 +60,7 @@ tags="..."
 input_hash=`echo $parameters$tags | shasum --text | awk '{ print $1 }'`
 ```
 
-Now we can build our token and call on Cloudformation to update our stack:
+Now we can build the token and call on Cloudformation to update the stack:
 
 ```sh
 aws cloudformation update-stack \
@@ -86,9 +87,9 @@ like this would work:
 aws cloudformation describe-stacks --stack-name MyStack
 
 if [ $? -eq 0 ]; then
-    aws cloudformation create-stack ...
-else
     aws cloudformation update-stack ...
+else
+    aws cloudformation create-stack ...
 fi
 ```
 
@@ -110,13 +111,15 @@ script. We'll call it like so:
 
 The wrapper script will roughly parse the arguments to look at `stack-name`,
 `parameters`, `tags`, `template-body`, `region`, and `profile`, then use those
-values to describe the stack to figure out if it exists, and then either create
-or update the stack, passing a client request token that ensures that noop
-updates are never applied.
+values to describe the stack to figure out if it exists. It will then either
+create or update the stack, passing in a client request token that ensures that
+no-op updates are never applied.
 
 We'll start by extracting the arguments we're interested in:
 
 ```sh
+#!/bin/bash
+
 setArgs () {
     while [ "$1" != "" ]; do
         case $1 in
@@ -148,16 +151,6 @@ setArgs () {
         shift
     done
 }
-```
-
-We'll pass all the script's arguments to this function:
-
-```sh
-#!/bin/bash
-
-setArgs () {
-    # ...
-}
 
 setArgs $*
 ```
@@ -165,7 +158,6 @@ setArgs $*
 We'll then describe the stack to see if it exists:
 
 ```sh
-
 describe_args="--stack-name $stack_name"
 
 if [ ! -z $profile ]; then
@@ -203,8 +195,6 @@ aws cloudformation $command --client-request-token=$template_hash$input_hash $*
 
 The whole thing is available on [my GitHub](https://github.com/cjohansen/cf-apply-stack):
 
-[Let me know what you think](https://twitter.com/cjno).
-
 ```sh
 #!/bin/bash
 
@@ -267,3 +257,5 @@ input_hash=$(echo $(echo "$parameters$tags$stack_name$region" | shasum --text | 
 
 aws cloudformation $command --client-request-token=$template_hash$input_hash $*
 ```
+
+[Let me know what you think](https://twitter.com/cjno).
