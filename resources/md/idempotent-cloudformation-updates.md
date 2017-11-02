@@ -71,7 +71,33 @@ aws cloudformation update-stack \
     --template-body file://template.yml
 ```
 
-If you run this twice, it will fail the second time. Success! Kinda.
+If you run this twice, it will fail the second time. Success! Kinda. The problem
+with this approach is that CloudFormation remembers the client request token
+seemingly forever. That means that the following scenario does not work as
+expected:
+
+1. Create a stack with client request token `"A"`
+2. Change some parameters and update the stack with client request token `"B"`
+3. Revert changes and "update" stack back to the original version -
+   **CloudFormation fails**
+
+The last step fails because the client request token was already used. So the
+once so promising client request token cannot be used after all.
+
+## Tags to the resque
+
+We have a hash that uniquely defines a change set, but we cannot use it with
+client request token, lest our stack will be unable to assume the same state
+twice. Speaking of change sets, CloudFormation has a first-class notion of a
+[change
+sets](http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/using-cfn-updating-stacks-changesets.html).
+However, they are not a good solution to quick updates (or not) of stacks as
+they have side-effects, and are geared more towards reviewing changes before
+applying.
+
+One possible solution to our idempotency problem is tags. Use the hash we
+computed before as a tag. Before applying the stack up, read tags from the
+existing stack and abort if it is already in the desired state.
 
 ## Upsert
 
@@ -112,8 +138,8 @@ script. We'll call it like so:
 The wrapper script will roughly parse the arguments to look at `stack-name`,
 `parameters`, `tags`, `template-body`, `region`, and `profile`, then use those
 values to describe the stack to figure out if it exists. It will then either
-create or update the stack, passing in a client request token that ensures that
-no-op updates are never applied.
+create or update the stack, passing in a hash as a tag that ensures that no-op
+updates are never applied.
 
 We'll start by extracting the arguments we're interested in:
 
@@ -160,18 +186,18 @@ We'll then describe the stack to see if it exists:
 ```sh
 describe_args="--stack-name $stack_name"
 
-if [ ! -z $profile ]; then
+if [ ! -z "$profile" ]; then
     describe_args="$describe_args --profile $profile"
 fi
 
-if [ ! -z $region ]; then
+if [ ! -z "$region" ]; then
     describe_args="$describe_args --region $region"
 fi
 
-aws cloudformation describe-stacks $describe_args > /dev/null 2>&1
+description=`aws cloudformation describe-stacks $describe_args 2> /dev/null`
 ```
 
-Based on whether it exists or not, we'll choose the action and alert the user to
+Based on whether it exists or not, we'll choose the action and alert the user of
 our choice:
 
 ```sh
@@ -184,13 +210,33 @@ else
 fi
 ```
 
-Finally, we'll create client request token and fire away:
+We'll then use [jq](https://stedolan.github.io/jq/) to find the existing client
+request token, if any:
+
+```sh
+current_crt=`echo "$description" | jq -r '.Stacks[0].Tags[] | select(.Key=="ClientRequestToken").Value'`
+```
+
+We'll use the relevant pieces to compute a new token (assuming that
+`--template-body` is a `file://...` URL):
 
 ```sh
 template_hash=$(echo $(shasum ${template:7:${#template}} | awk '{ print $1 }'))
 input_hash=$(echo $(echo "$parameters$tags$stack_name$region" | shasum --text | awk '{ print $1 }'))
+crt="$template_hash$input_hash"
+```
 
-aws cloudformation $command --client-request-token=$template_hash$input_hash $*
+Finally, we'll compare the two. If the new and old token are different, we'll
+call on `aws cloudformation`, otherwise, we're done.
+
+```sh
+if [ "$crt" == "$current_crt" ]; then
+  echo "Current version is up to date, nothing to do"
+  exit 0
+else
+    args=`addTags "Key=ClientRequestToken,Value=$crt" $*`
+    echo "aws cloudformation $command $args"
+fi
 ```
 
 The whole thing is available on [my GitHub](https://github.com/cjohansen/cf-apply-template):
@@ -230,6 +276,31 @@ setArgs () {
     done
 }
 
+addTags () {
+    local tags="$1"
+    shift
+    local res=""
+    local has_tags=0
+
+    while [ "$1" != "" ]; do
+        res="$res $1"
+
+        if [ "$1" == "--tags" ]; then
+            has_tags=1
+            res="$res $2 $tags"
+            shift
+        fi
+
+        shift
+    done
+
+    if [ $has_tags -eq 0 ]; then
+        res="$res --tags $tags"
+    fi
+
+    echo $res
+}
+
 setArgs $*
 
 describe_args="--stack-name $stack_name"
@@ -242,7 +313,7 @@ if [ ! -z $region ]; then
     describe_args="$describe_args --region $region"
 fi
 
-aws cloudformation describe-stacks $describe_args > /dev/null 2>&1
+description=`aws cloudformation describe-stacks $describe_args 2> /dev/null`
 
 if [ $? -eq 0 ]; then
     echo "Updating stack"
@@ -254,8 +325,16 @@ fi
 
 template_hash=$(echo $(shasum ${template:7:${#template}} | awk '{ print $1 }'))
 input_hash=$(echo $(echo "$parameters$tags$stack_name$region" | shasum --text | awk '{ print $1 }'))
+crt="$template_hash$input_hash"
+current_crt=`echo "$description" | jq -r '.Stacks[0].Tags[] | select(.Key=="ClientRequestToken").Value'`
 
-aws cloudformation $command --client-request-token=$template_hash$input_hash $*
+if [ "$crt" == "$current_crt" ]; then
+    echo "Current version is up to date, nothing to do"
+    exit 0
+else
+    args=`addTags "Key=ClientRequestToken,Value=$crt" $*`
+    echo "aws cloudformation $command $args"
+fi
 ```
 
 [Let me know what you think](https://twitter.com/cjno).
