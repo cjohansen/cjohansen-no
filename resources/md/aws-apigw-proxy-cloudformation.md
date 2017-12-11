@@ -109,7 +109,7 @@ amount of time to figure out.
           integration.request.path.proxy: 'method.request.path.proxy'
         IntegrationHttpMethod: ANY
         Type: HTTP_PROXY
-        Uri: http://my-imaginary-bucket.s3-website-eu-west-1.amazonaws.com/
+        Uri: http://my-imaginary-bucket.s3-website-eu-west-1.amazonaws.com/{proxy}
         PassthroughBehavior: WHEN_NO_MATCH
         IntegrationResponses:
           - StatusCode: 200
@@ -200,7 +200,7 @@ Resources:
           integration.request.path.proxy: 'method.request.path.proxy'
         IntegrationHttpMethod: ANY
         Type: HTTP_PROXY
-        Uri: http://my-imaginary-bucket.s3-website-eu-west-1.amazonaws.com/
+        Uri: http://my-imaginary-bucket.s3-website-eu-west-1.amazonaws.com/{proxy}
         PassthroughBehavior: WHEN_NO_MATCH
         IntegrationResponses:
           - StatusCode: 200
