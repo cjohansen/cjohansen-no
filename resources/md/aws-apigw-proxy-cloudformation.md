@@ -20,7 +20,7 @@ most interested in the `AWS::ApiGateway::Method` resource.
 
 At the top of the mountain is a Rest API:
 
-```yml
+```yaml
   Api:
     Type: 'AWS::ApiGateway::RestApi'
     Properties:
@@ -34,7 +34,7 @@ resource, and a catch-all resource. Well, a catch-almost-all anyway, since the
 catch-all does *not* catch the root resource. The root resource is created for
 you, the proxy resource is not:
 
-```yml
+```yaml
   Resource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
@@ -47,7 +47,7 @@ As you can see, this resource references the `Api.RootResourceId` as its parent.
 The path part `{proxy+}` is a greedy match for any path. If you wanted to only
 match requests under e.g. `/blog/*`, you'd have to define two resources:
 
-```yml
+```yaml
   BlogResource:
     Type: 'AWS::ApiGateway::Resource'
     Properties:
@@ -71,7 +71,7 @@ define one `ANY` method for each resource.
 The root resource is a 1:1 from the root path to the root path on your proxy
 target. For this example, we're proxying to an imaginary S3 bucket website:
 
-```yml
+```yaml
   RootMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
@@ -92,7 +92,7 @@ target. For this example, we're proxying to an imaginary S3 bucket website:
 Next up is the proxy resource method, and this is what took me an embarrassing
 amount of time to figure out.
 
-```yml
+```yaml
   ProxyMethod:
     Type: 'AWS::ApiGateway::Method'
     Properties:
@@ -135,7 +135,7 @@ have a direct dependency on either of the methods, and because we cannot deploy
 an API with no methods, we use `DependsOn` to help Cloudformation figure out the
 order of things:
 
-```yml
+```yaml
   Deployment:
     DependsOn:
       - RootMethod
@@ -152,7 +152,7 @@ Choose a stage name of your liking.
 
 That's all there is to it. Doesn't look very hard when you know what to do.
 
-```yml
+```yaml
 AWSTemplateFormatVersion: 2010-09-09
 Description: An API that proxies requests to another HTTP endpoint
 
