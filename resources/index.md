@@ -18,6 +18,7 @@ I sometimes write about software.
 
 ## Amazon Web Services (AWS)
 
+- [Api Gateway Proxy Resource with Cloudformation](/aws-apigw-proxy-cloudformation/)
 - [Idempotent Cloudformation Updates](/idempotent-cloudformation-updates/)
 
 ## Emacs Lisp
