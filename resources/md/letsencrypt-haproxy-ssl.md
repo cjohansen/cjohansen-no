@@ -73,7 +73,7 @@ the additional setup.
 Here's the frontend and backend for `haproxy.cfg` (defaults, globals, and other
 sections omitted):
 
-```txt
+```sh
 frontend http-in
     bind *:80
     compression algo gzip
@@ -170,7 +170,7 @@ Let's say you provisioned certificates for two sites, `site-a.com` and
 above. Assuming the certificate directory is exposed as the volume `/ssl-certs`
 in the HAProxy container, you can create an HTTPS frontend as such:
 
-```txt
+```sh
 frontend https-in
     bind *:443 ssl crt /ssl-certs/site-a.com.pem crt /ssl-certs/site-b.com.pem
     compression algo gzip
@@ -204,7 +204,7 @@ HTTPS. One way to do this is to redirect all attempts at HTTP to HTTPS. As we do
 this, keep in mind that the ACME challenge needs to be performed over HTTP, so
 there should be an exception for those URLs:
 
-```txt
+```sh
 frontend http-in
     bind *:80
     compression algo gzip
@@ -228,9 +228,10 @@ it is potentially confusing.
 [HTTP Strict Transport Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security),
 is security mechanism that avoids some phishing scenarios by informing the
 browser to _never_ access the site over plain HTTP. Add this header to all
-responses going out of HAProxy like so:
+responses going out of HAProxy like so (include it in either your frontend or
+backend configuration):
 
-```txt
+```sh
 http-response set-header Strict-Transport-Security "max-age=16000000; includeSubDomains; preload;"
 ```
 
