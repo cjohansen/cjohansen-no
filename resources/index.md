@@ -16,6 +16,9 @@ I sometimes write about software.
 - [Annotating Datomic transactions](/annotating-datomic-transactions/)
 - [Referentially transparent CRUD](/referentially-transparent-crud/)
 
+## Haproxy
+
+- [Securing HAProxy sites with Let's Encrypt SSL Certificates](/letsencrypt-haproxy-ssl/)
 ## Amazon Web Services (AWS)
 
 - [Api Gateway Proxy Resource with Cloudformation](/aws-apigw-proxy-cloudformation/)
