@@ -19,6 +19,7 @@ I sometimes write about software.
 ## Haproxy
 
 - [Securing HAProxy sites with Let's Encrypt SSL Certificates](/letsencrypt-haproxy-ssl/)
+
 ## Amazon Web Services (AWS)
 
 - [Api Gateway Proxy Resource with Cloudformation](/aws-apigw-proxy-cloudformation/)
