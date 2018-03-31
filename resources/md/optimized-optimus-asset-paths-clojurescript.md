@@ -5,7 +5,7 @@ should be using [Optimus](https://github.com/magnars/optimus) to optimize and
 serve your assets. One of the optimizations Optimus can employ is to create
 "cache buster" URLs, which means that `/images/logo.png` in development might
 become `/images/0951812be272/logo.png` in production. Optimus provides
-server-side resolution of URLs through its
+server-side resolution of URLs like this through its
 [optimus.link](https://github.com/magnars/optimus#using-the-new-urls) namespace.
 This post explains how to refer to optimized URLs from ClojureScript.
 
@@ -263,3 +263,8 @@ For reference, here is the full assets namespace:
 (defmacro asset-path [path]
   (preferred-path path))
 ```
+
+## Acknowledgements
+
+Thanks to the ever-awesome [Magnar Sveen](https://github.com/magnars) for
+hashing out the idea for this with me.
