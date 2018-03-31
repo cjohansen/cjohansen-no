@@ -6,6 +6,7 @@ I sometimes write about software.
 
 ## Clojure / ClojureScript
 
+- [Optimized Optimus Asset Paths from ClojureScript](/optimized-optimus-asset-paths-clojurescript/)
 - [A unified specification](/a-unified-specification/)
 - [Building static sites in Clojure with Stasis](/building-static-sites-in-clojure-with-stasis/)
 - [Clojure to die for](/clojure-to-die-for/)
