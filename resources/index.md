@@ -2,7 +2,7 @@ My name is Christian Johansen. I work for [Kodemaker](http://kodemaker.no),
 check out my [professional profile](http://kodemaker.no/christian/) over there
 if you're interested in my work, or would consider hiring me for your project.
 
-I sometimes write about software.
+I occasionally write about software.
 
 ## Clojure / ClojureScript
 
