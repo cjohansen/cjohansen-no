@@ -195,7 +195,7 @@ And use that for building:
 lein with-profile prod cljsbuild once min
 ```
 
-### A Note on Compile-time vs Runtime
+## A Note on Compile-time vs Runtime
 
 One drawback with this solution is that optimization settings is a compile-time
 decision for ClojureScript, but a runtime decision for Clojure. This means that
