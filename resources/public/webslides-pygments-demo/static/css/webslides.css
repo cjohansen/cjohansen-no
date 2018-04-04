@@ -1596,8 +1596,6 @@ form[class*='bg-'] {
   height: 200%; }
 
 /*=== Background with a frame === */
-/*<span class="background" style="background-image:url('image.jpg')"></span>
-<span class="background frame"></span>*/
 [class*='background'].frame {
   margin: 2.4rem; }
 
