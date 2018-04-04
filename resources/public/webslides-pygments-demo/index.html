@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Webslides Pygments Demo</title>
+    <meta name="description" content="Syntax highlighting Webslides with Pygments">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,700,700i%7CMaitree:200,300,400,600,700&amp;subset=latin-ext" rel="stylesheet">
+    <link rel="stylesheet" type='text/css' media='all' href="static/css/webslides.css">
+    <link rel="stylesheet" type='text/css' media='all' href="static/css/svg-icons.css">
+    <link rel="stylesheet" type='text/css' media='all' href="static/css/prism.css">
+    <meta property="og:url" content="https://cjohansen.no/webslides-pygments-demo/">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Syntax highlighting Webslides with Pygments">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@cjno">
+    <meta name="twitter:creator" content="@cjno">
+    <meta name="twitter:title" content="Syntax highlighting Webslides with Pygments">
+
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#333333">
+  </head>
+  <body>
+    <header role="banner">
+      <nav role="navigation">
+        <p class="logo"><a href="index.html" title="cjohansen.no">cjohansen.no</a></p>
+        <ul>
+          <li class="github">
+            <a rel="external" href="https://github.com/cjohansen" title="Github">
+              <svg class="fa-github">
+                <use xlink:href="#fa-github"></use>
+              </svg>
+              <em>cjohansen</em>
+            </a>
+          </li>
+          <li class="twitter">
+            <a rel="external" href="https://twitter.com/cjno" title="Twitter">
+              <svg class="fa-twitter">
+                <use xlink:href="#fa-twitter"></use>
+              </svg>
+              <em>@cjno</em>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main role="main">
+      <article id="webslides" class="vertical">
+        <section>
+          <span class="background"></span>
+          <div class="wrap aligncenter">
+            <h1><strong>Webslides with Pygments</strong></h1>
+            <p><a href="/webslides-syntax-highlighting/">Read the post</a></p>
+          </div>
+        </section>
+        <section>
+          <span class="background"></span>
+          <div class="wrap aligncenter">
+            <h1><strong>Some JavaScript</strong></h1>
+            <pre class="language-javascript"><code>const findStacksAndCancelUpdate = (cloudformation, event) => {
+  return cloudformation.describeStackResources({
+    LogicalResourceId: "TaskDefinition",
+    PhysicalResourceId: event.detail.taskDefinitionArn
+  }).promise()
+    .then(data => Promise.all(data.StackResources.map(stackResource => {
+      return stackStatusIsUpdateInProgress(cloudformation, stackResource)
+        .then(res => res && cancelUpdateStack(cloudformation, stackResource))
+    })))
+};
+
+exports.handler = (event, context, callback) => {
+  findStacksAndCancelUpdate(new AWS.CloudFormation(), event)
+    .then(() => callback())
+    .catch(err => {
+      console.log(`Error ${err}`);
+      callback(err);
+    });
+};</code></pre>
+          </div>
+        </section>
+        <section>
+          <span class="background"></span>
+          <div class="wrap aligncenter">
+            <h1><strong>Some Clojure</strong></h1>
+            <pre class="language-clojure"><code>(defn numberify [s]
+  (cond
+    (number? s) s
+    (re-matches #"^\d+$") (js/parseInt s)
+    :default :cljs.spec.alpha/invalid))
+
+(s/def ::number (s/conformer numberify))
+
+(s/def :person/id (s/conformer uuid))
+(s/def :person/name string?)
+(s/def :person/age ::number)
+(s/def :person/entity (s/keys :req [:person/id :person/name :person/age]))</code></pre>
+          </div>
+        </section>
+        <section>
+          <span class="background"></span>
+          <div class="wrap aligncenter">
+            <h1><strong>Some Bash</strong></h1>
+            <pre class="language-bash"><code>#!/bin/bash
+
+set -e
+
+well_known_root="$1"
+
+echo "$(date) About to renew certificates" >> /var/log/letsencrypt-renew.log
+/usr/bin/docker run \
+       -i \
+       --rm \
+       --name certbot \
+       -v /etc/letsencrypt:/etc/letsencrypt \
+       -v "$well_known_root:/webroot" \
+       certbot/certbot \
+       renew -w /webroot
+
+echo "$(date) Cat certificates" >> /var/log/letsencrypt-renew.log
+
+for dir in /etc/letsencrypt/live/*; do
+  $(dirname "$0")/cat-cert.sh $(basename "$dir")
+done
+
+echo "$(date) Reload haproxy" >> /var/log/letsencrypt-renew.log
+/usr/bin/docker kill -s HUP cirice-load-balancer
+
+echo "$(date) Done" >> /var/log/letsencrypt-renew.log
+</code></pre>
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <script src="static/js/prism.js"></script>
+    <script src="static/js/webslides.js"></script>
+    <script>
+      window.ws = new WebSlides();
+    </script>
+
+    <script defer src="static/js/svg-icons.js"></script>
+  </body>
+</html>

@@ -26,6 +26,7 @@ I occasionally write about software.
 - [Api Gateway Proxy Resource with Cloudformation](/aws-apigw-proxy-cloudformation/)
 - [Idempotent Cloudformation Updates](/idempotent-cloudformation-updates/)
 
-## Emacs Lisp
+## Misc
 
+- [Webslides Syntax Highlighting with Prism](/webslides-sytax-highlighting/)
 - [An introduction to elisp](/an-introduction-to-elisp/)
