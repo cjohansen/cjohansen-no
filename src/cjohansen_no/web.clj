@@ -76,7 +76,7 @@
 
 (defn get-raw-pages []
   (stasis/merge-page-sources
-   {:public (stasis/slurp-directory "resources/public" #".*\.(html|css|js)$")
+   {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
     :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))
     :frontpage {"/index.html" #(layout-page % (md/to-html (slurp (io/resource "index.md")) pegdown-options))}}))
 
