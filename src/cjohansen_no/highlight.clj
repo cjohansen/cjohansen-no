@@ -14,14 +14,17 @@
 
 (defn- highlight [node]
   (let [code (->> node :content (apply str))
-        lang (->> node :attrs :class keyword)]
-    (try
-      (assoc node :content (-> code
-                               (pygments/highlight lang :html)
-                               extract-code))
-      (catch Throwable e
-        (println "Failed to highlight code snippet!")
-        (println code)))))
+        lang (->> node :attrs :class keyword)
+        pygments-info (->> node :attrs :data-pygments)]
+    (if (= pygments-info "ignore")
+      node
+      (try
+        (assoc node :content (-> code
+                                 (pygments/highlight lang :html)
+                                 extract-code))
+        (catch Throwable e
+          (println (format "Failed to highlight %s code snippet!" lang))
+          (println code))))))
 
 (defn highlight-code-blocks [page]
   (enlive/sniptest page

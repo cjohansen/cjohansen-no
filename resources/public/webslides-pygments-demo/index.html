@@ -59,7 +59,7 @@
           <span class="background"></span>
           <div class="wrap aligncenter">
             <h1><strong>Some JavaScript</strong></h1>
-            <pre class="language-javascript"><code>const findStacksAndCancelUpdate = (cloudformation, event) => {
+            <pre class="language-javascript"><code data-pygments="ignore">const findStacksAndCancelUpdate = (cloudformation, event) => {
   return cloudformation.describeStackResources({
     LogicalResourceId: "TaskDefinition",
     PhysicalResourceId: event.detail.taskDefinitionArn
@@ -84,7 +84,7 @@ exports.handler = (event, context, callback) => {
           <span class="background"></span>
           <div class="wrap aligncenter">
             <h1><strong>Some Clojure</strong></h1>
-            <pre class="language-clojure"><code>(defn numberify [s]
+            <pre class="language-clojure"><code data-pygments="ignore">(defn numberify [s]
   (cond
     (number? s) s
     (re-matches #"^\d+$") (js/parseInt s)
@@ -102,7 +102,7 @@ exports.handler = (event, context, callback) => {
           <span class="background"></span>
           <div class="wrap aligncenter">
             <h1><strong>Some Bash</strong></h1>
-            <pre class="language-bash"><code>#!/bin/bash
+            <pre class="language-bash"><code data-pygments="ignore">#!/bin/bash
 
 set -e
 
