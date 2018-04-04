@@ -22,9 +22,9 @@ then mark up your code samples using
 Replace `clojure` with the language of your choice (make sure you enabled
 support for them when you downloaded Prism).
 
-There is a [demo](/webslides-pygments-demo/). Below is a complete example
-(non-essensials like opengraph stuff etc left out, view the source of the demo
-for an even more complete example):
+There is a [demo](/webslides-pygments-demo/). Its
+[full source is on Github](https://github.com/cjohansen/cjohansen-no/tree/master/resources/public/webslides-pygments-demo).
+Below is the essential parts of the HTML.
 
 ```html
 <!doctype html>
