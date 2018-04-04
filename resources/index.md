@@ -28,5 +28,5 @@ I occasionally write about software.
 
 ## Misc
 
-- [Webslides Syntax Highlighting with Prism](/webslides-sytax-highlighting/)
+- [Webslides Syntax Highlighting with Prism](/webslides-syntax-highlighting/)
 - [An introduction to elisp](/an-introduction-to-elisp/)
