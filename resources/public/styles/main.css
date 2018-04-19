@@ -41,6 +41,10 @@ ol {
   padding: 0;
 }
 
+ol {
+    margin-left: 40px;
+}
+
 li {
   margin-left: 16px;
 }
