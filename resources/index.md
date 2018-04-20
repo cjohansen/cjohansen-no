@@ -19,7 +19,8 @@ I occasionally write about software.
 
 ## Go
 
-- [A Better Playlist Shuffle with Go](./a-better-playlist-shuffle-with-golang/)
+- [A Better Playlist Shuffle with Go](/a-better-playlist-shuffle-with-golang/)
+- [Processing Data With Clojure and Go](/processing-data-with-clojure-and-golang)
 
 ## Haproxy
 

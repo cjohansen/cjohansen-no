@@ -91,8 +91,10 @@ The final track is plotted into the only available spot:
 Let's have a go at this using, ehm, [Go](https://golang.org/).
 
 **Disclaimer:** I used this task to learn Go. Perhaps unsurprisingly, this sort
-of data processing isn't really Go's strongest suit. I'll follow up with a post
-solving this in a functional language at a later point.
+of data processing isn't really Go's strongest suit. Feel free to see the
+companion post on [processing Data With Clojure and
+Go](/processing-data-with-clojure-and-golang) for an implementation in a dynamic
+functional langugage.
 
 **Disclaimer 2:** Go code should be indented with tabs. For presentational
 reasons, I've used spaces in the listings here, meaning you can't expect to
@@ -416,7 +418,6 @@ func (s byOccurrences) Swap(i, j int) {
 func (s byOccurrences) Less(i, j int) bool {
   return s[i].occurrences > s[j].occurrences
 }
-
 ```
 
 Now we'll loop through our grouped map, turn it into a slice of `Bucket`s and
