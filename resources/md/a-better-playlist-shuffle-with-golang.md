@@ -105,7 +105,7 @@ big difference perfomance-wise for the kinds of datasets this code will work on.
 
 ## Distributing the Artists
 
-We'll start with a function `Distribute`. It's task is to distribute the artist
+We'll start with a function `Distribute`. Its task is to distribute the artist
 the specified number of times as evenly as possible. The passed in distribution
 gives us the total amount of tracks, but it'll also inform us of which positions
 have already been filled.
