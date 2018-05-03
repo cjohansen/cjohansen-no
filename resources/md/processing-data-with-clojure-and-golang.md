@@ -1,7 +1,7 @@
 # Processing data with Clojure and Go
 
 I recently wrote about [a better playlist shuffle with
-Go](./a-better-playlist-shuffle-with-golang/), where I presented my ideal
+Go](/a-better-playlist-shuffle-with-golang/), where I presented my ideal
 implementation of a "shuffle" that isn't very random at all. In that post I
 outlined the algorithm and showed off my implementation in Go (one of my
 earliest uses of said language). In this post I'll present the same algorithm in
