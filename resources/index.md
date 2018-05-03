@@ -31,6 +31,10 @@ I occasionally write about software.
 - [Api Gateway Proxy Resource with Cloudformation](/aws-apigw-proxy-cloudformation/)
 - [Idempotent Cloudformation Updates](/idempotent-cloudformation-updates/)
 
+## Git
+
+- [Git Subtree for Multiple Directories](/git-subtree-multiple-dirs/)
+
 ## Misc
 
 - [Webslides Syntax Highlighting with Prism](/webslides-syntax-highlighting/)
