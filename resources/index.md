@@ -25,16 +25,13 @@ I occasionally write about software.
 ## Haproxy
 
 - [Securing HAProxy sites with Let's Encrypt SSL Certificates](/letsencrypt-haproxy-ssl/)
-- [Blue/green Deploys with Haproxy and Docker](/blue-green-haproxy-docker)
 
 ## Amazon Web Services (AWS)
 
 - [Api Gateway Proxy Resource with Cloudformation](/aws-apigw-proxy-cloudformation/)
 - [Idempotent Cloudformation Updates](/idempotent-cloudformation-updates/)
-- [Serverless Single-page Applications on AWS](/serverless-spa-on-aws/)
 
 ## Misc
 
-- [Democratic Shuffle for Multiple Playlists on Spotify](/democratic-shuffle-multiple-playlists-spotify/)
 - [Webslides Syntax Highlighting with Prism](/webslides-syntax-highlighting/)
 - [An introduction to elisp](/an-introduction-to-elisp/)
