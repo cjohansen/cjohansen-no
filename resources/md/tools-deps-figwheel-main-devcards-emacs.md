@@ -15,9 +15,9 @@ running tests and deploying your ClojureScript project as a
 
 ## 1. Install tools.deps
 
-The official docs already have a very good [getting
-started](https://clojure.org/guides/getting_started), refer to it for details.
-On OSX:
+The official docs already have very good [getting started
+instructions](https://clojure.org/guides/getting_started), refer to them for
+details. On OSX:
 
 ```sh
 brew install clojure
@@ -25,8 +25,8 @@ brew install clojure
 
 ## 2. Create a deps.edn file
 
-You will need some sources in `src/my_app_ns/*.cljs`. Create a file called
-`deps.edn`, and fill it with:
+You will need some cljs/cljc sources in `src/my_app_ns/`. Create a file in the
+root of your project called `deps.edn`, and fill it with:
 
 ```clj
 {:paths ["src"]
@@ -105,9 +105,9 @@ Edit `dev.cljs.edn`:
 
 ```clj
 ^{:watch-dirs ["src" "devcards"]
-  :extra-main-files {:devcards {:main my-app-ns.cards}}}
+  :extra-main-files {:devcards {:main my-app-ns.cards}}} ;; New build
 {:main my-app-ns.core
- :devcards true
+ :devcards true ;; Crucial!
  :optimizations :none
  :pretty-print true
  :source-map true
@@ -125,8 +125,9 @@ will serve your devcards.
 
 If you need to serve some CSS files, or otherwise want to tweak the HTML page
 that your devcards is served from, add `resources/public/devcards.html` and make
-sure it includes `/js/dev-devcards.js` and then view devcards from
-[http://localhost:9500/devcards.html](http://localhost:9500/devcards.html) instead.
+sure it includes `/js/dev-devcards.js`. Then view devcards from
+[http://localhost:9500/devcards.html](http://localhost:9500/devcards.html)
+instead.
 
 <a id="emacs"></a>
 ## 5. Run it from Emacs/CIDER
@@ -134,7 +135,7 @@ sure it includes `/js/dev-devcards.js` and then view devcards from
 To run it all from Emacs, add a `.dir-locals.el` file to the root of your
 project with the following contents:
 
-```el
+```clj
 ((nil
   (cider-clojure-cli-global-options . "-A:dev")
   (cider-default-cljs-repl . figwheel-main)
@@ -145,21 +146,21 @@ This will tell CIDER to use your `:dev` tools.deps profile, to start a
 figwheel-main REPL, and to use the `:dev` figwheel build (e.g. `dev.cljs.edn`).
 
 **Pitfall warning**: These vars will be set *when you open new files*, they will
-**not** apply when you revisit existing buffers. To be sure you are set right,
-kill the `deps.edn` buffer, reopen it, and continue from there.
+**not** apply when you revisit existing buffers. To avoid frustration, kill the
+`deps.edn` buffer, reopen it, and continue from there.
 
-Now you can start a fighweel-main REPL from inside Emacs (remember to close any
-existing figwheel process running in a shell) with `C-c M-C-j`, or
-`cider-jack-in-cljs`. It's crucial that you use the `cljs` version, and not the
-`clj` version (note the added meta in `C-c M-C-j`). I've already wasted enough
-time running the wrong jack-in for everyone...
+Start a fighweel-main REPL from inside Emacs (remember to close any existing
+figwheel process running in a shell) with `C-c M-C-j`, or `cider-jack-in-cljs`.
+It's crucial that you use the `cljs` version, and not the `clj` version (note
+the added meta in `C-c M-C-j`). I've already wasted enough time running the
+wrong jack-in for everyone, no need to repeat this mistake...
 
 You now have the ability to run figwheel-main with Devcards from both Emacs and
 the shell. However, your shell users are stuck with a pretty long incantation.
 It can be improved by putting the main options into your `deps.edn` file.
 However, **do not put `:main-opts` in the profile you intend to use with
-CIDER**. It will not work. It will start a figwheel processing, and things will
-*seem* to be *almost*  working, but CIDER will just hang. To avoid this problem,
+CIDER**. It will not work. It will start a figwheel process, and things will
+*seem* to be *almost* working, but CIDER will just hang. To avoid this problem,
 add a second profile for shell users. As a bonus, throw in
 [rebel-readline](https://github.com/bhauman/rebel-readline) for a massively
 improved REPL experience on the shell:
@@ -188,7 +189,7 @@ again, thanks Bruce!)
 [cljs-test-display](https://github.com/bhauman/cljs-test-display) to view test
 results in a browser (covered here), and
 [Kaocha](https://github.com/lambdaisland/kaocha), a command-line test runner
-shaping up to be an amazing product (next section).
+(next section).
 
 To use the visual test display, add the dependency and the `test` directory to
 `deps.edn`:
@@ -313,7 +314,7 @@ To release a ClojureScript package to Clojars, you need to
 This workflow requires maven. If you don't have it:
 
 ```sh
-lein install maven
+brew install maven
 ```
 
 ### 1. Provide a pom.xml
@@ -353,9 +354,9 @@ There are many ways to create a jar. I recommend using
                  :main-opts ["-m" "mach.pack.alpha.skinny" "--no-libs" "--project-path" "my-app.jar"]}}}
 ```
 
-You might want to chech whatever the latest stable commit is for
-[pack](https://github.com/juxt/pack.alpha) and use the right sha. Also change
-`my-app.jar` to a suitable name. You can now create a jar with:
+You should check whatever the latest stable commit is for
+[pack](https://github.com/juxt/pack.alpha) and use the corresponding sha. Also
+change `my-app.jar` to a suitable name. You can now create a jar with:
 
 ```sh
 clojure -A:jar
@@ -411,7 +412,8 @@ tools.deps isn't really a build-system, although its `:main-opts` will allow you
 to solve most uses with just your `deps.edn` file. However, I usually top the
 whole thing off with a Makefile. Explaining it is outside the scope of this
 article though, so I'll just provide an example for you to look at, and
-encourage you to learn more about this fascinating tool if you aren't already
+encourage you to [learn more about this fascinating
+tool](https://gist.github.com/isaacs/62a2d1825d04437c6f08) if you aren't already
 using it:
 
 ```makefile
@@ -425,7 +427,11 @@ pom.xml:
 	clojure -Spom
 
 deploy: pom.xml test my-app.jar
-	mvn deploy:deploy-file -Dfile=my-app.jar -DrepositoryId=clojars -Durl=https://clojars.org/repo -DpomFile=pom.xml
+	mvn deploy:deploy-file \
+	    -Dfile=my-app.jar \
+	    -DrepositoryId=clojars \
+	    -Durl=https://clojars.org/repo \
+	    -DpomFile=pom.xml
 
 .PHONY: test deploy
 ```
