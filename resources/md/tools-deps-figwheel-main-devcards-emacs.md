@@ -419,11 +419,7 @@ pom.xml:
 	clojure -Spom
 
 deploy: pom.xml test my-app.jar
-	mvn deploy:deploy-file \
-	    -Dfile=my-app.jar \
-	    -DrepositoryId=clojars \
-	    -Durl=https://clojars.org/repo \
-	    -DpomFile=pom.xml
+	clj -a:deploy
 
 .PHONY: test deploy
 ```
