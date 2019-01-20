@@ -308,14 +308,7 @@ To release a ClojureScript package to Clojars, you need to
 
 1. Provide a `pom.xml`
 2. Package the sources in a jar
-3. Configure your Clojars credentials with Maven
-4. Deploy the two sources to Clojars
-
-This workflow requires maven. If you don't have it:
-
-```sh
-brew install maven
-```
+3. Deploy to Clojars with your username and password
 
 ### 1. Provide a pom.xml
 
@@ -362,59 +355,56 @@ change `my-app.jar` to a suitable name. You can now create a jar with:
 clojure -A:jar
 ```
 
-### 3. Configure Clojars credentials for maven
+### 3. Deploy to Clojars with your username and password
 
-Open or create `~/.m2/settings.xml`, and add your Clojars username and password
-to it:
+We will use [deps-deploy]() to deploy the jar to Clojars:
 
-```xml
-<settings>
-  <servers>
-    <server>
-      <id>clojars</id>
-      <username>username</username>
-      <password>password</password>
-    </server>
-  </servers>
-</settings>
+```clj
+{:paths ["src"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.0"}
+        org.clojure/clojurescript {:mvn/version "1.10.439"}}
+ :aliases {:dev {:extra-paths ["test" "resources" "devcards"]
+                 :extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.0-SNAPSHOT"}
+                              devcards {:mvn/version "0.2.6"}
+                              com.bhauman/cljs-test-display {:mvn/version "0.1.1"}}}
+           :repl {:extra-deps {com.bhauman/rebel-readline {:mvn/version "0.1.4"}}
+                  :main-opts ["-m" "figwheel.main" "-b" "dev" "-r"]}
+           :test {:extra-paths ["test"]
+                  :extra-deps {lambdaisland/kaocha {:mvn/version "0.0-367"}
+                               lambdaisland/kaocha-cljs {:mvn/version "0.0-16"}}
+                  :main-opts ["-m" "kaocha.runner" "unit-cljs"]}
+           :jar {:extra-deps {pack/pack.alpha {:git/url "https://github.com/juxt/pack.alpha.git"
+                                               :sha "90a84a01c365fdac224bf4eef6e9c8e1d018a29e"}}
+                 :main-opts ["-m" "mach.pack.alpha.skinny" "--no-libs" "--project-path" "my-app.jar"]}}
+                 
+           ;; NEW
+           :deploy {:extra-deps {deps-deploy {:mvn/version "0.0.9"}}
+                    :main-opts ["-m" "deps-deploy.deps-deploy" "deploy" "my-app.jar"]}}
 ```
 
-### 4. Deploy to Clojars
-
-With all the pieces in place, you can now release your library:
+Now you can deploy the jar with:
 
 ```sh
-mvn deploy:deploy-file \
-    -Dfile=my-app.jar \
-    -DrepositoryId=clojars \
-    -Durl=https://clojars.org/repo \
-    -DpomFile=pom.xml
+env CLOJARS_USERNAME=username CLOJARS_PASSWORD=password clj -a:deploy
 ```
 
-I suggest adding `pom.xml` to git to persist whatever metadata you added to it.
-When you have a new version, make sure to update any dependency information,
-rebuild the jar and deploy:
+If you add `"true"` as the last `:main-opts`, deps-deploy will sign your release
+with GPG as well (provided you have a working GPG configuration):
 
-```sh
-clojure -Spom
-clojure -A:jar
-
-mvn deploy:deploy-file \
-    -Dfile=my-app.jar \
-    -DrepositoryId=clojars \
-    -Durl=https://clojars.org/repo \
-    -DpomFile=pom.xml
+```clj
+["-m" "deps-deploy.deps-deploy" "deploy" "my-app.jar"]
 ```
 
 ## 9. Add a Makefile
 
 tools.deps isn't really a build-system, although its `:main-opts` will allow you
-to solve most uses with just your `deps.edn` file. However, I usually top the
-whole thing off with a Makefile. Explaining it is outside the scope of this
-article though, so I'll just provide an example for you to look at, and
-encourage you to [learn more about this fascinating
-tool](https://gist.github.com/isaacs/62a2d1825d04437c6f08) if you aren't already
-using it:
+to solve most use-casess with just your `deps.edn` file. However, I usually top
+the whole thing off with a Makefile, which allows us to define dependencies
+between targets, refresh builds when source files change, and much more.
+Explaining it is outside the scope of this article though, so I'll just provide
+an example for you to look at, and encourage you to [learn more about this
+fascinating tool](https://gist.github.com/isaacs/62a2d1825d04437c6f08) if you
+aren't already using it:
 
 ```makefile
 test:
