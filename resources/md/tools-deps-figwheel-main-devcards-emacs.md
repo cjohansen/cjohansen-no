@@ -359,7 +359,8 @@ clojure -A:jar
 
 ### 3. Deploy to Clojars with your username and password
 
-We will use [deps-deploy]() to deploy the jar to Clojars:
+We will use [deps-deploy](https://github.com/slipset/deps-deploy) to deploy the
+jar to Clojars:
 
 ```clj
 {:paths ["src"]
