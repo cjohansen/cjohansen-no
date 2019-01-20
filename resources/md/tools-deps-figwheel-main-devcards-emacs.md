@@ -1,5 +1,7 @@
 # tools.deps, figwheel-main, Devcards, and Emacs
 
+*Published January 18th 2019, last updated January 19th 2019.* [History](https://github.com/cjohansen/cjohansen-no/commits/master/resources/md/tools-deps-figwheel-main-devcards-emacs.md).
+
 Thanks to [tools.deps](https://github.com/clojure/tools.deps.alpha), setting up
 a ClojureScript project in 2019 can be simpler (in terms of moving pieces) than
 it used to be, but there are still pitfalls.
