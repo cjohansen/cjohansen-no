@@ -147,7 +147,7 @@ representation for storing in Datascript.
    :movie/title (s/conform :movie/title (:title movie))
    :movie/description (s/conform :movie/description (:description movie))
    :movie/release-date (s/conform :movie/release-date (:release_date movie))
-   :movie/people (map convert-person-data (:people data))})
+   :movie/people (map convert-person-data (:people movie))})
 ```
 
 Relatively tedious, but thanks to conforming specs, not as bad as it could've
