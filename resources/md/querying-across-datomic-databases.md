@@ -87,7 +87,10 @@ The problem is that when you filter the database this way, you end up with
 _only_ the facts that were inserted after the specified point in time. In this
 case, the user was created before that time, and simply isn't a part of this
 particular database/view. To mitigate, we can query two databases: Find the
-requests in the filtered database, and the user in the entire database.
+requests in the filtered database, and the user in the entire database. This can
+be achieved by simply passing multiple databases to the query. When we do, we
+must name them (other than `$`) and be explicit about which database to match
+individual facts with.
 
 ```clj
 (let [db (d/db conn)]
@@ -96,7 +99,9 @@ requests in the filtered database, and the user in the entire database.
          :where
          [$users ?u :user/email ?email]
          [$recent ?e :booking-request/tenant ?u]]
+       ;; referred to as $recent above
        (d/since db #inst "2017-06-10T12:00:00")
+       ;; referred to as $users above
        db
        (:booking-request/email input)))
 ```
@@ -107,5 +112,6 @@ and `(d/since db time)` (or a combination), and that performs a join across
 databases. Did I mention that I love working with Datomic?
 
 June 17th 2017
+Updated March 27th 2019
 
 [Follow me (@cjno) on Twitter](http://twitter.com/cjno)
