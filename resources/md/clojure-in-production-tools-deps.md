@@ -62,7 +62,7 @@ The `Dockerfile` uses a specific version of the relevant JDK image. Never use
 fleeting tags like `latest` for a production build - you want those to be
 predictable and repeatable:
 
-```txt
+```sh
 FROM openjdk:11.0.2-slim
 
 ADD target/lib/lib /app/lib
