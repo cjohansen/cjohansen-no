@@ -70,7 +70,7 @@ ADD target/classes /app/classes
 
 WORKDIR /app
 
-CMD java $JAVA_OPTS -cp "classes:lib/*" out-app.core
+CMD java $JAVA_OPTS -cp "classes:lib/*" our-app.core
 ```
 
 Externalizing JVM parameters with `$JAVA_OPTS` allows us to tweak runtime
