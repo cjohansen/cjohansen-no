@@ -105,7 +105,7 @@ make docker # AOT compiles first if sources have changed
 Here's something to get you started:
 
 ```make
-VERSION:=git-$(shell git rev-parse --short=10 HEAD)
+VERSION:=$(shell git rev-parse --short=10 HEAD)
 
 target:
     mkdir -p target
