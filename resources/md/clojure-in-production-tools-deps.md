@@ -1,20 +1,14 @@
 # Clojure in Production with tools.deps
 
-In this post I'll show you how my project is currently packaging and running
-Clojure apps in production, using
-[`tools.deps`](https://github.com/clojure/tools.deps.alpha) as a build tool.
+In this post I'll show you how my project is packaging and running Clojure apps
+in production, using [`tools.deps`](https://github.com/clojure/tools.deps.alpha)
+as a build tool. Credit where credit's due: this setup was all the work of my
+awesome colleague [Alf Kristian Støyle](https://www.kodemaker.no/alf-kristian),
+I'm just the messenger.
 
-<a id="packaging"></a>
-## Neat and simple packaging
+Our setup at a glance:
 
-Let me start by placing credit where credit is due. This setup was all the work
-of my awesome colleague [Alf Kristian
-Støyle](https://www.kodemaker.no/alf-kristian), I'm just here to tell you what
-he did.
-
-Our setup can be summarized as follows:
-
-- `tools.deps` to manage dependencies and build class paths
+- Use `tools.deps` to manage dependencies and build class paths
 - AOT compile sources (and possibly some dependencies) to class files in `classes`
 - Place all dependency jars in `lib`
 - Package `classes` and `lib` in a Docker container
@@ -25,11 +19,12 @@ only one library on top of `tools.deps`,
 [badigeon](https://github.com/EwenG/badigeon). Badigeon has a very nice
 [bundler](https://github.com/EwenG/badigeon/blob/master/src/badigeon/bundle.clj#L140)
 that can collect all kinds of dependencies supported by `tools.deps` for further
-packaging. Importantly, this helps us with git libs, which we use for internal
-libraries and more. Since we already have it on the classpath, we also use
-Badigeon's AOT compiler, which is a thin wrapper over Clojure's that provides a
-few niceties like ensuring that the target directory exists before putting files
-in it.
+packaging. Importantly, this helps us with [git
+libs](https://www.clojure.org/guides/deps_and_cli#_using_git_libraries), which
+we use for internal libraries and more. Since we already have it on the
+classpath, we also use Badigeon's AOT compiler, which is a thin wrapper over
+Clojure's that provides a few niceties like ensuring that the target directory
+exists before putting files in it.
 
 `deps.edn`:
 
@@ -67,7 +62,7 @@ The `Dockerfile` uses a specific version of the relevant JDK image. Never use
 fleeting tags like `latest` for a production build - you want those to be
 predictable and repeatable:
 
-```
+```txt
 FROM openjdk:11.0.2-slim
 
 ADD target/lib/lib /app/lib
@@ -79,9 +74,8 @@ CMD java $JAVA_OPTS -cp "classes:lib/*" out-app.core
 ```
 
 Externalizing JVM parameters with `$JAVA_OPTS` allows us to tweak runtime
-characteristics without having to build another artifact. Here's an example of
-setting it from a Kubernetes deployment descriptor to configure JMX and heap
-memory:
+characteristics without building a new artifact. Here's an example of setting it
+from a Kubernetes deployment descriptor to configure JMX and heap memory:
 
 ```yaml
 containers:
@@ -105,12 +99,12 @@ containers:
 We use a `Makefile` to tie everything together, so we can do things like:
 
 ```sh
-make docker # AOT compiles first, if sources have changed
+make docker # AOT compiles first if sources have changed
 ```
 
 Here's something to get you started:
 
-```
+```make
 VERSION:=git-$(shell git rev-parse --short=10 HEAD)
 
 target:
@@ -139,7 +133,7 @@ concepts to understand, no runtime component, and starts quickly.
 There are several alternatives around for packaging Clojure apps. One of the
 first approaches we tried was using Capsule and OneJar, through
 [pack.alpha](https://github.com/juxt/pack.alpha/). `pack.alpha` makes it very
-easy to add packaging to your `tools.deps` project. It is very nice building
+easy to add packaging to your `tools.deps` project. It is very nice for building
 ["skinny jars" for libraries](/tools-deps-figwheel-main-devcards-emacs/) but for
 single jar deployments, the resulting jar will likely include more than you
 bargained for.
@@ -150,10 +144,10 @@ installing dependencies on the run and more. None of those features are
 desirable for reproducible application server deployments.
 
 [OneJar](http://one-jar.sourceforge.net) loads all the bytecode into memory up
-front "making for improved runtime performance". The problem is, I have never
-experienced that loading bytecode is anywhere near a bottleneck. Besides, an
-application likely ships with dependencies from which it only uses a few
-functions. Prematurely loading all that bytecode into memory is pretty much
+front _"making for improved runtime performance"_. The problem is, loading
+bytecode is very unlikely a bottleneck, and not in any real need of optimizing.
+Besides, an application likely ships with dependencies from which it only uses a
+few functions. Prematurely loading all that bytecode into memory is pretty much
 guaranteed to waste resources. This is especially true because OneJar loads it
 into heap space.
 
