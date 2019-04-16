@@ -6,6 +6,7 @@ I occasionally write about software.
 
 ## Clojure / ClojureScript
 
+- [Clojure in Production with tools.deps](/clojure-in-production-tools-deps/)
 - [tools.deps, figwheel-main, Devcards, and Emacs](/tools-deps-figwheel-main-devcards-emacs/)
 - [Optimized Optimus Asset Paths from ClojureScript](/optimized-optimus-asset-paths-clojurescript/)
 - [A unified specification](/a-unified-specification/)
