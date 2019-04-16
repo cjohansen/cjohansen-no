@@ -110,7 +110,7 @@ VERSION:=$(shell git rev-parse --short=10 HEAD)
 target:
     mkdir -p target
 
-target/classes/our_app/core.class: src/**/* target
+target/classes/our_app/core.class: deps.edn src/**/* target
     clojure -A:build -m package
 
 build: target/classes/our_app/core.class
