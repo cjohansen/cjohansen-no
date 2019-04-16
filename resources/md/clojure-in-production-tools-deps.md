@@ -2,9 +2,9 @@
 
 In this post I'll show you how my project is packaging and running Clojure apps
 in production, using [`tools.deps`](https://github.com/clojure/tools.deps.alpha)
-as a build tool. Credit where credit's due: this setup was all the work of my
-awesome colleague [Alf Kristian Støyle](https://www.kodemaker.no/alf-kristian),
-I'm just the messenger.
+as a build tool. Credit where credit's due: my awesome colleague [Alf Kristian
+Støyle](https://www.kodemaker.no/alf-kristian) did the heavy lifting on this
+setup.
 
 Our setup at a glance:
 
@@ -90,8 +90,8 @@ containers:
                 -Dcom.sun.management.jmxremote.authenticate=false
                 -Dcom.sun.management.jmxremote.local.only=false
                 -Djava.rmi.server.hostname=localhost
-                -Xmx192m
-                -Xms96m"
+                -Xms128m
+                -Xmx128m"
 ```
 
 ### Tying it all together
@@ -131,7 +131,7 @@ concepts to understand, no runtime component, and starts quickly.
 ## Alternatives
 
 There are several alternatives around for packaging Clojure apps. One of the
-first approaches we tried was using Capsule and OneJar, through
+first approaches we tried was using Capsule and One-JAR, through
 [pack.alpha](https://github.com/juxt/pack.alpha/). `pack.alpha` makes it very
 easy to add packaging to your `tools.deps` project. It is very nice for building
 ["skinny jars" for libraries](/tools-deps-figwheel-main-devcards-emacs/) but for
@@ -143,17 +143,17 @@ tool, and it boasts features like selecting the JVM version at startup,
 installing dependencies on the run and more. None of those features are
 desirable for reproducible application server deployments.
 
-[OneJar](http://one-jar.sourceforge.net) loads all the bytecode into memory up
+[One-JAR](http://one-jar.sourceforge.net) loads all the bytecode into memory up
 front _"making for improved runtime performance"_. The problem is, loading
 bytecode is very unlikely a bottleneck, and not in any real need of optimizing.
 Besides, an application likely ships with dependencies from which it only uses a
 few functions. Prematurely loading all that bytecode into memory is pretty much
-guaranteed to waste resources. This is especially true because OneJar loads it
+guaranteed to waste resources. This is especially true because One-JAR loads it
 into heap space.
 
 I'm not saying that these tools don't have their use cases, I'm just saying that
 they didn't fit our requirements. They gave us too slow startup times, and the
-OneJar solution landed us at a baseline heap size of a whopping 250 megabytes.
+One-JAR solution landed us at a baseline heap size of a whopping 250 megabytes.
 The solution presented above puts us at just around 30MB after startup, and
 between 64MB and 96MB after running for a few days - and that's without any of
 the bytecode from before, which no is longer loaded into heap space.
