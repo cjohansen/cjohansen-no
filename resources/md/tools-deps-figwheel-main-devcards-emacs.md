@@ -1,6 +1,6 @@
 # tools.deps, figwheel-main, Devcards, and Emacs
 
-*Published January 18th 2019, last updated January 19th 2019.* [History](https://github.com/cjohansen/cjohansen-no/commits/master/resources/md/tools-deps-figwheel-main-devcards-emacs.md).
+*Published January 18th 2019, last updated June 11th 2019.* [History](https://github.com/cjohansen/cjohansen-no/commits/master/resources/md/tools-deps-figwheel-main-devcards-emacs.md).
 
 Thanks to [tools.deps](https://github.com/clojure/tools.deps.alpha), setting up
 a ClojureScript project in 2019 can be simpler (in terms of moving pieces) than
@@ -62,6 +62,33 @@ clojure -A:dev -m figwheel.main -b dev -r
 This will pop up a browser window and drop you into a shell. **NB!** While you
 can add the command line arguments to `:main-opts` I strongly suggest you
 don't until you've read through [the Emacs section](#emacs).
+
+The `dev.cljs.edn` file creates a figwheel build, called `dev` - the name of the
+configuration file, excluding the suffix. If you want to have a more optimized
+production build, just create another `*.cljs.edn` file, and invoke
+`figwheel.main` with the `-b` (that's "build") or `--build-once` option pointing
+to the file you created. Example:
+
+```clj
+;; prod.cljs.edn
+{:main my-app-ns.core
+ :optimizations :advanced
+ :pretty-print false
+ :source-map "resources/public/js/prod.js.map"
+ :asset-path "/js/prod"
+ :output-to "resources/public/js/prod.js"
+ :output-dir "resources/public/js/prod"}
+```
+
+Then build the file:
+
+```sh
+clojure -A:dev -m figwheel.main --build-once prod
+```
+
+**NB!** It is **not** recommended to share `:output-dir` between different
+builds with different optimization settings, as you will end up with builds that
+simply do not work.
 
 ## 4. Add Devcards
 
