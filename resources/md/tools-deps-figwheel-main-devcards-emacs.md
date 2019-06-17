@@ -108,7 +108,7 @@ process. It's amazing. In the root of your project, create the
 (defn render []
   (devcards.core/start-devcard-ui!))
 
-(defn ^:after-load render-on-relaod []
+(defn ^:after-load render-on-reload []
   (render))
 
 (render)
@@ -260,8 +260,8 @@ The test runner needs to load the library and all your tests. Add
 `test/my_app_ns/test_runner.cljs` with the following content:
 
 ```clj
-(ns ^:figwheel-hooks yahtzee.test-runner
-  (:require [my-app-ns.core-test]
+(ns ^:figwheel-hooks my-app-ns.test-runner
+  (:require [yahtzee.core-test]
             [cljs.test :as test]
             [cljs-test-display.core :as display]))
 
