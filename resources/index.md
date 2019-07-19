@@ -41,6 +41,5 @@ I occasionally write about software.
 
 ## Misc
 
-- [Democratic Shuffle for Multiple Playlists on Spotify](/democratic-shuffle-multiple-playlists-spotify/)
 - [Webslides Syntax Highlighting with Prism](/webslides-syntax-highlighting/)
 - [An introduction to elisp](/an-introduction-to-elisp/)
