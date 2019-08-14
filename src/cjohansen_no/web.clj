@@ -89,8 +89,7 @@
           (map #(partial prepare-page %) (vals pages))))
 
 (defn get-pages []
-  (stasis/merge-page-sources
-   {:new-pages (prepare-pages (get-raw-pages))}))
+  (prepare-pages (get-raw-pages)))
 
 (def app (-> (stasis/serve-pages get-pages)
              (optimus/wrap get-assets optimizations/all serve-live-assets)
