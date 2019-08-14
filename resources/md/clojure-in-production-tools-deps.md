@@ -30,7 +30,8 @@ exists before putting files in it.
 
 ```clj
 {:paths ["src"]
- :deps {org.clojure/clojure {:mvn/version "1.10.1-beta2"}}
+ :deps {org.clojure/clojure
+        {:mvn/version "1.10.1-beta2"}}
  :aliases
  {:build
   {:extra-paths ["build"]
