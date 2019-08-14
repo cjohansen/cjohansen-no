@@ -5,7 +5,9 @@ body {
   box-sizing: border-box;
   line-height: 1.5;
   font-family: "Helvetica Neue", Helvetica, "Calibri Light", Calibri, sans-serif;
-  font-size: 18px;
+  font-size: 16px;
+  margin: 0;
+  padding: 0;
 }
 
 *, *:before, *:after {
@@ -17,7 +19,7 @@ img {
 }
 
 .mod, h1, h2, h3, h4, h5, h6, p, ul, ol, hr, pre, center, dl {
-  margin: 20px;
+  margin: 20px 10px;
 }
 
 h1,
@@ -26,8 +28,12 @@ h3 {
   font-weight: normal;
 }
 
-h2 {
+h1 {
   font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.25rem;
   font-weight: 500;
 }
 
@@ -57,10 +63,12 @@ li {
 pre,
 code {
   background: #f6f6f6;
+  overflow: scroll;
 }
 
 pre {
-  padding: 20px;
+  font-size: 0.75rem;
+  padding: 10px 5px;
 }
 
 .related {
@@ -165,4 +173,32 @@ hr {
 
 .banner-link:hover {
   text-decoration: underline
+}
+
+@media only screen and (min-width: 600px) {
+  html,
+  body {
+    font-size: 18px;
+  }
+
+  .mod, h1, h2, h3, h4, h5, h6, p, ul, ol, hr, pre, center, dl {
+    margin: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  h3 {
+    font-size: 1.1rem;
+  }
+
+  pre {
+    font-size: 1rem;
+    padding: 20px;
+  }
 }
