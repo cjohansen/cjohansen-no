@@ -25,13 +25,13 @@
       [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
       [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
       [:meta {:name "author" :content "Christian Johansen"}]
-      [:title (or (-> page
+      [:title (or (:page-title opt)
+                  (-> page
                       java.io.StringReader.
                       enlive/html-resource
                       (enlive/select [:h1])
                       first
                       :content)
-                  (:page-title opt)
                   "Tech blog")]
       [:link {:rel "stylesheet" :href (link/file-path request "/styles/main.css")}]]
      [:body
