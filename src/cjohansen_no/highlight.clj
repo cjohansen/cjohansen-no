@@ -16,6 +16,7 @@
   (let [code (->> node :content (apply str))
         lang (->> node :attrs :class keyword)
         pygments-info (->> node :attrs :data-pygments)]
+
     (if (= pygments-info "ignore")
       node
       (try
@@ -27,6 +28,8 @@
           (println code))))))
 
 (defn highlight-code-blocks [page]
-  (enlive/sniptest page
-                   [:pre :code] highlight
-                   [:pre :code] #(assoc-in % [:attrs :class] "codehilite")))
+  (if (map? page)
+    (enlive/sniptest page
+                     [:pre :code] highlight
+                     [:pre :code] #(assoc-in % [:attrs :class] "codehilite"))
+    page))
