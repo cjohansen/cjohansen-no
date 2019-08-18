@@ -171,6 +171,12 @@ hr {
   text-decoration: none
 }
 
+h3 a:link,
+h3 a:visited {
+  font-weight: normal;
+  text-decoration: none
+}
+
 .banner-link:hover {
   text-decoration: underline
 }

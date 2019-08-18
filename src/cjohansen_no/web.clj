@@ -1,13 +1,12 @@
 (ns cjohansen-no.web
-  (:require [cjohansen-no.highlight :refer [highlight-code-blocks]]
+  (:require [cjohansen-no.fermentations :as fermentations]
+            [cjohansen-no.highlight :refer [highlight-code-blocks]]
+            [cjohansen-no.html :as html]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [hiccup.page :refer [html5]]
             [me.raynes.cegdown :as md]
-            [net.cgrand.enlive-html :as enlive]
             [optimus.assets :as assets]
-            [optimus.export]
-            [optimus.link :as link]
+            optimus.export
             [optimus.optimizations :as optimizations]
             [optimus.prime :as optimus]
             [optimus.strategies :refer [serve-live-assets]]
@@ -30,55 +29,28 @@
 (defn get-assets []
   (assets/load-assets "public" [#".*"]))
 
-(defn- current-year []
-  (+ 1900 (.getYear (java.util.Date.))))
-
-(defn layout-page [request page]
-  (html5
-   [:head
-    [:meta {:charset "utf-8"}]
-    [:meta {:name "viewport"
-            :content "width=device-width, initial-scale=1.0"}]
-    [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
-    [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
-    [:meta {:name "author" :content "Christian Johansen"}]
-    [:title (or (-> page
-                    java.io.StringReader.
-                    enlive/html-resource
-                    (enlive/select [:h1])
-                    first
-                    :content) "Tech blog")]
-    [:link {:rel "stylesheet" :href (link/file-path request "/styles/main.css")}]]
-   [:body
-    [:div.banner.masthead.main-content.vs-s
-     [:p
-      [:a.banner-link {:href "/"} "Christian Johansen"]]
-     [:hr]]
-    [:div.main-content page]
-    [:div.banner.footer.main-content
-     [:hr]
-     [:p.related
-      [:a.item {:rel "license"
-                :href "http://creativecommons.org/licenses/by-nc-sa/3.0/"
-                :title "Creative Commons License"}
-       [:img {:alt "Creative Commons License" :src "/images/cc-by-nc-sa.png"}]]
-      [:span.item "2006 - " (current-year)]
-      [:a.item {:href "mailto:christian@cjohansen.no"} "Christian Johansen"]]]
-    [:script "var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-20457026-1']);_gaq.push(['_trackPageview']);(function(b){var c=b.createElement('script');c.type='text/javascript';c.async=true;c.src='http://www.google-analytics.com/ga.js';var a=b.getElementsByTagName('script')[0];a.parentNode.insertBefore(c,a)})(document);"]]))
-
-(def pegdown-options ;; https://github.com/sirthias/pegdown
-  [:autolinks :fenced-code-blocks :strikethrough])
-
 (defn markdown-pages [pages]
   (zipmap (map #(str/replace % #"\.md$" "/") (keys pages))
-          (map #(fn [req] (layout-page req (md/to-html % pegdown-options)))
+          (map #(fn [req] (html/layout-page req (md/to-html % html/pegdown-options)))
                (vals pages))))
 
 (defn get-raw-pages []
-  (stasis/merge-page-sources
-   {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
-    :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))
-    :frontpage {"/index.html" #(layout-page % (md/to-html (slurp (io/resource "index.md")) pegdown-options))}}))
+  (let [fermentations (fermentations/load-fermentations (stasis/slurp-directory "resources/fermentations" #"\.md$"))]
+    (stasis/merge-page-sources
+     {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
+      :bread-images (stasis/slurp-directory "resources/public/images/bread" #".\.jpg$")
+      :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))
+      :fermentation-pages (fermentations/prepare-pages fermentations)
+      :frontpage {"/index.html" #(html/layout-page % (md/to-html (slurp (io/resource "index.md")) html/pegdown-options) {:page-title "Christian Johansen"})}
+      :fermentations {"/fermentations/" #(html/layout-page % (md/to-html (slurp (io/resource "fermentations.md")) html/pegdown-options)
+                                                           {:page-title "Fermentations - Christian Johansen"
+                                                            :page-fn (partial fermentations/render-blurbs fermentations)})}
+      :ferm-tags (->> fermentations
+                      (mapcat :tags)
+                      distinct
+                      (map #(fermentations/prepare-tag-page % fermentations))
+                      (into {}))
+      })))
 
 (defn prepare-page [page req]
   (-> (if (string? page) page (page req))

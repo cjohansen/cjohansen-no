@@ -4,6 +4,7 @@
   :license {:name "BSD 2 Clause"
             :url "http://opensource.org/licenses/BSD-2-Clause"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha17"]
+                 [mapdown "0.2.1"]
                  [stasis "2.3.0"]
                  [ring "1.6.1"]
                  [hiccup "1.0.5"]

@@ -1,6 +1,10 @@
-My name is Christian Johansen. I work for [Kodemaker](http://kodemaker.no),
-check out my [professional profile](http://kodemaker.no/christian/) over there
-if you're interested in my work, or would consider hiring me for your project.
+I am Christian Johansen. I play guitar in [Execration](https://execration.no). I
+work for [Kodemaker](http://kodemaker.no), check out my [professional
+profile](http://kodemaker.no/christian/) if you're interested in my work, or
+would consider hiring me for your project. Occasionally, I tweet as
+[@cjno](https://twitter.com/cjno/).
+
+I log my [fermentations](/fermentations/), mostly beer and breads.
 
 I occasionally write about software.
 
