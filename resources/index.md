@@ -47,3 +47,8 @@ I occasionally write about software.
 
 - [Webslides Syntax Highlighting with Prism](/webslides-syntax-highlighting/)
 - [An introduction to elisp](/an-introduction-to-elisp/)
+
+## På Norsk
+
+- [AWS Free Tier](/aws-free-tier/)
+- [CSS Grid](/css-grid/)
