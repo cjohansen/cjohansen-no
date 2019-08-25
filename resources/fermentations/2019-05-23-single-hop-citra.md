@@ -52,11 +52,12 @@ sit for 10 minutes, and did another vorlauf and runoff.
 - 42g Citra dry hops
 
 **IBU**: ~35
-**OG**: 1.055
+**OG**: 1.053
 **FG**: 1.012
-**ABV**: 5.6%
+**ABV**: 5.4%
 
-## Bottling
+## 2019-06-02: Bottling
 
-Bottled with 6g/l sucrose, dosed in individual bottles with a syringe. Beer
-turned out great, should've made a full batch of the stuff.
+Bottled with left-over wort from the boil, dosed in individual bottles with a
+syringe at 41ml per 500ml bottle. Beer turned out great, should've made a full
+batch of the stuff.
