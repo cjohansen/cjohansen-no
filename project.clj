@@ -14,5 +14,6 @@
                  [optimus "0.19.3"]]
   :ring {:handler cjohansen-no.web/app}
   :aliases {"build-site" ["run" "-m" "cjohansen-no.web/export"]}
-  :profiles {:dev {:plugins [[lein-ring "0.12.0"]]}}
+  :profiles {:dev {:dependencies [[hiccup-bridge "1.0.1"]]
+                   :plugins [[lein-ring "0.12.0"]]}}
   :jvm-opts ["-Djava.awt.headless=true"])
