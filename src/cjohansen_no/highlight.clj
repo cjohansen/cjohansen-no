@@ -28,7 +28,7 @@
           (println code))))))
 
 (defn highlight-code-blocks [page]
-  (if (map? page)
+  (if (string? page)
     (enlive/sniptest page
                      [:pre :code] highlight
                      [:pre :code] #(assoc-in % [:attrs :class] "codehilite"))
