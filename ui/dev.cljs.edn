@@ -1,0 +1,8 @@
+{:main ui.devcards
+ :optimizations :none
+ :pretty-print true
+ :source-map true
+ :devcards true
+ :asset-path "/js/compiled/out"
+ :output-to "resources/public/js/compiled/devcards.js"
+ :output-dir "resources/public/js/compiled/out"}

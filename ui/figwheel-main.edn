@@ -1,0 +1,5 @@
+{:watch-dirs ["src" "devcards"]
+ :open-file-command "emacsclient"
+ :ring-server-options {:port 9660}
+ :open-url false
+ :css-dirs ["resources/public/css"]}

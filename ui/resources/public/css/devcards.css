@@ -1,0 +1,10 @@
+.com-rigsomelight-devcards-base
+.com-rigsomelight-devcards-container {
+  margin: auto;
+  width: 100%;
+}
+
+body .com-rigsomelight-devcards-card-base,
+body .com-rigsomelight-devcards-card-base-no-pad {
+  background: #fff;
+}
