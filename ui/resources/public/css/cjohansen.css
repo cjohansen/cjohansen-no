@@ -10,11 +10,15 @@
   --fulvors: #e28413;
   --lightbw: #f9f9fc;
 
+  --fg-color: var(--smoky);
+  --dark-fg-color: var(--lightbw);
   --section-bg: #fff;
   --section-fg: var(--smoky);
   --link-color: var(--denim);
   --code-bg: var(--lightbw);
   --code-contrast: var(--jet);
+  --header-bg: var(--mystic);
+  --header-fg: var(--fg-color);
 }
 
 .light-theme1 {
@@ -23,7 +27,9 @@
 
 .dark-theme1 {
   --section-bg: linear-gradient(120deg, var(--smoky) 0%, var(--jet) 100%);
-  --section-fg: var(--lightbw);
+  --section-fg: var(--dark-fg-color);
+  --header-bg: var(--smoky);
+  --header-fg: var(--dark-fg-color);
   --code-bg: var(--smoky);
   --code-contrast: var(--lightbw);
   --link-color: var(--ruby);
@@ -33,7 +39,7 @@ html,
 body {
   background: #fff;;
   box-sizing: border-box;
-  color: var(--smoky);
+  color: var(--fg-color);
   font-family: "Lato", Helvetica, Arial, sans-serif;
   font-size: 18px;
   line-height: 1.5;
@@ -230,7 +236,8 @@ p code {
 /* Logo and header */
 
 .header {
-  background: var(--mystic);
+  background: var(--header-bg);
+  color: var(--header-fg);
   align-items: center;
   justify-content: space-between;
   padding: 0 10px 10px;

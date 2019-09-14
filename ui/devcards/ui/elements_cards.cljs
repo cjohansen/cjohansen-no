@@ -204,3 +204,6 @@
 
 (defcard header
   (e/header))
+
+(defcard dark-header
+  [:div.dark-theme1 (e/header)])
