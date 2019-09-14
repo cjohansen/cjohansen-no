@@ -225,50 +225,53 @@ p code {
   padding: 30px 0;
 }
 
+.hide-mobile {display: none;}
+
+/* Logo and header */
+
 .header {
+  background: var(--mystic);
   align-items: center;
-  border-bottom: 1px solid var(--jet);
-  display: flex;
   justify-content: space-between;
-  padding-bottom: 10px;
+  padding: 0 10px 10px;
+  margin-top: 30px;
 }
 
 .logo {
   display: flex;
+  align-items: flex-start;
+  font-size: 1.25rem;
 }
 
-.firstname .rest {
-  margin-right: 10px;
+.facebox {
+  background: var(--jet);
+  border-radius: 50%;
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  position: relative;
+  margin-right: 20px;
+  margin-top: -15px;
 }
 
-.extended {
-  display: none;
+.facebox .img {
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+  display: block;
+  width: 100px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
 }
 
-.firstname .first-letter {
-  color: var(--ruby);
-  font-weight: bold;
-}
-
-.firstname .rest {
-  display: none;
-}
-
-.lastname {
-  color: var(--ruby);
-}
-
-.lastname:first-letter {
-  font-weight: bold;
-}
-
-.menu {
-  display: flex;
-}
-
-.menu li + li {
-  margin-left: 20px;
-}
+.logo-name {padding-top: 7px;}
+.logo-firstname, .logo-lastname {display: inline-block;}
+.logo-firstname:first-letter {font-weight: bold;}
+.logo-lastname {margin-left: 5px;}
+.logo-lastname:first-letter {font-weight: bold;}
+.header .menu {margin-left: 120px; margin-top: -43px; font-size: 0.9rem;}
+.menu {display: flex;}
+.menu li + li {margin-left: 10px;}
 
 @media only screen and (orientation : landscape) {
   code, .code, .codehilite {
@@ -288,8 +291,22 @@ p code {
   .h4 {font-size: 1.5rem;}
   code, .code, .codehilite {font-size: 0.7rem;}
   .content {padding: 50px 40px;}
-  .logo {font-size: 1.25rem;}
-  .firstname .rest {display: inline;}
+  div.hide-mobile {display: block;}
+  span.hide-mobile {display: inline;}
+
+  .header {
+    display: flex;
+    margin: 0;
+    padding: 10px 20px;
+  }
+
+  .logo {align-items: center;}
+  .facebox {margin-top: 0;}
+  .logo-name {padding: 0;}
+  .logo-firstname, .logo-lastname {display: block; margin: 0;}
+  .header .menu {margin: 0; font-size: 1rem;}
+  .logo-firstname:first-letter {color: var(--ruby);}
+  .logo-lastname {color: var(--ruby);}
 }
 
 @media only screen and (min-width: 1024px) {

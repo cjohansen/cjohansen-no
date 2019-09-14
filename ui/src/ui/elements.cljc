@@ -25,9 +25,12 @@
 (defn header []
   [:div.header
    [:div.logo
-    [:div.firstname [:span.first-letter "C"] [:span.rest "hristian"]]
-    [:div.lastname "Johansen"]]
+    [:div.facebox
+     [:img.img {:src "/images/christian-bw.png" :width 100}]]
+    [:div.logo-name
+     [:div.logo-firstname "Christian"]
+     [:div.logo-lastname "Johansen"]]]
    [:ul.nav-list.menu {:role "nav"}
     [:li [:a {:href "/"} "Tech"]]
     [:li [:a {:href "/fermentations/"} "Fermentations"]]
-    [:li [:a {:href "/about/"} "About" [:span.extended" me"]]]]])
+    [:li [:a {:href "/about/"} "About" [:span.hide-mobile " me"]]]]])
