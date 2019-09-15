@@ -1,7 +1,7 @@
 (ns ui.sections-cards
   (:require [dumdom.devcards :refer-macros [defcard]]
             [ui.elements :as e]
-            [ui.elements-cards :refer [CodeSample]]))
+            [ui.highlight-cards :refer [CodeSample]]))
 
 (defn centered-example []
   (e/centered

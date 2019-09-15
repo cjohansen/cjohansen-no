@@ -1,6 +1,7 @@
 (ns ^:figwheel-hooks ui.devcards
   (:require [ui.color-cards]
             [ui.elements-cards]
+            [ui.highlight-cards]
             [ui.sections-cards]
             [devcards.core :as devcards]))
 
