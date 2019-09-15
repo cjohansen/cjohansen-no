@@ -42,3 +42,12 @@
       [:p source]])
    [:div.bq-quote
     [:p quote]]])
+
+(defn ingredient-list [ingredients]
+  [:table.table
+   (for [{:keys [amount percent temp title]} ingredients]
+     [:tr
+      [:td amount]
+      [:td [:strong percent]]
+      [:th title (when temp [:span.subtle (str " " temp)])]
+      ])])

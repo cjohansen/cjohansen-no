@@ -9,6 +9,7 @@
   --denim: #1384e2;
   --fulvors: #e28413;
   --lightbw: #f9f9fc;
+  --manatee: #999ca0;
 
   --fg-color: var(--smoky);
   --dark-fg-color: var(--lightbw);
@@ -348,6 +349,29 @@ body .text-content :first-child {
 .text-content .h5:last-child,
 body .text-content :last-child {
   margin-bottom: 0;
+}
+
+.subtle {
+  color: var(--manatee);
+}
+
+/* Tables */
+table {
+}
+
+.table th {
+  text-align: left;
+  font-weight: normal;
+}
+
+.table td,
+.table th {
+  padding: 5px 10px;
+}
+
+.table strong {
+  font-weight: normal;
+  color: var(--fulvors);
 }
 
 @media only screen and (orientation : landscape) {

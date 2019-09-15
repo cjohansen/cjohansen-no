@@ -74,3 +74,15 @@
 
 (defcard dark-header
   [:div.dark-theme1 (e/header)])
+
+(defcard ingredient-list
+  (e/ingredient-list
+   [{:amount "250g" :percent "25%" :title "Coarse whole wheat flour"}
+    {:amount "250g" :percent "25%" :title "White wheat flour"}
+    {:amount "100g" :percent "10%" :title "Flaked oats"}
+    {:amount "200g" :percent "20%" :title "Milk" :temp "38℃"}
+    {:amount "100g" :percent "10%" :title "Water" :temp "38℃"}
+    {:amount "50g" :percent "5%" :title "Soft butter"}
+    {:amount "50g" :percent "5%" :title "Sugar"}
+    {:amount "22g" :percent "2.2%" :title "Salt"}
+    {:amount "3g" :percent "0.3%" :title "Yeast"}]))
