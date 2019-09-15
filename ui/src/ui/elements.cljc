@@ -14,7 +14,7 @@
 
 (defn section [{:keys [title sub-title content class]}]
   [:div.section {:className class}
-   [:div.content
+   [:div.content.text-content
     (when title (h1 {} title))
     (when sub-title (h2 {} sub-title))
     content]])
@@ -34,3 +34,11 @@
     [:li [:a {:href "/"} "Tech"]]
     [:li [:a {:href "/fermentations/"} "Fermentations"]]
     [:li [:a {:href "/about/"} "About" [:span.hide-mobile " me"]]]]])
+
+(defn blockquote [quote & [source]]
+  [:blockquote.bq.text-content
+   (when source
+     [:div.bq-source
+      [:p source]])
+   [:div.bq-quote
+    [:p quote]]])
