@@ -71,3 +71,21 @@
       [:span.subtle (->> (for [{:keys [title url]} tags]
                            [:a {:href url} title])
                          (interpose ", "))])]])
+
+(defn captioned [{:keys [content caption class]}]
+  [:div.captioned {:className class}
+   content
+   [:div.caption [:p caption]]])
+
+(def caption-themes
+  {:red ""
+   :blue "captioned-b"
+   :green "captioned-g"
+   :light "captioned-light"})
+
+(defn captioned-image [{:keys [src caption alt theme pop?]}]
+  (captioned
+   {:content [:img.img {:src src
+                        :alt (or alt caption)}]
+    :caption caption
+    :class (str (caption-themes theme) (when pop? " captioned-pop"))}))

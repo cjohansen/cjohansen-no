@@ -96,3 +96,42 @@
            {:title "Sesame" :url "/tags/sesame"}
            {:title "Whole wheat" :url "/tags/whole-wheat"}
            {:title "FWSY" :url "/tags/fwsy"}]}))
+
+(defcard image-with-legend-red
+  [:div {:style {:display "grid"
+                 :gridTemplateColumns "1fr 1fr"}}
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :caption "A sunflower seed bread, cooked in a dutch oven"})
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :theme :blue
+     :caption "A sunflower seed bread, cooked in a dutch oven"})
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :theme :green
+     :caption "A sunflower seed bread, cooked in a dutch oven"})
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :theme :light
+     :caption "A sunflower seed bread, cooked in a dutch oven"})
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :pop? true
+     :caption "A sunflower seed bread, cooked in a dutch oven"})
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :theme :blue
+     :pop? true
+     :caption "A sunflower seed bread, cooked in a dutch oven"})
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :theme :green
+     :pop? true
+     :caption "A sunflower seed bread, cooked in a dutch oven"})
+   (e/captioned-image
+    {:src "/devcard_images/IMG_1620.jpg"
+     :theme :light
+     :pop? true
+     :caption "A sunflower seed bread, cooked in a dutch oven"})])
+

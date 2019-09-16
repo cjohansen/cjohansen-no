@@ -340,6 +340,73 @@ code, .code, .codehilite {
 .codehilite .il { color: var(--lima); font-weight: bold; } /* Literal.Number.Integer.Long */
 .codehilite .nx {font-weight: bold;}
 
+/* Captioned elements */
+
+.captioned {position: relative; overflow: hidden;}
+.captioned .img {display: block;}
+
+.caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  transition: transform 0.25s ease-out;
+}
+
+.caption p {
+  color: #fff;
+  position: relative;
+  z-index: 1;
+}
+
+.caption:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--ruby);
+  z-index: 0;
+  opacity: 0.75;
+  transition: opacity 0.25s;
+}
+
+@media not all and (hover: none) {
+  .captioned-pop .caption:after {
+    opacity: 1;
+  }
+
+  .captioned-pop .caption {
+    transform: translateY(calc(100% - 6px));
+  }
+}
+
+.captioned-b .caption:after {
+  background: var(--denim);
+}
+
+.captioned-g .caption:after {
+  background: var(--lima);
+}
+
+.captioned-light .caption:after {
+  background: var(--athens);
+}
+
+.captioned-light .caption p {
+  color: var(--smoky);
+}
+
+.captioned-pop:hover .caption {
+  transform: translateY(0);
+}
+
+.captioned-pop:hover .caption:after {
+  opacity: 0.75;
+}
+
 /* Sections */
 
 .section {
