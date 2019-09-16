@@ -12,15 +12,25 @@
 (def h3 (partial el :h3))
 (def h4 (partial el :h4))
 
-(defn section [{:keys [title sub-title content class]}]
+(defn section [{:keys [title sub-title content class media]}]
   [:div.section {:className class}
-   [:div.content.text-content
-    (when title (h1 {} title))
-    (when sub-title (h2 {} sub-title))
-    content]])
+   [:div.content
+    (when media
+      [:div.media
+       media])
+    [:div.section-content.text-content
+     (when title (h1 {} title))
+     (when sub-title (h2 {} sub-title))
+     content]]])
 
 (defn centered [params]
   (section (assoc params :class "centered")))
+
+(defn section-media-front [params]
+  (section (assoc params :class "media-front")))
+
+(defn section-media-back [params]
+  (section (assoc params :class "media-back")))
 
 (defn header []
   [:div.header
@@ -47,7 +57,17 @@
   [:table.table
    (for [{:keys [amount percent temp title]} ingredients]
      [:tr
+      [:th title (when temp [:span.subtle (str " (" temp ")")])]
       [:td amount]
       [:td [:strong percent]]
-      [:th title (when temp [:span.subtle (str " " temp)])]
       ])])
+
+(defn byline [{:keys [title date tags]}]
+  [:div
+   [:h2 title]
+   [:p.byline
+    [:span.date date]
+    (when tags
+      [:span.subtle (->> (for [{:keys [title url]} tags]
+                           [:a {:href url} title])
+                         (interpose ", "))])]])

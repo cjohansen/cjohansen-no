@@ -77,12 +77,22 @@
 
 (defcard ingredient-list
   (e/ingredient-list
-   [{:amount "250g" :percent "25%" :title "Coarse whole wheat flour"}
-    {:amount "250g" :percent "25%" :title "White wheat flour"}
-    {:amount "100g" :percent "10%" :title "Flaked oats"}
-    {:amount "200g" :percent "20%" :title "Milk" :temp "38℃"}
-    {:amount "100g" :percent "10%" :title "Water" :temp "38℃"}
-    {:amount "50g" :percent "5%" :title "Soft butter"}
-    {:amount "50g" :percent "5%" :title "Sugar"}
-    {:amount "22g" :percent "2.2%" :title "Salt"}
-    {:amount "3g" :percent "0.3%" :title "Yeast"}]))
+   [{:amount "250 g" :percent "25%" :title "Coarse whole wheat flour"}
+    {:amount "250 g" :percent "25%" :title "White wheat flour"}
+    {:amount "100 g" :percent "10%" :title "Flaked oats"}
+    {:amount "200 g" :percent "20%" :title "Milk" :temp "38℃"}
+    {:amount "100 g" :percent "10%" :title "Water" :temp "38℃"}
+    {:amount "50 g" :percent "5%" :title "Soft butter"}
+    {:amount "50 g" :percent "5%" :title "Sugar"}
+    {:amount "22 g" :percent "2.2%" :title "Salt"}
+    {:amount "3 g" :percent "0.3%" :title "Yeast"}]))
+
+(defcard byline
+  (e/byline
+   {:title "Variations on Flour Water Salt Yeast 50% Whole Wheat"
+    :date "September 01 2019"
+    :tags [{:title "Flax" :url "/tags/flax"}
+           {:title "Bread" :url "/tags/bread"}
+           {:title "Sesame" :url "/tags/sesame"}
+           {:title "Whole wheat" :url "/tags/whole-wheat"}
+           {:title "FWSY" :url "/tags/fwsy"}]}))

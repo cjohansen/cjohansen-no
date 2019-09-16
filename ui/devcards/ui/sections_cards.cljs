@@ -58,3 +58,29 @@ Both Stasis and Optimus are written by my good friend and colleague, "
 (defcard section-with-code-dark1
   [:div.dark-theme1
    (e/section longer-section)])
+
+(defcard image-left-section
+  (e/section-media-front
+   {:content (list (e/h2 {} "Bottling")
+                   [:p "After a few days, the beer was at 1.014, so I cold
+                   crashed it with gelatine and let it sit for a few days."]
+                   [:p "After bottling the beer was refreshing and nice, but the
+                   Nelson hops where much too noticable. The goal with this beer
+                   was to have a relatively neutral beer on hand for guests, and
+                   the Nelson made it a special interest beer. Luckily, after
+                   quite some weeks, it is just as uninteresting as intended,
+                   and I can hand it out to anyone."])
+    :media [:img.img {:src "/devcard_images/IMG_1625.jpg"}]}))
+
+(defcard image-right-section
+  (e/section-media-back
+   {:content (list (e/h2 {} "Bottling")
+                   [:p "After a few days, the beer was at 1.014, so I cold
+                   crashed it with gelatine and let it sit for a few days."]
+                   [:p "After bottling the beer was refreshing and nice, but the
+                   Nelson hops where much too noticable. The goal with this beer
+                   was to have a relatively neutral beer on hand for guests, and
+                   the Nelson made it a special interest beer. Luckily, after
+                   quite some weeks, it is just as uninteresting as intended,
+                   and I can hand it out to anyone."])
+    :media [:img.img {:src "/devcard_images/IMG_1625.jpg"}]}))
