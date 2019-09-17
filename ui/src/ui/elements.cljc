@@ -21,7 +21,7 @@
     [:div.section-content.text-content
      (when title (h1 {} title))
      (when sub-title (h2 {} sub-title))
-     content]]])
+     (when content content)]]])
 
 (defn centered [params]
   (section (assoc params :class "centered")))
@@ -31,6 +31,14 @@
 
 (defn section-media-back [params]
   (section (assoc params :class "media-back")))
+
+(defn section-media [{:keys [media title size]}]
+  [:div.media-wide {:className (if size
+                                 (str "s-" (name size))
+                                 "section")}
+   [:div.content
+    [:div.media media]
+    (when title [:div.title (h1 {} title)])]])
 
 (defn header []
   [:div.header

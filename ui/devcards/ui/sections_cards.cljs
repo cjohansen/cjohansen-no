@@ -84,3 +84,24 @@ Both Stasis and Optimus are written by my good friend and colleague, "
                    quite some weeks, it is just as uninteresting as intended,
                    and I can hand it out to anyone."])
     :media [:img.img {:src "/devcard_images/IMG_1625.jpg"}]}))
+
+(defcard image-wide-section
+  (e/section-media
+   {:size :mega-wide
+    :media [:img.img {:src "/devcard_images/IMG_1603.jpg"}]}))
+
+(defcard image-title-section
+  (e/section-media
+   {:size :mega-wide
+    :media [:img.img {:src "/devcard_images/sepia.jpg"}]
+    :title "Flour Water Salt Yeast 50% Whole Wheat"}))
+
+(defcard wide-image-section
+  (e/section-media
+   {:size :wide
+    :media [:img.img {:src "/devcard_images/IMG_1603.jpg"}]}))
+
+(defcard normal-image-only-section
+  (e/section-media
+   {:media [:img.img {:src "/devcard_images/IMG_1603.jpg"}]}))
+
