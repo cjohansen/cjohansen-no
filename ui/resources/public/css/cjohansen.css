@@ -201,12 +201,27 @@ p code {
 
 .table td,
 .table th {
-  padding: 5px 10px;
+  border-bottom: 1px solid var(--athens);
+  padding: 0.5rem 1rem;
+}
+
+.table td:first-child,
+.table th:first-child {
+  padding-left: 2rem;
+}
+
+.table td:last-child,
+.table th:last-child {
+  padding-right: 2rem;
 }
 
 .table strong {
   font-weight: normal;
   color: var(--fulvors);
+}
+
+.table th a {
+  color: var(--section-fg);
 }
 
 /* Logo and header */

@@ -77,7 +77,7 @@
 
 (defcard ingredient-list
   (e/ingredient-list
-   [{:amount "250 g" :percent "25%" :title "Coarse whole wheat flour"}
+   [{:amount "250 g" :percent "25%" :title [:a {:href "#"} "Coarse whole wheat flour"]}
     {:amount "250 g" :percent "25%" :title "White wheat flour"}
     {:amount "100 g" :percent "10%" :title "Flaked oats"}
     {:amount "200 g" :percent "20%" :title "Milk" :temp "38℃"}
