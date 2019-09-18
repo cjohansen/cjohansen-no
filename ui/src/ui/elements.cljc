@@ -101,9 +101,17 @@
 
 (defn teaser [{:keys [url media title published pitch]}]
   [:div.teaser
-   [:div.media [:a {:href url} media]]
-   [:div.content
+   (when media [:div.media [:a {:href url} media]])
+   [:div.teaser-content
     (when pitch
       (h5 {:className "subtle"} pitch))
     (h4 {} [:a {:href url} title])
     [:span.subtle.text-s published]]])
+
+(defn teaser-section [{:keys [title sub-title teasers class]}]
+  [:div.section {:className (str "teasers" (when class (str " " class)))}
+   [:div.content
+    [:div.section-content
+     (when title (h2 {} title))
+     (when sub-title (h2 {} sub-title))
+     [:div.teaser-list (map teaser teasers)]]]])

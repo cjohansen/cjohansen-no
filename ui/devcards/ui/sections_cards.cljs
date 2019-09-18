@@ -105,3 +105,34 @@ Both Stasis and Optimus are written by my good friend and colleague, "
   (e/section-media
    {:media [:img.img {:src "/devcard_images/IMG_1603.jpg"}]}))
 
+(defcard teaser-section
+  (e/teaser-section
+   {:title "More breads"
+    :teasers [{:media [:img.img {:src "/devcard_images/IMG_1555.jpg"}]
+               :title "Variations on Flour Water Salt Yeast 50% Whole Wheat"
+               :published "September 1st 2019"
+               :url "/fermentations/2019-09-01-fwsy-5050/"}
+              {:media [:img.img {:src "/devcard_images/IMG_1603.jpg"}]
+               :title "Flour Water Salt Yeast 50% Whole Wheat"
+               :published "August 31st 2019"
+               :url "/fermentations/2019-08-31-fwsy-5050/"}
+              {:media [:img.img {:src "/devcard_images/P8240257.jpg"}]
+               :title "Hamelman's Five Grain Bread with Paté Fermentèe"
+               :published "August 21st 2019"
+               :url "/fermentations/2019-08-31-fwsy-5050/"}]}))
+
+(defcard teaser-section-no-images
+  (e/teaser-section
+   {:title "More Clojure"
+    :teasers [{:title "Clojure in Production with tools.deps"
+               :published "June 3rd 2019"
+               :url "/clojure-in-production-tools-deps/"}
+              {:title "tools.deps, figwheel-main, Devcards, and Emacs"
+               :published "May 14th 2019"
+               :url "/tools-deps-figwheel-main-devcards-emacs/"}
+              {:title "Optimized Optimus Asset Paths from ClojureScript"
+               :published "February 18th 2019"
+               :url "/optimized-optimus-asset-paths-clojurescript/"}
+              {:title "A Unified Specification"
+               :published "January 3rd 2019"
+               :url "/a-unified-specification/"}]}))
