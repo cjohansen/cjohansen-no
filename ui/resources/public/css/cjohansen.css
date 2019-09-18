@@ -186,6 +186,10 @@ p code {
   font-weight: normal;
 }
 
+.text-s {
+  font-size: 0.9rem;
+}
+
 .img {
   display: inline-block;
   max-width: 100%;
