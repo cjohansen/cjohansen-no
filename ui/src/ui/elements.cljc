@@ -11,6 +11,7 @@
 (def h2 (partial el :h2))
 (def h3 (partial el :h3))
 (def h4 (partial el :h4))
+(def h5 (partial el :h5))
 
 (defn section [{:keys [title sub-title content class media]}]
   [:div.section {:className class}
@@ -62,7 +63,7 @@
     [:p quote]]])
 
 (defn ingredient-list [ingredients]
-  [:table.table
+  [:table.table.text-xs
    (for [{:keys [amount percent temp title]} ingredients]
      [:tr
       [:th title (when temp [:span.subtle (str " (" temp ")")])]
@@ -98,9 +99,11 @@
     :caption caption
     :class (str (caption-themes theme) (when pop? " captioned-pop"))}))
 
-(defn teaser [{:keys [url media title published]}]
+(defn teaser [{:keys [url media title published pitch]}]
   [:div.teaser
    [:div.media [:a {:href url} media]]
    [:div.content
+    (when pitch
+      (h5 {:className "subtle"} pitch))
     (h4 {} [:a {:href url} title])
     [:span.subtle.text-s published]]])

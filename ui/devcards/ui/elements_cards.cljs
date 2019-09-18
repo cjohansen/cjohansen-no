@@ -147,4 +147,5 @@
    {:media [:img.img {:src "/devcard_images/IMG_1603.jpg"}]
     :title "Flour Water Salt Yeast 50% Whole Wheat"
     :published "August 31st 2019"
+    :pitch "Previous"
     :url "/fermentations/2019-08-31-fwsy-5050/"}))
