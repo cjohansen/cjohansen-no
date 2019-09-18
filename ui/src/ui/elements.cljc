@@ -97,3 +97,10 @@
                         :alt (or alt caption)}]
     :caption caption
     :class (str (caption-themes theme) (when pop? " captioned-pop"))}))
+
+(defn teaser [{:keys [url media title published]}]
+  [:div.teaser
+   [:div.media [:a {:href url} media]]
+   [:div.content
+    (h4 {} [:a {:href url} title])
+    [:span.subtle.text-s published]]])

@@ -428,6 +428,21 @@ code, .code, .codehilite {
   opacity: 0.75;
 }
 
+/* Teasers */
+.teaser {
+  border-bottom: 1px solid var(--athens);
+  padding-bottom: 1rem;
+}
+
+.teaser .content {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.teaser .media {
+  margin-bottom: 1rem;
+}
+
 /* Sections */
 
 .section {
@@ -592,6 +607,20 @@ body .text-content :last-child {
     padding: 1rem 3rem;
     margin: 0 auto;
   }
+
+  .teaser {
+    display: flex;
+    align-items: center;
+  }
+
+  .teaser .content {
+    margin: 0 0 0 1rem;
+  }
+
+  .teaser .media {
+    margin: 0;
+    max-width: calc(40% - 1rem);
+  }
 }
 
 @media only screen and (min-width: 1024px) {
@@ -606,4 +635,5 @@ body .text-content :last-child {
   .media-front .content, .media-back .content {align-items: center;}
   .media-front .media {margin: 0 3rem 0 -122px;}
   .media-back .media {margin: 0 -122px 0 3rem;}
+  .teaser .content {margin: 0 0 0 2rem;}
 }

@@ -135,3 +135,16 @@
      :pop? true
      :caption "A sunflower seed bread, cooked in a dutch oven"})])
 
+(defcard teaser
+  (e/teaser
+   {:media [:img.img {:src "/devcard_images/IMG_1555.jpg"}]
+    :title "Variations on Flour Water Salt Yeast 50% Whole Wheat"
+    :published "September 1st 2019"
+    :url "/fermentations/2019-09-01-fwsy-5050/"}))
+
+(defcard teaser-shorter-text
+  (e/teaser
+   {:media [:img.img {:src "/devcard_images/IMG_1603.jpg"}]
+    :title "Flour Water Salt Yeast 50% Whole Wheat"
+    :published "August 31st 2019"
+    :url "/fermentations/2019-08-31-fwsy-5050/"}))
