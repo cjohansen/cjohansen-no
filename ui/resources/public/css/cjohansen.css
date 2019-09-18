@@ -441,6 +441,14 @@ code, .code, .codehilite {
   padding: 20px;
 }
 
+.text-content .h1 a:link
+.text-content .h2 a:link
+.text-content .h3 a:link
+.text-content .h4 a:link
+.text-content .h5 a:link {
+  color: var(--fg-color);
+}
+
 .text-content .h1 {
   margin: 0 0 2.4rem;
 }
