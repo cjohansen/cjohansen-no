@@ -23,11 +23,11 @@
   --header-fg: var(--fg-color);
 }
 
-.light-theme1 {
+.theme-light1 {
   --section-bg: linear-gradient(120deg, var(--athens) 0%, var(--mystic) 100%);
 }
 
-.dark-theme1 {
+.theme-dark1 {
   --section-bg: linear-gradient(120deg, var(--smoky) 0%, var(--jet) 100%);
   --section-fg: var(--dark-fg-color);
   --header-bg: var(--smoky);
@@ -141,7 +141,7 @@ a:hover, .clickable:hover {
   z-index: 2;
 }
 
-.dark-theme1 .bq-source ~ .bq-quote:before {
+.theme-dark1 .bq-source ~ .bq-quote:before {
   background: var(--smoky);
 }
 

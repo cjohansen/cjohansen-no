@@ -23,11 +23,11 @@ Both Stasis and Optimus are written by my good friend and colleague, "
                 ", " [:a {:href "https://github.com/magnars"} "Magnar Sveen."]]]}))
 
 (defcard light-theme-1-centered-element
-  [:div.light-theme1
+  [:div.theme-light1
    (centered-example)])
 
 (defcard dark-theme-1-centered-element
-  [:div.dark-theme1
+  [:div.theme-dark1
    (centered-example)])
 
 (defcard plain-section
@@ -48,7 +48,7 @@ Both Stasis and Optimus are written by my good friend and colleague, "
              [:p [:code "#\"...\""] " is Clojure syntax for regular expressions."])})
 
 (defcard section-with-code-light1
-  [:div.light-theme1
+  [:div.theme-light1
    (e/section longer-section)])
 
 (defcard section-with-code-default
@@ -56,7 +56,7 @@ Both Stasis and Optimus are written by my good friend and colleague, "
    (e/section longer-section)])
 
 (defcard section-with-code-dark1
-  [:div.dark-theme1
+  [:div.theme-dark1
    (e/section longer-section)])
 
 (defcard image-left-section
