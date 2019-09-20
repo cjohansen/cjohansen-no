@@ -6,16 +6,42 @@
   (:import java.time.LocalDateTime
            java.time.ZoneId))
 
-(defn parse-section [{:keys [body section-type theme]}]
-  (cond-> {:section/body body}
+(defn db-conn []
+  (d/create-database "datomic:mem://blog")
+  (let [conn (d/connect "datomic:mem://blog")]
+    (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
+    conn))
+
+(defn prune-nils [m]
+  (->> m
+       (remove (fn [[k v]] (nil? v)))
+       (into {})))
+
+(defn parse-section [id {:keys [body section-type theme title sub-title]}]
+  (cond-> {:section/body body
+           :section/number id}
     section-type (assoc :section/type (read-string section-type))
-    theme (assoc :section/theme (read-string theme))))
+    theme (assoc :section/theme (read-string theme))
+    title (assoc :section/title title)
+    sub-title (assoc :section/sub-title sub-title)))
+
+(defn parse-image [image]
+  (let [image (try
+                (read-string image)
+                (catch Exception e
+                  image))]
+    (if (string? image)
+      {:image/url image}
+      (->> image
+           (map (fn [[k v]] [(keyword "image" (name k)) v]))
+           (into {})))))
 
 (defn parse-tech-post
   ([file-name] (parse-tech-post file-name (slurp (io/resource file-name))))
   ([file-name content]
    (let [[_ url] (re-find #"^tech(.*)\.md$" file-name)
-         sections (md/parse content)]
+         sections (md/parse content)
+         max-sections (count sections)]
      (loop [post {:tech-blog/sections []}
             [section & sections] sections]
        (if section
@@ -24,12 +50,17 @@
             :meta (-> post
                       (assoc :browsable/url (str url "/"))
                       (assoc :tech-blog/title (:title section))
+                      (assoc :tech-blog/short-title (:short-title section))
+                      (assoc :tech-blog/image (parse-image (:image section)))
+                      (assoc :i18n/locale (or (some-> (:locale section) keyword) :en/US))
                       (assoc :tech-blog/published (LocalDateTime/parse (:published section)))
                       (assoc :tech-blog/tags (->> (:tags section)
                                                   read-string
-                                                  (map #(keyword "tag" (name %))))))
+                                                  (map #(keyword "tag" (name %)))))
+                      prune-nils)
 
-            :section (update post :tech-blog/sections conj (parse-section section)))
+            :section (let [id (- max-sections (count sections))]
+                       (update post :tech-blog/sections conj (parse-section id section))))
           sections)
          post)))))
 
@@ -56,12 +87,22 @@
   (d/transact conn (tag-txes (read-string (slurp (io/resource "tags.edn")))))
   (d/transact conn (tech-post-txes "tech/clojure-in-production-tools-deps.md"))
 
-  (d/q '[:find ?title ?url
+  (d/q '[:find ?e
          :in $
          :where
-         [?e :browsable/url ?url]
-         [?e :tech-blog/title ?title]]
+         [?e :tech-blog/published]]
        (d/db conn))
+
+  (let [db (d/db conn)]
+    (->> (d/q '[:find ?e
+                :in $
+                :where
+                [?e :tech-blog/published]]
+              db)
+         (map #(d/entity db (first %)))
+         (map :tech-blog/title)))
+
+  (d/transact conn [{:db/id "/some/path" :tech-blog/title nil}])
 
   (parse-tech-post "tech/clojure-in-production-tools-deps.md")
 )

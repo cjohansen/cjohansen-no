@@ -1,8 +1,10 @@
 (ns cjohansen-no.html
   (:require [hiccup.page :refer [html5]]
+            [dumdom.string :as dumdom]
             [net.cgrand.enlive-html :as enlive]
             [optimus.link :as link]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [ui.elements :as e]))
 
 (def pegdown-options ;; https://github.com/sirthias/pegdown
   [:autolinks :fenced-code-blocks :strikethrough])
@@ -80,3 +82,34 @@
         [:span.item "2006 - " (current-year)]
         [:a.item {:href "mailto:christian@cjohansen.no"} "Christian Johansen"]]]
       [:script "var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-20457026-1']);_gaq.push(['_trackPageview']);(function(b){var c=b.createElement('script');c.type='text/javascript';c.async=true;c.src='http://www.google-analytics.com/ga.js';var a=b.getElementsByTagName('script')[0];a.parentNode.insertBefore(c,a)})(document);"]])))
+
+(defn layout-page-new [request page]
+  (str
+   "<!DOCTYPE html>"
+   (dumdom/render
+    [:html
+     [:head
+      [:meta {:charset "utf-8"}]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+      [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
+      [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
+      [:meta {:name "author" :content "Christian Johansen"}]
+
+      (when-let [title (:open-graph/title page)]
+        [:meta {:property "og:title" :content title}])
+      [:meta {:property "og:title" :content (or (:open-graph/type page) "article")}]
+      [:meta {:property "og:url" :content (str (get-in request [:headers "host"]) (:uri request))}]
+      (when-let [image (:open-graph/image page)]
+        [:meta {:property "og:image" :content (str (get-in request [:headers "host"]) (:image/url image))}])
+
+      [:title (or (:page-title page)
+                  (-> page
+                      java.io.StringReader.
+                      enlive/html-resource
+                      (enlive/select [:h1])
+                      first
+                      :content)
+                  "Tech blog")]
+      [:link {:rel "stylesheet" :href (link/file-path request "/css/cjohansen.css")}]]
+     [:body
+      (:body page)]])))

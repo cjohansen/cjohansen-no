@@ -2,8 +2,11 @@
   (:require [cjohansen-no.fermentations :as fermentations]
             [cjohansen-no.highlight :refer [highlight-code-blocks]]
             [cjohansen-no.html :as html]
+            [cjohansen-no.ingest :as ingest]
+            [cjohansen-no.tech-blog :as tech]
             [clojure.java.io :as io]
             [clojure.string :as str]
+            [datomic.api :as d]
             [me.raynes.cegdown :as md]
             [optimus.assets :as assets]
             optimus.export
@@ -34,12 +37,19 @@
           (map #(fn [req] (html/layout-page req (md/to-html % html/pegdown-options)))
                (vals pages))))
 
+(defn tech-pages [conn]
+  (let [posts (tech/load-posts (d/db conn))]
+    (zipmap (map :browsable/url posts)
+            (map tech/render-page posts))))
+
 (defn get-raw-pages []
-  (let [fermentations (fermentations/load-fermentations (stasis/slurp-directory "resources/fermentations" #"\.md$"))]
+  (let [fermentations (fermentations/load-fermentations (stasis/slurp-directory "resources/fermentations" #"\.md$"))
+        conn (ingest/db-conn)]
     (stasis/merge-page-sources
      {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
       :bread-images (stasis/slurp-directory "resources/public/images/bread" #".\.jpg$")
-      :markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))
+      ;;:markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))
+      :tech-pages (tech-pages conn)
       :fermentation-pages (fermentations/prepare-pages fermentations)
       :frontpage {"/index.html" #(html/layout-page % (md/to-html (slurp (io/resource "index.md")) html/pegdown-options) {:page-title "Christian Johansen"})}
       :fermentations {"/fermentations/" #(html/layout-page % (md/to-html (slurp (io/resource "fermentations.md")) html/pegdown-options)
@@ -64,7 +74,7 @@
   (prepare-pages (get-raw-pages)))
 
 (def app (-> (stasis/serve-pages get-pages)
-             (optimus/wrap get-assets optimizations/all serve-live-assets)
+             (optimus/wrap get-assets optimizations/none serve-live-assets)
              wrap-content-type
              wrap-utf-8))
 

@@ -27,5 +27,7 @@
   (start))
 
 (comment
+  (stop)
   (start)
+  (restart)
 )

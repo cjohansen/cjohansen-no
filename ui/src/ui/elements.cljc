@@ -43,16 +43,17 @@
 
 (defn header []
   [:div.header
-   [:div.logo
-    [:div.facebox
-     [:img.img {:src "/images/christian-bw.png" :width 100}]]
-    [:div.logo-name
-     [:div.logo-firstname "Christian"]
-     [:div.logo-lastname "Johansen"]]]
-   [:ul.nav-list.menu {:role "nav"}
-    [:li [:a {:href "/"} "Tech"]]
-    [:li [:a {:href "/fermentations/"} "Fermentations"]]
-    [:li [:a {:href "/about/"} "About" [:span.hide-mobile " me"]]]]])
+   [:div.header-content
+    [:div.logo
+     [:div.facebox
+      [:img.img {:src "/images/christian-bw.png" :width 100}]]
+     [:div.logo-name
+      [:div.logo-firstname "Christian"]
+      [:div.logo-lastname "Johansen"]]]
+    [:ul.nav-list.menu {:role "nav"}
+     [:li [:a {:href "/"} "Tech"]]
+     [:li [:a {:href "/fermentations/"} "Fermentations"]]
+     [:li [:a {:href "/about/"} "About" [:span.hide-mobile " me"]]]]]])
 
 (defn blockquote [quote & [source]]
   [:blockquote.bq.text-content

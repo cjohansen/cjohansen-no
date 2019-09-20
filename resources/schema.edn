@@ -5,29 +5,72 @@
   :db/cardinality :db.cardinality/one}
 
  ;; Sections
+ {:db/ident :section/number
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
  {:db/ident :section/body
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
-{:db/ident :section/type
-  :db/valueType :db.type/keyword
-  :db/cardinality :db.cardinality/one}
-
-{:db/ident :section/theme
-  :db/valueType :db.type/keyword
-  :db/cardinality :db.cardinality/one}
-
-{:db/ident :section/body
+ {:db/ident :section/title
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
- ;; Tech blog poss
+ {:db/ident :section/sub-title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :section/image
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :section/type
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :section/theme
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one}
+
+ ;; Language
+ {:db/ident :i18n/locale
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one}
+
+ ;; Images
+ {:db/ident :image/url
+  :db/valueType :db.type/string
+  :db/unique :db.unique/identity
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :image/alt
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :image/width
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :image/height
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ ;; Tech blog posts
  {:db/ident :browsable/url
   :db/valueType :db.type/string
   :db/unique :db.unique/identity
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :tech-blog/title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :tech-blog/short-title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :tech-blog/description
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
@@ -42,6 +85,10 @@
  {:db/ident :tech-blog/tags
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/many}
+
+ {:db/ident :tech-blog/image
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one}
 
  {:db/ident :tech-blog/sections
   :db/valueType :db.type/ref

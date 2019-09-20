@@ -3,12 +3,14 @@
 :title Clojure in Production with tools.deps
 :published 2019-04-14T12:00:00
 :tags [:clojure :tools.deps]
+:image {:url "/images/stasis.svg" :alt "Stasis Logo"}
+:description An lean and fast setup for packaging Clojure applications for production using tools.deps
 --------------------------------------------------------------------------------
 :type :section
 :section-type :centered
 :theme :dark1
+:title Clojure in Production with tools.deps
 :body
-# Clojure in Production with tools.deps
 
 In this post I'll show you how my project is packaging and running Clojure apps
 in production, using [`tools.deps`](https://github.com/clojure/tools.deps.alpha)
@@ -114,8 +116,10 @@ containers:
                 -Xms128m
                 -Xmx128m"
 ```
-
-### Tying it all together
+--------------------------------------------------------------------------------
+:type :section
+:sub-title Tying it all together
+:body
 
 We use a `Makefile` to tie everything together, so we can do things like:
 

@@ -1,7 +1,8 @@
-(ns cjohansen-no.highlight
+rin(ns cjohansen-no.highlight
   (:require [clojure.java.io :as io]
             [clygments.core :as pygments]
-            [net.cgrand.enlive-html :as enlive]))
+            [net.cgrand.enlive-html :as enlive]
+            [clojure.string :as str]))
 
 (defn- extract-code
   [highlighted]
@@ -12,11 +13,10 @@
       first
       :content))
 
-(defn- highlight [node]
-  (let [code (->> node :content (apply str))
+(defn highlight [node]
+  (let [code (->> node :content (apply str) str/trim)
         lang (->> node :attrs :class keyword)
         pygments-info (->> node :attrs :data-pygments)]
-
     (if (= pygments-info "ignore")
       node
       (try
@@ -27,11 +27,21 @@
           (println (format "Failed to highlight %s code snippet!" lang))
           (println code))))))
 
+(defn try-highlight [node]
+  (if (and (= 1 (count (:content node)))
+           (= :code (-> node :content first :tag)))
+    (-> node
+        (update-in [:content 0] highlight)
+        (assoc-in [:attrs :class] "codehilite"))
+    node))
+
 (defn highlight-code-blocks [page]
   (if (string? page)
     (enlive/sniptest page
-                     [:pre :code] highlight
-                     [:pre :code] #(assoc-in % [:attrs :class] "codehilite"))
+                     [:pre] try-highlight
+                     ;;[:pre :code] highlight
+                     ;;[:pre :code] #(assoc-in % [:attrs :class] "codehilite")
+                     )
     page))
 
 (comment
@@ -52,8 +62,25 @@
 
   (require '[hiccup-bridge.core :as hicv])
 
-  (-> (slurp (clojure.java.io/file "/tmp/stuff.html"))
-      (pygments/highlight :html :html)
-      hicv/html->hiccup
+  (-> "(defproject cjohansen-no \"0.1.0-SNAPSHOT\"
+  :description \"cjohansen.no source code\"
+  :url \"http://cjohansen.no\"
+  :license {:name \"BSD 2 Clause\"
+            :url \"http://opensource.org/licenses/BSD-2-Clause\"}
+  :dependencies [[org.clojure/clojure \"1.5.1\"]
+                 [stasis \"1.0.0\"]])"
+      (pygments/highlight :clj :html)
+      prn)
+
+  (-> "lein new cjohansen-no
+cd cjohansen-no"
+      (pygments/highlight :sh :html)
+      prn)
+
+
+
+  (-> (slurp (clojure.java.io/file "/Users/christian/projects/hafslund/consumptor/recipients.js"))
+      (pygments/highlight :js :html)
+      ;;hicv/html->hiccup
       prn)
   )
