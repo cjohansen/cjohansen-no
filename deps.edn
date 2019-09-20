@@ -1,0 +1,22 @@
+{:paths ["src" "resources" "ui/resources" "ui/src"]
+ :deps {org.clojure/clojure {:mvn/version "1.10.1"}
+        org.clojure/core.match {:mvn/version "0.3.0"}
+        org.clojure/tools.namespace {:mvn/version "0.3.1"}
+        com.datomic/datomic-free {:mvn/version "0.9.5697"}
+        ch.digitalfondue.jfiveparse/jfiveparse {:mvn/version "0.6.0"}
+        cjohansen/dumdom {:mvn/version "2019.09.16"}
+        clygments {:mvn/version "2.0.0"}
+        enlive {:mvn/version "1.1.6"} ;; TODO: Remove
+        hiccup {:mvn/version "1.0.5"} ;; TODO: Remove
+        mapdown {:mvn/version "0.2.1"}
+        me.raynes/cegdown {:mvn/version "0.1.1"}
+        mount {:mvn/version "0.1.16"}
+        optimus {:mvn/version "0.20.2"}
+        prone {:mvn/version "2019-07-08"}
+        ring {:mvn/version "1.7.1"}
+        stasis {:mvn/version "2.5.0"}}
+ :aliases
+ {:dev {:extra-paths ["dev"]}
+  :server {:main-opts ["-m" "cjohansen-no.dev"]}
+  :ancient {:extra-deps {olical/depot {:mvn/version "1.8.4"}}
+            :main-opts ["-m" "depot.outdated.main"]}}}
