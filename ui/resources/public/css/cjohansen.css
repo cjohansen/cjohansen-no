@@ -159,6 +159,14 @@ a:hover, .clickable:hover {
   font-weight: 500;
 }
 
+.text-content h1,
+.text-content h2,
+.text-content h3,
+.text-content h4,
+.text-content h5 {
+  position: relative;
+}
+
 .h1,
 .text-content h1 {
   font-size: 2.6rem;
@@ -319,8 +327,9 @@ p code {
 
 code, .code, .codehilite {
   font-family: "Source Code Pro", monospace;
-  font-size: 0.7rem;
 }
+
+.codehilite {font-size: 0.7rem;}
 
 .codehilite .hll { background-color: #ffffcc }
 .codehilite .c { color: #aaaaaa; font-style: italic } /* Comment */
@@ -480,12 +489,22 @@ code, .code, .codehilite {
   padding: 20px;
 }
 
-.text-content .h1 a:link
-.text-content .h2 a:link
-.text-content .h3 a:link
-.text-content .h4 a:link
-.text-content .h5 a:link {
+.text-content h1 a:link,
+.text-content h2 a:link,
+.text-content h3 a:link,
+.text-content h4 a:link,
+.text-content h5 a:link {
   color: var(--fg-color);
+}
+
+.anchor-marker {
+  display: none;
+}
+
+a:hover .anchor-marker {
+  position: absolute;
+  left: -1.5rem;
+  display: block;
 }
 
 .text-content .h1 {
@@ -581,7 +600,7 @@ body .text-content :last-child {
 }
 
 @media only screen and (orientation : landscape) {
-  code, .code, .codehilite {
+  .codehilite {
     font-size: 0.6rem;
   }
 }
@@ -597,7 +616,7 @@ body .text-content :last-child {
   .h3 {font-size: 2rem;}
   .h4 {font-size: 1.5rem;}
   .h5 {font-size: 1.25rem; }
-  code, .code, .codehilite {font-size: 0.7rem;}
+  .codehilite {font-size: 0.7rem;}
   .section .content {padding: 2rem 40px;}
   div.hide-mobile {display: block;}
   span.hide-mobile {display: inline;}
@@ -605,7 +624,7 @@ body .text-content :last-child {
   .header-content {
     display: flex;
     margin-top: 0;
-    padding: 10px 20px;
+    padding: 30px 20px;
   }
 
   .logo {align-items: center;}
@@ -669,7 +688,7 @@ body .text-content :last-child {
   .h2 {font-size: 3rem; line-height: 1.1;}
 
   .codehilite code {padding: 28px;}
-  code, .code, .codehilite {font-size: 0.9rem; line-height: 1.3;}
+  .codehilite {font-size: 0.9rem; line-height: 1.3;}
 
   .centered {padding: 3rem 0; text-align: center;}
 

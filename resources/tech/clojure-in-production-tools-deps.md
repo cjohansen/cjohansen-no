@@ -154,9 +154,8 @@ concepts to understand, no runtime component, and starts quickly.
 
 --------------------------------------------------------------------------------
 :type :section
-:theme :dark-1
+:theme :light1
 :body
-<a id="alternatives"></a>
 ## Alternatives
 
 There are several alternatives around for packaging Clojure apps. One of the

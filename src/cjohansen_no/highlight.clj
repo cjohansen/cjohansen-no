@@ -1,8 +1,10 @@
-rin(ns cjohansen-no.highlight
+(ns cjohansen-no.highlight
   (:require [clojure.java.io :as io]
             [clygments.core :as pygments]
             [net.cgrand.enlive-html :as enlive]
-            [clojure.string :as str]))
+            [cjohansen-no.html-walker :as html-walker]
+            [clojure.string :as str]
+            [dumdom.string :as dumdom]))
 
 (defn- extract-code
   [highlighted]
@@ -35,13 +37,38 @@ rin(ns cjohansen-no.highlight
         (assoc-in [:attrs :class] "codehilite"))
     node))
 
+(def norwegian-char-replacements
+  {"æ" "e"
+   "ø" "o"
+   "å" "a"
+   "Æ" "E"
+   "Ø" "O"
+   "Å" "A"})
+
+(defn to-id-str [str]
+  (-> (str/lower-case str)
+      (str/replace #"[æøåÆØÅ]" norwegian-char-replacements)
+      (str/replace #"[^a-zA-Z0-9]+" "-")
+      (str/replace #"-$" "")
+      (str/replace #"^-" "")))
+
+(defn- add-anchor [node]
+  (when-not (= "a" (.getNodeName (first (.getChildNodes node))))
+    (let [id-str (to-id-str (.getTextContent node))]
+      (.setInnerHTML
+       node
+       (dumdom/render
+        [:a.anchor-link {:id id-str :href (str "#" id-str)}
+         [:span.anchor-marker "¶"]
+         (.getInnerHTML node)])))))
+
 (defn highlight-code-blocks [page]
   (if (string? page)
-    (enlive/sniptest page
-                     [:pre] try-highlight
-                     ;;[:pre :code] highlight
-                     ;;[:pre :code] #(assoc-in % [:attrs :class] "codehilite")
-                     )
+    (-> (enlive/sniptest page [:pre] try-highlight)
+        (html-walker/replace
+         {[:h2] add-anchor
+          [:h3] add-anchor
+          [:h4] add-anchor}))
     page))
 
 (comment
