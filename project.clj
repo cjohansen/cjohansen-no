@@ -11,7 +11,6 @@
                  [ring "1.6.1"]
                  [hiccup "1.0.5"]
                  [me.raynes/cegdown "0.1.1"]
-                 [enlive "1.1.6"]
                  [clygments "1.0.0"]
                  [optimus "0.19.3"]
                  [cjohansen/dumdom "2019.09.16"]

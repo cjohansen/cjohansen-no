@@ -1,10 +1,8 @@
 (ns cjohansen-no.html
-  (:require [hiccup.page :refer [html5]]
+  (:require [clojure.string :as str]
             [dumdom.string :as dumdom]
-            [net.cgrand.enlive-html :as enlive]
-            [optimus.link :as link]
-            [clojure.string :as str]
-            [ui.elements :as e]))
+            [hiccup.page :refer [html5]]
+            [optimus.link :as link]))
 
 (def pegdown-options ;; https://github.com/sirthias/pegdown
   [:autolinks :fenced-code-blocks :strikethrough])
@@ -27,14 +25,7 @@
       [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
       [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
       [:meta {:name "author" :content "Christian Johansen"}]
-      [:title (or (:page-title opt)
-                  (-> page
-                      java.io.StringReader.
-                      enlive/html-resource
-                      (enlive/select [:h1])
-                      first
-                      :content)
-                  "Tech blog")]
+      [:title (or (:page-title opt) "Tech blog")]
       [:link {:rel "stylesheet" :href (link/file-path request "/styles/main.css")}]]
      [:body
       [:div.banner.masthead.main-content.vs-s
@@ -102,14 +93,8 @@
       (when-let [image (:open-graph/image page)]
         [:meta {:property "og:image" :content (str (get-in request [:headers "host"]) (:image/url image))}])
 
-      [:title (or (:page-title page)
-                  (-> page
-                      java.io.StringReader.
-                      enlive/html-resource
-                      (enlive/select [:h1])
-                      first
-                      :content)
-                  "Tech blog")]
+      [:title (or (:page-title page) "Tech blog")]
+      [:link {:rel "stylesheet" :href "https://fonts.googleapis.com/css?family=Lato|Source+Sans+Pro|Source+Code+Pro|Source+Serif+Pro&display=swap"}]
       [:link {:rel "stylesheet" :href (link/file-path request "/css/cjohansen.css")}]]
      [:body
       (:body page)]])))

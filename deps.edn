@@ -6,7 +6,6 @@
         ch.digitalfondue.jfiveparse/jfiveparse {:mvn/version "0.6.0"}
         cjohansen/dumdom {:mvn/version "2019.09.16"}
         clygments {:mvn/version "2.0.0"}
-        enlive {:mvn/version "1.1.6"} ;; TODO: Remove
         hiccup {:mvn/version "1.0.5"} ;; TODO: Remove
         mapdown {:mvn/version "0.2.1"}
         me.raynes/cegdown {:mvn/version "0.1.1"}

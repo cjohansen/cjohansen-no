@@ -1,7 +1,6 @@
 (ns cjohansen-no.web-test
   (:require [cjohansen-no.web :as web]
-            [clojure.test :refer [testing is]]
-            [net.cgrand.enlive-html :as enlive]))
+            [clojure.test :refer [testing is]]))
 
 ;; (testing "All pages respond with 200 OK"
 ;;   (doseq [url (keys (web/get-pages))]

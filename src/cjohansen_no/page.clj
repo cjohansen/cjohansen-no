@@ -1,41 +1,35 @@
-(ns cjohansen-no.highlight
-  (:require [clojure.java.io :as io]
-            [clygments.core :as pygments]
-            [net.cgrand.enlive-html :as enlive]
-            [cjohansen-no.html-walker :as html-walker]
+(ns cjohansen-no.page
+  (:require [cjohansen-no.html-walker :as html-walker]
+            [clojure.java.io :as io]
             [clojure.string :as str]
+            [clygments.core :as pygments]
             [dumdom.string :as dumdom]))
 
-(defn- extract-code
-  [highlighted]
-  (-> highlighted
-      java.io.StringReader.
-      enlive/html-resource
-      (enlive/select [:pre])
-      first
-      :content))
+(defn- extract-code [highlighted]
+  (.getInnerHTML (first (html-walker/find highlighted [:pre]))))
 
-(defn highlight [node]
-  (let [code (->> node :content (apply str) str/trim)
-        lang (->> node :attrs :class keyword)
-        pygments-info (->> node :attrs :data-pygments)]
-    (if (= pygments-info "ignore")
-      node
-      (try
-        (assoc node :content (-> code
-                                 (pygments/highlight lang :html)
-                                 extract-code))
-        (catch Throwable e
-          (println (format "Failed to highlight %s code snippet!" lang))
-          (println code))))))
+(defn highlight [^ch.digitalfondue.jfiveparse.Node node]
+  (let [lang (some-> node (.getAttribute "class") not-empty keyword)
+        pygments-info (some-> node (.getAttribute "data-pygments"))
+        code (cond-> (.getInnerHTML node)
+               (= :html lang) (-> (str/replace "&lt;" "<")
+                                  (str/replace "&gt;" ">")))]
+    ;; Certain code samples (like a 14Kb HTML string embedded in JSON) trips up
+    ;; Pygments (too much recursion). When that happens, skip highlighting
+    (try
+      (.setInnerHTML node
+                     (-> code
+                         (pygments/highlight (or lang "text") :html)
+                         (extract-code)))
+      (catch Exception _))))
 
-(defn try-highlight [node]
-  (if (and (= 1 (count (:content node)))
-           (= :code (-> node :content first :tag)))
-    (-> node
-        (update-in [:content 0] highlight)
-        (assoc-in [:attrs :class] "codehilite"))
-    node))
+(def skip-pygments?
+  (= (System/getProperty "kodemaker.skip.pygments") "true"))
+
+(defn maybe-highlight [^ch.digitalfondue.jfiveparse.Node node]
+  (when-not (or skip-pygments? (= "ignore" (some-> node (.getAttribute "data-pygments"))))
+    (highlight (.getFirstChild node))
+    (.setAttribute node "class" "codehilite")))
 
 (def norwegian-char-replacements
   {"æ" "e"
@@ -62,13 +56,14 @@
          [:span.anchor-marker "¶"]
          (.getInnerHTML node)])))))
 
-(defn highlight-code-blocks [page]
+(defn finalize-page [page]
   (if (string? page)
-    (-> (enlive/sniptest page [:pre] try-highlight)
-        (html-walker/replace
-         {[:h2] add-anchor
-          [:h3] add-anchor
-          [:h4] add-anchor}))
+    (html-walker/replace
+     page
+     {[:pre] maybe-highlight
+      [:h2] add-anchor
+      [:h3] add-anchor
+      [:h4] add-anchor})
     page))
 
 (comment

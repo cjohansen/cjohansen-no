@@ -1,8 +1,8 @@
 (ns cjohansen-no.web
   (:require [cjohansen-no.fermentations :as fermentations]
-            [cjohansen-no.highlight :refer [highlight-code-blocks]]
             [cjohansen-no.html :as html]
             [cjohansen-no.ingest :as ingest]
+            [cjohansen-no.page :as page]
             [cjohansen-no.tech-blog :as tech]
             [clojure.java.io :as io]
             [clojure.string :as str]
@@ -64,7 +64,7 @@
 
 (defn prepare-page [page req]
   (-> (if (string? page) page (page req))
-      highlight-code-blocks))
+      page/finalize-page))
 
 (defn prepare-pages [pages]
   (zipmap (keys pages)

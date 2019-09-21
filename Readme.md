@@ -5,7 +5,6 @@ Clojure and these libraries:
 
 * [Stasis](http://github.com/magnars/stasis)
 * [Optimus](http://github.com/magnars/optimus)
-* [enlive](https://github.com/cgrand/enlive)
 * [hiccup](https://github.com/weavejester/hiccup)
 * [cegdown](https://github.com/Raynes/cegdown)
 * [clygments](https://github.com/bfontaine/clygments)
