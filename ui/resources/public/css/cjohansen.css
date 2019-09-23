@@ -201,6 +201,12 @@ p code {
   padding: 2px 3px;
 }
 
+.theme-light1 li code,
+.theme-light1 p code {
+  background: transparent;
+  padding: 0;
+}
+
 .hide-mobile {display: none;}
 
 .subtle {
