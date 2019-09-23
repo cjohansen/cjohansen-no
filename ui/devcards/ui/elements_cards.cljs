@@ -88,14 +88,27 @@
     {:amount "3 g" :percent "0.3%" :title "Yeast"}]))
 
 (defcard byline
-  (e/byline
-   {:title "Variations on Flour Water Salt Yeast 50% Whole Wheat"
-    :date "September 01 2019"
-    :tags [{:title "Flax" :url "/tags/flax"}
-           {:title "Bread" :url "/tags/bread"}
-           {:title "Sesame" :url "/tags/sesame"}
-           {:title "Whole wheat" :url "/tags/whole-wheat"}
-           {:title "FWSY" :url "/tags/fwsy"}]}))
+  [:div
+   (e/h2 {} "Variations on Flour Water Salt Yeast 50% Whole Wheat")
+   (e/byline
+    {:published "September 01 2019"
+     :tags [{:title "Flax" :url "/tags/flax"}
+            {:title "Bread" :url "/tags/bread"}
+            {:title "Sesame" :url "/tags/sesame"}
+            {:title "Whole wheat" :url "/tags/whole-wheat"}
+            {:title "FWSY" :url "/tags/fwsy"}]})])
+
+(defcard byline-updated
+  [:div
+   (e/h2 {} "Variations on Flour Water Salt Yeast 50% Whole Wheat")
+   (e/byline
+    {:published "September 1st"
+     :updated "September 3rd 2019"
+     :tags [{:title "Flax" :url "/tags/flax"}
+            {:title "Bread" :url "/tags/bread"}
+            {:title "Sesame" :url "/tags/sesame"}
+            {:title "Whole wheat" :url "/tags/whole-wheat"}
+            {:title "FWSY" :url "/tags/fwsy"}]})])
 
 (defcard image-with-legend-red
   [:div {:style {:display "grid"

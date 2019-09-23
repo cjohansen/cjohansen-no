@@ -13,7 +13,19 @@
 (def h4 (partial el :h4))
 (def h5 (partial el :h5))
 
-(defn section [{:keys [title sub-title content class media]}]
+(defn byline [{:keys [published updated tags]}]
+  [:p.byline
+   (cond
+     (and published updated)
+     [:span.date (str updated " (published " published ")")]
+
+     published [:span.date published])
+   (when tags
+     [:span.subtle (->> (for [{:keys [title url]} tags]
+                          [:a {:href url} title])
+                        (interpose ", "))])])
+
+(defn section [{:keys [title sub-title content class media meta] :as props}]
   [:div.section {:className class}
    [:div.content
     (when media
@@ -21,8 +33,14 @@
        media])
     [:div.section-content.text-content
      (when title (h1 {} title))
+     (when (:byline props) (byline (:byline props)))
      (when sub-title (h2 {} sub-title))
-     (when content content)]]])
+     (when content content)
+     (when (or (:published meta) (:updated meta))
+       [:p.subtle.text-s
+        (if (and (:published meta) (:updated meta))
+          (format "Published %s, updated %s" (:published meta) (:updated meta))
+          (format "Published %s" (:published meta)))])]]])
 
 (defn centered [params]
   (section (assoc params :class "centered")))
@@ -71,16 +89,6 @@
       [:td amount]
       [:td [:strong percent]]
       ])])
-
-(defn byline [{:keys [title date tags]}]
-  [:div
-   [:h2 title]
-   [:p.byline
-    [:span.date date]
-    (when tags
-      [:span.subtle (->> (for [{:keys [title url]} tags]
-                           [:a {:href url} title])
-                         (interpose ", "))])]])
 
 (defn captioned [{:keys [content caption class]}]
   [:div.captioned {:className class}
