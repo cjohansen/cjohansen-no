@@ -2,7 +2,7 @@
   (:require [cjohansen-no.html :as html]
             [clojure.java.io :as io]
             [clojure.string :as str]
-            [hiccup.core :as hiccup]
+            [dumdom.string :as dumdom]
             [mapdown.core :as mapdown]
             [me.raynes.cegdown :as md]))
 
@@ -29,7 +29,7 @@
   (str/join " " (str/split (str/capitalize (name tag)) #"-")))
 
 (defn byline [{:keys [published tags]}]
-  (hiccup/html
+  (dumdom/render
    [:p {:style (html/styles
                 {:color "#999"
                  :margin-top "-15px"})}

@@ -1,7 +1,6 @@
 (ns cjohansen-no.html
   (:require [clojure.string :as str]
             [dumdom.string :as dumdom]
-            [hiccup.page :refer [html5]]
             [optimus.link :as link]))
 
 (def pegdown-options ;; https://github.com/sirthias/pegdown
@@ -14,6 +13,9 @@
   (->> attrs
        (map (fn [[k v]] (str (name k) ": " v)))
        (str/join ";")))
+
+(defn html5 [& args]
+  (str "<!DOCTYPE html>" (dumdom/render [:html args])))
 
 (defn layout-page [request page & [opt]]
   (let [ferm-active? (str/starts-with? (:uri request) "/fermentations")]
@@ -75,26 +77,23 @@
       [:script "var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-20457026-1']);_gaq.push(['_trackPageview']);(function(b){var c=b.createElement('script');c.type='text/javascript';c.async=true;c.src='http://www.google-analytics.com/ga.js';var a=b.getElementsByTagName('script')[0];a.parentNode.insertBefore(c,a)})(document);"]])))
 
 (defn layout-page-new [request page]
-  (str
-   "<!DOCTYPE html>"
-   (dumdom/render
-    [:html
-     [:head
-      [:meta {:charset "utf-8"}]
-      [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
-      [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
-      [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
-      [:meta {:name "author" :content "Christian Johansen"}]
+  (html5
+   [:head
+    [:meta {:charset "utf-8"}]
+    [:meta {:name "viewport" :content "width=device-width, initial-scale=1.0"}]
+    [:meta {:http-equiv "X-UA-Compatible" :content "chrome=1"}]
+    [:meta {:http-equiv "X-UA-Compatible" :content "edge"}]
+    [:meta {:name "author" :content "Christian Johansen"}]
 
-      (when-let [title (:open-graph/title page)]
-        [:meta {:property "og:title" :content title}])
-      [:meta {:property "og:title" :content (or (:open-graph/type page) "article")}]
-      [:meta {:property "og:url" :content (str (get-in request [:headers "host"]) (:uri request))}]
-      (when-let [image (:open-graph/image page)]
-        [:meta {:property "og:image" :content (str (get-in request [:headers "host"]) (:image/url image))}])
+    (when-let [title (:open-graph/title page)]
+      [:meta {:property "og:title" :content title}])
+    [:meta {:property "og:title" :content (or (:open-graph/type page) "article")}]
+    [:meta {:property "og:url" :content (str (get-in request [:headers "host"]) (:uri request))}]
+    (when-let [image (:open-graph/image page)]
+      [:meta {:property "og:image" :content (str (get-in request [:headers "host"]) (:image/url image))}])
 
-      [:title (or (:page-title page) "Tech blog")]
-      [:link {:rel "stylesheet" :href "https://fonts.googleapis.com/css?family=Lato|Source+Sans+Pro|Source+Code+Pro|Source+Serif+Pro&display=swap"}]
-      [:link {:rel "stylesheet" :href (link/file-path request "/css/cjohansen.css")}]]
-     [:body
-      (:body page)]])))
+    [:title (or (:page-title page) "Tech blog")]
+    [:link {:rel "stylesheet" :href "https://fonts.googleapis.com/css?family=Lato|Source+Sans+Pro|Source+Code+Pro|Source+Serif+Pro&display=swap"}]
+    [:link {:rel "stylesheet" :href (link/file-path request "/css/cjohansen.css")}]]
+   [:body
+    (:body page)]))

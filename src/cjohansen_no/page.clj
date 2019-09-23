@@ -82,8 +82,6 @@
   (highlight-code-blocks
    (slurp (clojure.java.io/file "/tmp/stuff.html")))
 
-  (require '[hiccup-bridge.core :as hicv])
-
   (-> "(defproject cjohansen-no \"0.1.0-SNAPSHOT\"
   :description \"cjohansen.no source code\"
   :url \"http://cjohansen.no\"
@@ -103,6 +101,5 @@ cd cjohansen-no"
 
   (-> (slurp (clojure.java.io/file "/Users/christian/projects/hafslund/consumptor/recipients.js"))
       (pygments/highlight :js :html)
-      ;;hicv/html->hiccup
       prn)
   )
