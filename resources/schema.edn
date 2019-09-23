@@ -5,6 +5,11 @@
   :db/cardinality :db.cardinality/one}
 
  ;; Sections
+ {:db/ident :section/id
+  :db/valueType :db.type/string
+  :db/unique :db.unique/identity
+  :db/cardinality :db.cardinality/one}
+
  {:db/ident :section/number
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one}
@@ -32,6 +37,15 @@
  {:db/ident :section/theme
   :db/valueType :db.type/keyword
   :db/cardinality :db.cardinality/one}
+
+ {:db/ident :section/time
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :section/ingredients
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many
+  :db/isComponent true}
 
  ;; Language
  {:db/ident :i18n/locale
@@ -94,4 +108,53 @@
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many}
+
+ ;; Ingredients
+ {:db/ident :ingredient/type
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :ingredient/name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ ;; Recipe step ingredient
+ {:db/ident :step-ingredient/ingredient
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :step-ingredient/amount
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :step-ingredient/temperature
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ ;; Bread recipes
+ {:db/ident :bread/title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :bread/description
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :bread/published
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :bread/updated
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :bread/image
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :bread/sections
+  :db/valueType :db.type/ref
+  :db/isComponent true
+  :db/cardinality :db.cardinality/many}
+
  ]

@@ -1,0 +1,65 @@
+[{:db/ident :fine-whole-wheat
+  :ingredient/type :flour
+  :ingredient/name "Fine whole wheat flour"}
+ {:db/ident :coarse-whole-wheat
+  :ingredient/type :flour
+  :ingredient/name "Coarse whole wheat flour"}
+ {:db/ident :white-wheat
+  :ingredient/type :flour
+  :ingredient/name "White wheat flour"}
+ {:db/ident :white-rye
+  :ingredient/type :flour
+  :ingredient/name "White rye flour"}
+ {:db/ident :coarse-whole-rye
+  :ingredient/type :flour
+  :ingredient/name "Coarse whole rye flour"}
+ {:db/ident :water
+  :ingredient/type :liquid
+  :ingredient/name "Water"}
+ {:db/ident :milk
+  :ingredient/type :liquid
+  :ingredient/name "Milk"}
+ {:db/ident :salt
+  :ingredient/name "Salt"}
+ {:db/ident :yeast
+  :ingredient/type :leven
+  :ingredient/name "Yeast"}
+ {:db/ident :sugar
+  :ingredient/type :sugar
+  :ingredient/name "Sugar"}
+ {:db/ident :neutral-oil
+  :ingredient/type :fat
+  :ingredient/name "Neutral oil"}
+ {:db/ident :butter
+  :ingredient/type :fat
+  :ingredient/name "Butter"}
+ {:db/ident :honey
+  :ingredient/type :sugar
+  :ingredient/name "Honey"}
+ {:db/ident :malt-syrup
+  :ingredient/type :sugar
+  :ingredient/name "Malt syrup"}
+ {:db/ident :flaked-oats
+  :ingredient/type :grain
+  :ingredient/name "Flaked oats"}
+ {:db/ident :flaked-rye
+  :ingredient/type :grain
+  :ingredient/name "Flaked rye"}
+ {:db/ident :flaked-wheat
+  :ingredient/type :grain
+  :ingredient/name "Flaked wheat"}
+ {:db/ident :whole-wheat
+  :ingredient/type :grain
+  :ingredient/name "Whole wheat"}
+ {:db/ident :sunflower
+  :ingredient/type :seed
+  :ingredient/name "Sunflower seeds"}
+ {:db/ident :flax
+  :ingredient/type :seed
+  :ingredient/name "Flax seeds"}
+ {:db/ident :poppy
+  :ingredient/type :seed
+  :ingredient/name "Poppy seeds"}
+ {:db/ident :sesame
+  :ingredient/type :seed
+  :ingredient/name "Sesame seeds"}]
