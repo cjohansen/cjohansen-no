@@ -195,6 +195,7 @@ a:hover, .clickable:hover {
   font-size: 1.2rem;
 }
 
+li code,
 p code {
   background: var(--code-bg);
   padding: 2px 3px;
