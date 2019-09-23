@@ -43,7 +43,7 @@ exists before putting files in it.
 
 --------------------------------------------------------------------------------
 :type :section
-:theme :light-1
+:theme :light1
 :body
 `deps.edn`:
 
@@ -116,10 +116,8 @@ containers:
                 -Xms128m
                 -Xmx128m"
 ```
---------------------------------------------------------------------------------
-:type :section
-:sub-title Tying it all together
-:body
+
+## Tying it all together
 
 We use a `Makefile` to tie everything together, so we can do things like:
 
