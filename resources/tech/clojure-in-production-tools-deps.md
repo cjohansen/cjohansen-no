@@ -1,10 +1,10 @@
 --------------------------------------------------------------------------------
 :type :meta
 :title Clojure in Production with tools.deps
-:published 2019-04-14T12:00:00
+:published #time/ldt "2019-04-14T12:00"
+:updated #time/ldt "2019-08-16T12:00"
 :tags [:clojure :tools.deps]
-:image {:url "/images/stasis.svg" :alt "Stasis Logo"}
-:description An lean and fast setup for packaging Clojure applications for production using tools.deps
+:description A lean and fast setup for packaging Clojure applications for production using tools.deps
 --------------------------------------------------------------------------------
 :type :section
 :section-type :centered
