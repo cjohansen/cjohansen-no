@@ -270,8 +270,8 @@ p code {
 .header-content {
   align-items: center;
   justify-content: space-between;
-  padding: 0 10px 10px;
-  margin: 30px auto 0;
+  padding: 40px 10px;
+  margin: 0 auto;
   max-width: 1100px;
 }
 
