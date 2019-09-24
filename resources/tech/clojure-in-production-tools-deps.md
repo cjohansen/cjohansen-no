@@ -1,4 +1,16 @@
-# Clojure in Production with tools.deps
+--------------------------------------------------------------------------------
+:type :meta
+:title Clojure in Production with tools.deps
+:published #time/ldt "2019-04-14T12:00"
+:updated #time/ldt "2019-08-16T12:00"
+:tags [:clojure :tools.deps]
+:description A lean and fast setup for packaging Clojure applications for production using tools.deps
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Clojure in Production with tools.deps
+:body
 
 In this post I'll show you how my project is packaging and running Clojure apps
 in production, using [`tools.deps`](https://github.com/clojure/tools.deps.alpha)
@@ -6,6 +18,9 @@ as a build tool. Credit where credit's due: my awesome colleague [Alf Kristian
 Støyle](https://www.kodemaker.no/alf-kristian) did the heavy lifting on this
 setup.
 
+--------------------------------------------------------------------------------
+:type :section
+:body
 Our setup at a glance:
 
 - Use `tools.deps` to manage dependencies and build class paths
@@ -26,6 +41,10 @@ classpath, we also use Badigeon's AOT compiler, which is a thin wrapper over
 Clojure's that provides a few niceties like ensuring that the target directory
 exists before putting files in it.
 
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:body
 `deps.edn`:
 
 ```clj
@@ -53,6 +72,9 @@ exists before putting files in it.
   (c/compile 'our-app.core {:compile-path "target/classes"}))
 ```
 
+--------------------------------------------------------------------------------
+:type :section
+:body
 Now you can stage classes and jars like this:
 
 ```sh
@@ -95,7 +117,7 @@ containers:
                 -Xmx128m"
 ```
 
-### Tying it all together
+## Tying it all together
 
 We use a `Makefile` to tie everything together, so we can do things like:
 
@@ -128,7 +150,10 @@ clean:
 This is a very straight-forward approach that uses little tooling, has few
 concepts to understand, no runtime component, and starts quickly.
 
-<a id="alternatives"></a>
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:body
 ## Alternatives
 
 There are several alternatives around for packaging Clojure apps. One of the
