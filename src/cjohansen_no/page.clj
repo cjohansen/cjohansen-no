@@ -11,9 +11,9 @@
 (defn highlight [^ch.digitalfondue.jfiveparse.Node node]
   (let [lang (some-> node (.getAttribute "class") not-empty keyword)
         pygments-info (some-> node (.getAttribute "data-pygments"))
-        code (cond-> (.getInnerHTML node)
-               (= :html lang) (-> (str/replace "&lt;" "<")
-                                  (str/replace "&gt;" ">")))]
+        code (-> (.getInnerHTML node)
+                 (str/replace "&lt;" "<")
+                 (str/replace "&gt;" ">"))]
     ;; Certain code samples (like a 14Kb HTML string embedded in JSON) trips up
     ;; Pygments (too much recursion). When that happens, skip highlighting
     (try
