@@ -13,9 +13,9 @@
 :body
 
 On the rare occasions that I hit "shuffle" in music players like Spotify, I
-don't really want to completely randomize a playlist. In fact, what I want isn't
-very random at all. More than anything, my intention is "please play these songs
-with as much track-to-track variation as possible".
+don't really want complete randomization. In fact, what I want isn't very random
+at all. More than anything, my intention is "please play these songs with as
+much track-to-track variation as possible".
 
 --------------------------------------------------------------------------------
 :type :section

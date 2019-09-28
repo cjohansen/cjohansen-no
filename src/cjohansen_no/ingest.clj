@@ -5,16 +5,11 @@
             [clojure.string :as str]
             [datomic.api :as d]
             [java-time-literals.core :as time]
-            [mapdown.core :as md])
+            [mapdown.core :as md]
+            [stasis.core :as stasis])
   (:import [java.time LocalDateTime ZoneId]))
 
 ::time/keep
-
-(defn db-conn []
-  (d/create-database "datomic:mem://blog")
-  (let [conn (d/connect "datomic:mem://blog")]
-    (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
-    conn))
 
 (defn ->image-map [image]
   (cond
@@ -153,11 +148,29 @@
 (defn tag-txes [content]
   (map (fn [[k v]] {:db/ident k, :tag/name v}) content))
 
+(defn slurp-tech-posts []
+  (->> (stasis/slurp-directory (io/resource "tech") #"\.md$")
+       (mapcat (fn [[file-name content]] (tech-post-txes (str "tech" file-name) content)))))
+
+(defn db-conn []
+  (d/create-database "datomic:mem://blog")
+  (let [conn (d/connect "datomic:mem://blog")]
+    (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
+    conn))
+
+(defn ingest-everything []
+  [(tag-txes (read-string (slurp (io/resource "tags.edn"))))
+   (read-string (slurp (io/resource "ingredients.edn")))
+   (slurp-tech-posts)])
+
 (comment
   (d/delete-database "datomic:mem://blog")
   (d/create-database "datomic:mem://blog")
   (def conn (d/connect "datomic:mem://blog"))
   (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
+
+  (->> (stasis/slurp-directory (io/resource "tech") #"\.md$")
+       (mapcat (fn [[file-name content]] (tech-post-txes (str "tech" file-name) content))))
 
   (d/transact conn (tag-txes (read-string (slurp (io/resource "tags.edn")))))
   (d/transact conn (read-string (slurp (io/resource "ingredients.edn"))))

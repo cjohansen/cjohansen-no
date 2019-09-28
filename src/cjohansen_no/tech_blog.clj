@@ -14,6 +14,14 @@
             db)
        (map #(d/entity db (first %)))))
 
+(defn find-by-url [db url]
+  (->> (d/q '[:find ?e .
+              :in $ ?url
+              :where
+              [?e :browsable/url ?url]]
+            db url)
+       (d/entity db)))
+
 (defmulti post-section (fn [section] (or (:section/type section) :section)))
 
 (defmethod post-section :default [{:section/keys [body title sub-title theme type] :as opt}]
@@ -63,12 +71,15 @@
                (map post-section))
           (e/footer)]})
 
-(defn render-page [post]
-  (fn [req]
-    (html/layout-page-new req (tech-blog-page post))))
+(defn render-page [req post]
+  (html/layout-page-new req (tech-blog-page post)))
 
 (comment
   (def conn (d/connect "datomic:mem://blog"))
+
+  (load-posts (d/db conn))
+
+
   (let [db (d/db conn)]
     (->> (d/q '[:find ?e
                 :in $

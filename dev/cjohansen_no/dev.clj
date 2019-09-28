@@ -7,7 +7,7 @@
 
 (defstate server
   :start (jetty/run-jetty
-          (-> #'web/app
+          (-> (web/app-handler)
               prone/wrap-exceptions)
           {:port 3030
            :join? false})

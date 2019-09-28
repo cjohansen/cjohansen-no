@@ -1,13 +1,9 @@
 (ns cjohansen-no.web
-  (:require [cjohansen-no.fermentations :as fermentations]
-            [cjohansen-no.html :as html]
-            [cjohansen-no.ingest :as ingest]
+  (:require [cjohansen-no.ingest :as ingest]
             [cjohansen-no.page :as page]
             [cjohansen-no.tech-blog :as tech]
-            [clojure.java.io :as io]
             [clojure.string :as str]
             [datomic.api :as d]
-            [me.raynes.cegdown :as md]
             [optimus.assets :as assets]
             optimus.export
             [optimus.optimizations :as optimizations]
@@ -36,10 +32,17 @@
                                 #".*\.ico$"
                                 #".*\.js$"]))
 
+(defn ingest-and-render-tech [conn post req]
+  (let [url (str/replace (:uri req) #"\/index\.html$" "/")
+        path (str "tech" (str/replace url #"/$" ".md"))]
+    (d/transact conn [[:db/retractEntity (:db/id post)]])
+    (d/transact conn (ingest/tech-post-txes path))
+    (tech/render-page req (tech/find-by-url (d/db conn) url))))
+
 (defn tech-pages [conn]
   (let [posts (tech/load-posts (d/db conn))]
     (zipmap (map :browsable/url posts)
-            (map tech/render-page posts))))
+            (map #(fn [req] (ingest-and-render-tech conn % req)) posts))))
 
 (defn get-raw-pages []
   (let [conn (ingest/db-conn)]
@@ -58,15 +61,30 @@
 (defn get-pages []
   (prepare-pages (get-raw-pages)))
 
-(def app (-> (stasis/serve-pages get-pages)
-             (optimus/wrap get-assets optimizations/none serve-live-assets)
-             wrap-content-type
-             wrap-utf-8))
+(defn index [conn]
+  (let [txes (ingest/ingest-everything)]
+    (println "Ingesting" (count (into [] cat txes)) "txes")
+    (doseq [tx-data txes]
+      (d/transact conn tx-data))))
+
+(defn app-handler []
+  (let [conn (ingest/db-conn)]
+    (index conn)
+    (-> (stasis/serve-pages get-pages)
+        (optimus/wrap get-assets optimizations/none serve-live-assets)
+        wrap-content-type
+        wrap-utf-8)))
 
 (def export-dir "build")
 
 (defn export []
   (let [assets (optimizations/all (get-assets) {})]
+    (index (ingest/db-conn))
     (stasis/empty-directory! export-dir)
     (optimus.export/save-assets assets export-dir)
     (stasis/export-pages (get-pages) export-dir {:optimus-assets assets})))
+
+(comment
+  (index (ingest/db-conn))
+  (tech/load-posts (d/db (ingest/db-conn)))
+)
