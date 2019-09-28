@@ -1,4 +1,19 @@
-# Clojure to die for
+--------------------------------------------------------------------------------
+:type :meta
+:title Clojure to die for
+:published #time/ldt "2014-03-11T12:00"
+:tags [:clojure]
+:description
+
+A selection of the details that makes Clojure such an enjoyable language to work
+with.
+
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Clojure to die for
+:body
 
 There are many reasons to love [Clojure](http://clojure.org);
 [homoiconicity](http://en.wikipedia.org/wiki/Homoiconicity),
@@ -7,8 +22,10 @@ There are many reasons to love [Clojure](http://clojure.org);
 to focus on a few "details" in the language that really puts the icing on the
 cake, and clears up many common situations for me.
 
-## Map access
-<a name="maps"></a>
+--------------------------------------------------------------------------------
+:type :section
+:title Map access
+:body
 
 In Clojure, you can access map entries in a number of useful ways. First, a map
 can be called as a function with a key as the only argument. It will return the

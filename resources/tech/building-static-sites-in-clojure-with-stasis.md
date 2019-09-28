@@ -1,4 +1,19 @@
-# Building static sites in Clojure with Stasis
+--------------------------------------------------------------------------------
+:type :meta
+:title Building static sites in Clojure with Stasis
+:published #time/ldt "2014-03-10T12:00"
+:tags [:clojure]
+:description
+
+An in-depth code-along guide to building static web sites powered by the Stasis
+library.
+
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Building static sites in Clojure with Stasis
+:body
 
 [Stasis](https://github.com/magnars/stasis) is a static site toolkit for
 Clojure. Unlike pretty much every other static site generator, though, it is not
@@ -12,6 +27,10 @@ assets, courtesy of [Optimus](https://github.com/magnars/optimus). Both Stasis
 and Optimus are written by my good friend and colleague,
 [Mr. Emacs Wizard](http://emacsrocks.com),
 [Magnar Sveen](https://github.com/magnars).
+
+--------------------------------------------------------------------------------
+:type :section
+:body
 
 The source code for this post can be found
 [on GitHub](https://github.com/cjohansen/cjohansen-no/tree/blog-post). As I plan
@@ -171,8 +190,11 @@ Run the server:
 This will pop up a browser displaying your static HTML file in all its naked
 glory.
 
-## Adding templating
-<a name="templating"></a>
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:title Adding templating
+:body
 
 Next we will add a page that is split between the content/body of the page and
 the wrapping layout. The layout will be shared by many files, so applying it in
@@ -194,10 +216,11 @@ HTML in a more compact form by using vectors, keywords and maps. It is best
 illustrated with an example. Add Hiccup to project.clj:
 
 ```clj
-:dependencies [[org.clojure/clojure "1.5.1"]
-               [stasis "1.0.0"]
-               [ring "1.2.1"]
-               [hiccup "1.0.5"]] ;; Like so
+{:dependencies [[org.clojure/clojure "1.5.1"]
+                [stasis "1.0.0"]
+                [ring "1.2.1"]
+                [hiccup "1.0.5"]] ;; Like so
+}
 ```
 
 Alter the namespace form in src/cjohansen_no/web.clj to require the
@@ -339,7 +362,11 @@ URL conflicts between :public and :partials: #{"/about/index.html"}
 
 (That last bit is Clojure set notation by the way).
 
-## Writing in markdown
+--------------------------------------------------------------------------------
+:type :section
+:title Writing in markdown
+:body
+
 <a name="markdown"></a>
 
 Partial pages are nice, but being able to write in markdown would be even
@@ -438,7 +465,7 @@ Let's add a
 [fenced code block](https://help.github.com/articles/github-flavored-markdown#fenced-code-blocks)
 to our markdown file:
 
-```text
+<pre class="codehilite"><code>
 # My first post
 
 It's pretty short for now. Here's our project.clj:
@@ -457,6 +484,7 @@ It's pretty short for now. Here's our project.clj:
   :ring {:handler cjohansen-no.web/app}
   :profiles {:dev {:plugins [[lein-ring "0.8.10"]]}})
 ```
+</code></pre>
 
 In order for this work, we need to inform `cegdown` that we want to
 enable the fenced code blocks extension. While we're at it, we'll enable a

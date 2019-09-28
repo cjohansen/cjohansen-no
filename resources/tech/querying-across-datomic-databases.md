@@ -1,11 +1,25 @@
-# Querying across Datomic databases
+--------------------------------------------------------------------------------
+:type :meta
+:title Querying across Datomic databases
+:published #time/ldt "2017-06-17T12:00"
+:updated #time/ldt "2019-03-27T12:00"
+:tags [:clojure :datomic]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Querying across Datomic databases
+:body
 
 Among its many, many unique and interesting features, [Datomic](http://www.datomic.com/)
 supports [datalog](http://docs.datomic.com/query.html) queries across multiple
 databases. I recently had a chance to actually use this feature, and thought I'd
 share an actual example of it.
 
-## Tracking recent activity
+--------------------------------------------------------------------------------
+:type :section
+:title Tracking recent activity
+:body
 
 In our app, people can make booking requests to venues by posting a form with
 some data, including their email address. For ease of use, there is no need to
@@ -110,8 +124,5 @@ And there you go. A reusable query that can be used to find a user's activity in
 any time duration using database filtering functions like `(d/as-of db time)`
 and `(d/since db time)` (or a combination), and that performs a join across
 databases. Did I mention that I love working with Datomic?
-
-June 17th 2017
-Updated March 27th 2019
 
 [Follow me (@cjno) on Twitter](http://twitter.com/cjno)

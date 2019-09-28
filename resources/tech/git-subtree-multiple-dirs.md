@@ -1,11 +1,24 @@
-# Git Subtree for Multiple Directories
+--------------------------------------------------------------------------------
+:type :meta
+:title Git Subtree for Multiple Directories
+:published #time/ldt "2018-05-03T12:00"
+:tags [:git]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Git Subtree for Multiple Directories
+:body
 
 Your git repository has grown over time, and it's time for parts of it to become
 its own separate repo. Depending on how much you want to extract, you have two
 options: [`git filter-branch`](https://git-scm.com/docs/git-filter-branch) or
 `git subtree split`.
 
-## Extracting a Single Directory
+--------------------------------------------------------------------------------
+:type :section
+:title Extracting a Single Directory
+:body
 
 If you want to extract a single directory as a new Git repository, you're in
 luck: `git subtree split` was made specifically for you. You achieve this in two

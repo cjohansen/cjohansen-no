@@ -1,4 +1,13 @@
-# Idempotent Cloudformation Updates
+--------------------------------------------------------------------------------
+:type :meta
+:title Idempotent Cloudformation Updates
+:published #time/ldt "2017-10-19T12:00"
+:tags [:cloudformation]
+--------------------------------------------------------------------------------
+:type :section
+:theme :dark1
+:title Idempotent Cloudformation Updates
+:body
 
 Having worked a lot with Ansible, I came to
 [Cloudformation](https://aws.amazon.com/cloudformation/) thinking (or at least
@@ -14,7 +23,10 @@ automation on AWS also means you need to lay off point-and-click in the console.
 This is ultimately a good thing (point-and-click is fine for learning,
 automation is good for production). The first two points though, need fixing.
 
-## Disclaimer: Amateur at work
+--------------------------------------------------------------------------------
+:type :section
+:title Disclaimer: Amateur at work
+:body
 
 Let's be clear: I am no Cloudformation expert. Maybe you're reading this and
 thinking that I'm being the [expert

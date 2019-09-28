@@ -1,4 +1,14 @@
-# Processing data with Clojure and Go
+--------------------------------------------------------------------------------
+:type :meta
+:title Processing data with Clojure and Go
+:published #time/ldt "2018-04-20T12:00"
+:tags [:clojure :go :spotify]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Processing data with Clojure and Go
+:body
 
 I recently wrote about [a better playlist shuffle with
 Go](/a-better-playlist-shuffle-with-golang/), where I presented my ideal
@@ -9,7 +19,10 @@ Clojure, compare parts to the Go implementation, and muse a little about the
 difference between these two languages when it comes to data processing
 (performance, typing, etc).
 
-## First index
+--------------------------------------------------------------------------------
+:type :section
+:title First index
+:body
 
 Unlike Go, Clojure has `indexOf` for collections by calling out to the Java
 method:

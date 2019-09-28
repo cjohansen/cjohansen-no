@@ -1,6 +1,15 @@
-# tools.deps, figwheel-main, Devcards, and Emacs
-
-*Published January 18th 2019, last updated June 11th 2019.* [History](https://github.com/cjohansen/cjohansen-no/commits/master/resources/md/tools-deps-figwheel-main-devcards-emacs.md).
+--------------------------------------------------------------------------------
+:type :meta
+:title tools.deps, figwheel-main, Devcards, and Emacs
+:published #time/ldt "2019-01-19T10:00"
+:updated #time/ldt "2019-06-11T12:00"
+:tags [:clojure :clojurescript :figwheel :devcards :emacs]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title tools.deps, figwheel-main, Devcards, and Emacs
+:body
 
 Thanks to [tools.deps](https://github.com/clojure/tools.deps.alpha), setting up
 a ClojureScript project in 2019 can be simpler (in terms of moving pieces) than
@@ -14,6 +23,10 @@ project with [figwheel-main](https://figwheel.org) and
 Emacs/CIDER or from a shell. Towards the end you'll find bonus sections on
 running tests and deploying your ClojureScript project as a
 [Clojars](http://clojars.org/) module for others to use.
+
+--------------------------------------------------------------------------------
+:type :section
+:body
 
 ## 1. Install tools.deps
 

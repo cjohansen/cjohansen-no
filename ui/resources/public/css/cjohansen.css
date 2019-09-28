@@ -21,6 +21,7 @@
   --code-contrast: var(--lima);
   --header-bg: var(--mystic);
   --header-fg: var(--fg-color);
+  --code-high-contrast: var(--jet);
 }
 
 .theme-light1 {
@@ -28,6 +29,7 @@
 }
 
 .theme-dark1 {
+  --fg-color: var(--dark-fg-color);
   --section-bg: linear-gradient(120deg, var(--smoky) 0%, var(--jet) 100%);
   --section-fg: var(--dark-fg-color);
   --header-bg: var(--smoky);
@@ -35,6 +37,7 @@
   --code-bg: var(--smoky);
   --code-contrast: var(--lightbw);
   --link-color: var(--ruby);
+  --code-high-contrast: var(--manatee);
 }
 
 html,
@@ -195,10 +198,21 @@ a:hover, .clickable:hover {
   font-size: 1.2rem;
 }
 
+.text-content kbd,
+p code,
 li code,
-p code {
+dt code,
+dd code {
   background: var(--code-bg);
   padding: 2px 3px;
+}
+
+.text-content dt {
+  font-weight: bold;
+}
+
+.text-content dd {
+  margin: 0 0 1rem;
 }
 
 .theme-light1 li code,
@@ -350,7 +364,7 @@ code, .code, .codehilite {
 .codehilite .ge { font-style: italic } /* Generic.Emph */
 .codehilite .gr { color: var(--code-contrast); font-weight: bold; } /* Generic.Error */
 .codehilite .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.codehilite .gi { color: var(--jet) } /* Generic.Inserted */
+.codehilite .gi { color: var(--code-high-contrast) } /* Generic.Inserted */
 .codehilite .go { color: #888888 } /* Generic.Output */
 .codehilite .gp { color: #555555 } /* Generic.Prompt */
 .codehilite .gs { font-weight: bold } /* Generic.Strong */
@@ -366,11 +380,11 @@ code, .code, .codehilite {
 .codehilite .s { color: var(--ruby) } /* Literal.String */
 .codehilite .na { color: var(--code-contrast)  font-weight: bold;} /* Name.Attribute */
 .codehilite .nb { color: var(--lima); font-weight: bold; } /* Name.Builtin */
-.codehilite .nc { color: var(--jet); text-decoration: underline } /* Name.Class */
+.codehilite .nc { color: var(--code-high-contrast); text-decoration: underline } /* Name.Class */
 .codehilite .no { color: var(--code-contrast); font-weight: bold; } /* Name.Constant */
 .codehilite .nd { color: #888888 } /* Name.Decorator */
 .codehilite .ni { color: #800000; font-weight: bold } /* Name.Entity */
-.codehilite .nf { color: var(--jet) } /* Name.Function */
+.codehilite .nf { color: var(--code-high-contrast) } /* Name.Function */
 .codehilite .nn { color: var(--lima); font-weight: bold;; text-decoration: underline } /* Name.Namespace */
 .codehilite .nt { color: var(--smokey); font-weight: bold } /* Name.Tag */
 .codehilite .nv { color: var(--code-contrast); } /* Name.Variable */
@@ -535,6 +549,11 @@ a:hover .anchor-marker {
   margin-bottom: 1.33rem;
 }
 
+.text-content ol,
+.text-content ul {
+  margin-left: 1rem;
+}
+
 .text-content .h2:first-child,
 .text-content .h3:first-child,
 .text-content .h4:first-child,
@@ -624,7 +643,7 @@ body .text-content :last-child {
   .h4 {font-size: 1.5rem;}
   .h5 {font-size: 1.25rem; }
   .codehilite {font-size: 0.7rem;}
-  .section .content {padding: 2rem 40px;}
+  .section .content {padding: 4rem 40px;}
   .section:last-child .content {padding-bottom: 100px;}
   div.hide-mobile {display: block;}
   span.hide-mobile {display: inline;}

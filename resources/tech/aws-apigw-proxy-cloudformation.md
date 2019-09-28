@@ -1,12 +1,26 @@
-# Setting up an Api Gateway Proxy Resource using Cloudformation
+--------------------------------------------------------------------------------
+:type :meta
+:title Setting up an Api Gateway Proxy Resource using Cloudformation
+:published #time/ldt "2017-12-11T12:00"
+:tags [:aws-apigw :cloudformation]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Setting up an Api Gateway Proxy Resource using Cloudformation
+:body
 
 I just spent the better part of a day trying to figure out how to do something
 as seemingly simple as configuring an AWS Api Gateway catch-all endpoint to
-proxy to another HTTP service. Amazon has
-[documentation detailing how to do this](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-set-up-simple-proxy.html).
-Using the console. Using the console is great for learning how stuff works, but
-it is not great for creating reproducible production environments. So I wanted
-to achieve this with Cloudformation. Which wasn't all that straight-forward.
+proxy to another HTTP service. Amazon has [documentation detailing how to do
+this](http://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-set-up-simple-proxy.html)
+using the console. Using the console is great for learning how stuff works, but
+not so great for creating reproducible production environments. So I wanted to
+achieve this with Cloudformation. Which wasn't all that straight-forward.
+
+--------------------------------------------------------------------------------
+:type :section
+:body
 
 Like most other things, solving said problem really is quite straight-forward
 once you know _how_. My Googlings where unsuccessful in this area, so I'll
@@ -214,4 +228,3 @@ Resources:
       RestApiId: !Ref Api
       StageName: !Ref StageName
 ```
-

@@ -1,4 +1,20 @@
-# A Unified Specification
+--------------------------------------------------------------------------------
+:type :meta
+:title A Unified Specification
+:published #time/ldt "2018-09-26T12:00"
+:tags [:clojure :datascript :spec]
+:description
+
+An approach to describing the structure of data in ClojureScript applications in
+one place, and using it to power Datascript schemas, specs, and coercions for
+data from external sources.
+
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title A Unified Specification
+:body
 
 Your frontend application state lives in
 [Datascript](https://github.com/tonsky/datascript) (it should anyway), and you
@@ -10,6 +26,11 @@ the Datascript schema.
 
 Problem: the structure of your data is now scattered across three distinct
 pieces of code.
+
+
+--------------------------------------------------------------------------------
+:type :section
+:body
 
 To visualize the problem, we'll consume some data from
 [The Studio Ghibli API](https://ghibliapi.herokuapp.com), specifically, data
@@ -77,7 +98,11 @@ ones we care about modelling:
 }
 ```
 
-## The Datascript schema
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:title The Datascript schema
+:body
 
 Datascript schemas only need to specify attributes that should be unique, that
 are references, or that are collections. It does not care about or enforce the
@@ -98,7 +123,10 @@ looks like. To mitigate this, I've sometimes included empty placeholders for
 documentation purposes, but that has problems of its own - who will remember to
 keep those placeholders up to date as the schema changes?
 
-## The specs
+--------------------------------------------------------------------------------
+:type :section
+:title The specs
+:body
 
 Next up, we'd like to write Clojure specs for the data - not primarily to
 validate data from the API, but to aid in transformation of data, and for use
@@ -131,7 +159,11 @@ This description of our data is much more complete. In fact, the only thing not
 encoded in this representation is the fact that the two `id` attributes are
 unique.
 
-## The mapping
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:title The mapping
+:body
 
 Finally, I present to you some code to map the API data into our chosen
 representation for storing in Datascript.
@@ -159,7 +191,11 @@ in any sensible way. This particular schema is small, so it's not all that bad.
 But take a schema of 5-6 entities with a bunch of attributes each, and you
 quickly lose track of the full picture.
 
-## Step 1: Inline those specs
+--------------------------------------------------------------------------------
+:type :section
+:tile Step 1: Inline those specs
+:body
+
 
 In an attempt to create a more singular description of our data, we will move
 the specs *into* the Datascript schema. This won't actually work, but it'll
@@ -414,7 +450,11 @@ for conformers to handle, such as converting `"SomeLabel_23"` into
 could be fixed with a `:schema/mapper` function that receives the current data
 and produces the data to process.
 
-## In Summary
+--------------------------------------------------------------------------------
+:type :section
+:theme :dark1
+:title In Summary
+:body
 
 With just a little bit of abstraction on top of Datascript schemas and specs,
 we're able to produce a Datascript schema, specs, and API->schema mapping from

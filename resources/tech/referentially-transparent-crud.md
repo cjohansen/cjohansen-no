@@ -1,4 +1,15 @@
-# Referentially transparent CRUD
+--------------------------------------------------------------------------------
+:type :meta
+:title Referentially transparent CRUD
+:published #time/ldt "2017-06-17T10:00"
+:updated #time/ldt "2017-06-20T12:00"
+:tags [:clojure :datomic]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Referentially transparent CRUD
+:body
 
 Side-effects: can't live with 'em, can't live without 'em. But you can contain
 them to a small part of your code-base, making the rest of it pleasant to work
@@ -10,7 +21,10 @@ head and ruins the party. Luckily, [Datomic](http://www.datomic.com/) has
 several features that go a long way in enabling you to write referentially
 transparent code, even when you're I/O-ing.
 
-## Reading data
+--------------------------------------------------------------------------------
+:type :section
+:title Reading data
+:body
 
 When you read data from Datomic, you need "a database". "A database" is
 different from "the database" (which I guess is called "the catalog" in Datomic

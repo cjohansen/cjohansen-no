@@ -1,12 +1,14 @@
 (ns cjohansen-no.ingest
   (:require [clojure.core.match :refer [match]]
             [clojure.java.io :as io]
-            [datomic.api :as d]
-            [mapdown.core :as md]
+            [clojure.set :as set]
             [clojure.string :as str]
-            [clojure.set :as set])
-  (:import java.time.LocalDateTime
-           java.time.ZoneId))
+            [datomic.api :as d]
+            [java-time-literals.core :as time]
+            [mapdown.core :as md])
+  (:import [java.time LocalDateTime ZoneId]))
+
+::time/keep
 
 (defn db-conn []
   (d/create-database "datomic:mem://blog")
@@ -160,6 +162,24 @@
   (d/transact conn (tag-txes (read-string (slurp (io/resource "tags.edn")))))
   (d/transact conn (read-string (slurp (io/resource "ingredients.edn"))))
   (d/transact conn (tech-post-txes "tech/clojure-in-production-tools-deps.md"))
+  (d/transact conn (tech-post-txes "tech/a-better-playlist-shuffle-with-golang.md"))
+  (d/transact conn (tech-post-txes "tech/a-unified-specification.md"))
+  (d/transact conn (tech-post-txes "tech/an-introduction-to-elisp.md"))
+  (d/transact conn (tech-post-txes "tech/annotating-datomic-transactions.md"))
+  (d/transact conn (tech-post-txes "tech/aws-apigw-proxy-cloudformation.md"))
+  (d/transact conn (tech-post-txes "tech/aws-free-tier.md"))
+  (d/transact conn (tech-post-txes "tech/building-static-sites-in-clojure-with-stasis.md"))
+  (d/transact conn (tech-post-txes "tech/clojure-to-die-for.md"))
+  (d/transact conn (tech-post-txes "tech/css-grid.md"))
+  (d/transact conn (tech-post-txes "tech/git-subtree-multiple-dirs.md"))
+  (d/transact conn (tech-post-txes "tech/idempotent-cloudformation-updates.md"))
+  (d/transact conn (tech-post-txes "tech/letsencrypt-haproxy-ssl.md"))
+  (d/transact conn (tech-post-txes "tech/optimized-optimus-asset-paths-clojurescript.md"))
+  (d/transact conn (tech-post-txes "tech/processing-data-with-clojure-and-golang.md"))
+  (d/transact conn (tech-post-txes "tech/querying-across-datomic-databases.md"))
+  (d/transact conn (tech-post-txes "tech/referentially-transparent-crud.md"))
+  (d/transact conn (tech-post-txes "tech/tools-deps-figwheel-main-devcards-emacs.md"))
+  (d/transact conn (tech-post-txes "tech/webslides-syntax-highlighting.md"))
   (d/transact conn (bread-post-txes "fermentations/2019-09-21-whole-wheat-rolls.md"))
 
 

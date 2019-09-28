@@ -1,4 +1,14 @@
-# Optimized Optimus Asset Paths from ClojureScript
+--------------------------------------------------------------------------------
+:type :meta
+:title Optimized Optimus Asset Paths from ClojureScript
+:published #time/ldt "2018-03-31T12:00"
+:tags [:clojure]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Optimized Optimus Asset Paths from ClojureScript
+:body
 
 If you're building a web application with Clojure, chances are you either are or
 should be using [Optimus](https://github.com/magnars/optimus) to optimize and
@@ -9,7 +19,10 @@ server-side resolution of URLs like this through its
 [optimus.link](https://github.com/magnars/optimus#using-the-new-urls) namespace.
 This post explains how to refer to optimized URLs from ClojureScript.
 
-## Macros to the rescue
+--------------------------------------------------------------------------------
+:type :section
+:title Macros to the rescue
+:body
 
 ClojureScript macros run in Clojure, and provide the necessary link between the
 two worlds. To access Optimus asset paths in ClojureScript, we will load some

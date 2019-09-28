@@ -1,4 +1,13 @@
-# Securing HAProxy sites with Let's Encrypt SSL Certificates
+--------------------------------------------------------------------------------
+:type :meta
+:title Securing HAProxy sites with Let's Encrypt SSL Certificates
+:published #time/ldt "2018-03-10T12:00"
+:tags [:haproxy :letsencrypt :https]
+--------------------------------------------------------------------------------
+:type :section
+:theme :dark1
+:title Securing HAProxy sites with Let's Encrypt SSL Certificates
+:body
 
 In this article:
 
@@ -6,6 +15,10 @@ In this article:
 - Configuring HAProxy to serve multiple SSL domains
 - Configuring HTTP -> HTTPS redirects in HAProxy
 - Using certbot on Centos through Docker
+
+--------------------------------------------------------------------------------
+:type :section
+:body
 
 If you're serving websites (or APIs) with HAProxy in front, and you're looking
 for how to get those sites set up with https, for free, then you've come to the

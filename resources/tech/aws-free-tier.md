@@ -1,8 +1,29 @@
-# AWS Free Tier
+--------------------------------------------------------------------------------
+:type :meta
+:title AWS Free Tier
+:published #time/ldt "2019-07-24T12:00"
+:tags [:aws :efs]
+:locale :nb
+:description
 
 Dette er en liten historie om hvordan [EFS](https://aws.amazon.com/efs/) nærmest
 tok livet av Kubernetes-clusteret vårt, og hvordan du kan unngå å havne i samme
 knipa — selvom du ikke bruker EFS.
+
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title AWS Free Tier
+:body
+
+Dette er en liten historie om hvordan [EFS](https://aws.amazon.com/efs/) nærmest
+tok livet av Kubernetes-clusteret vårt, og hvordan du kan unngå å havne i samme
+knipa — selvom du ikke bruker EFS.
+
+--------------------------------------------------------------------------------
+:type :section
+:body
 
 **Høsten 2018**: En kollega og jeg satt opp et Kubernetes-cluster på AWS. Vi gikk i
 prod uten særlig om og men, og ting fungerte som forventet. Spol frem 5-6
@@ -38,18 +59,28 @@ config-filer). Det viste seg å bare nesten være sant.
 
 AWS selger EFS med blant annet denne teksten:
 
-> Throughput and IOPS scale as a file system grows and can burst to higher
-> throughput levels for short periods of time to support the unpredictable
-> performance needs of file workloads. For the most demanding workloads, Amazon
-> EFS can support performance over 10 GB/sec and up to 500,000 IOPS.
+<blockquote class="bq text-content">
+  <div class="bq-source">AWS dokumentasjon</div>
+  <div class="bq-quote">
+Throughput and IOPS scale as a file system grows and can burst to higher
+throughput levels for short periods of time to support the unpredictable
+performance needs of file workloads. For the most demanding workloads, Amazon
+EFS can support performance over 10 GB/sec and up to 500,000 IOPS.
+  </div>
+</blockquote>
 
 Dette høres jo lovende ut. Men, hva mer sier AWS om throughput?
 
->**Amazon EFS Bursting Throughput (Default)**
->
->In the default Bursting Throughput mode, there are no charges for bandwidth or
->requests and you get a baseline rate of 50 KB/s per GB of throughput included
->with the price of storage.
+<blockquote class="bq text-content">
+  <div class="bq-source">AWS dokumentasjon</div>
+  <div class="bq-quote">
+**Amazon EFS Bursting Throughput (Default)**
+
+In the default Bursting Throughput mode, there are no charges for bandwidth or
+requests and you get a baseline rate of 50 KB/s per GB of throughput included
+with the price of storage.
+  </div>
+</blockquote>
 
 Vår bruk av EFS bestod først og fremst i å lese noen config-filer. Veldig lite
 skriving. Datamengdene våre var dermed på godt under 1GB. Altså var vi garantert
@@ -59,6 +90,11 @@ Når vi så visste at samtlige pods som hadde problemer brukte samme EFS share, 
 overføringen fra EFS sammenlagt var strupet til 0.05 Mbit/s var det ganske
 åpenbart hvor problemet lå. Men hvorfor tok det 6 måneder før dette ble et
 problem?
+
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:body
 
 ## AWS bustable ressurser og credits
 
@@ -83,7 +119,7 @@ credit-balanse**.
 
 Sånn så problemet ut for oss:
 
-![AWS EFS credit-balanse på vei i grøfta](/images/blogg/burst.png)
+![AWS EFS credit-balanse på vei i grøfta](/images/burst.png)
 
 Altså:
 
@@ -96,7 +132,10 @@ Dermed feilet en del pods helsesjekkene sine, og ble restartet av Kubernetes, om
 og om igjen. Dette forsterket problemet, da en del av tjenestene leste en del
 data fra disk under oppstart. D'OH!
 
-## Hva skal vi lære av dette?
+--------------------------------------------------------------------------------
+:type :section
+:title Hva skal vi lære av dette?
+:body
 
 Så hva skal du, kjære leser, ta med deg fra denne lille anekdoten? Vi lærte
 opptil flere ting fra denne tabben:

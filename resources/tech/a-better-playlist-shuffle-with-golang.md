@@ -1,10 +1,27 @@
-# A Better Playlist Shuffle with Go
+--------------------------------------------------------------------------------
+:type :meta
+:title A Better Playlist Shuffle with Go
+:published #time/ldt "2019-04-19T12:00"
+:updated #time/ldt "2019-09-28T12:00"
+:tags [:go :spotify]
+:description Shuffling music playlists with less random and more cleverness, using Go.
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title A Better Playlist Shuffle with Go
+:body
 
 On the rare occasions that I hit "shuffle" in music players like Spotify, I
 don't really want to completely randomize a playlist. In fact, what I want isn't
 very random at all. More than anything, my intention is "please play these songs
-with as much track-to-track variation as possible". Let's visualize this with an
-example:
+with as much track-to-track variation as possible".
+
+--------------------------------------------------------------------------------
+:type :section
+:body
+
+Let's visualize this with an example:
 
 1. **Nirvana**: Smells Like Teen Spirit
 2. **Nirvana**: Come as You Are
@@ -88,6 +105,12 @@ The final track is plotted into the only available spot:
 9. Nirvana
 10. Leviathan
 
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:title Attempting an implementation
+:body
+
 Let's have a go at this using, ehm, [Go](https://golang.org/).
 
 **Disclaimer:** I used this task to learn Go. Perhaps unsurprisingly, this sort
@@ -105,7 +128,10 @@ working code at the bottom.
 of mutation and will avoid it if possible, and 2) I don't think it would make a
 big difference perfomance-wise for the kinds of datasets this code will work on.
 
-## Distributing the Artists
+--------------------------------------------------------------------------------
+:type :section
+:title Distributing the Artists
+:body
 
 We'll start with a function `Distribute`. Its task is to distribute the artist
 the specified number of times as evenly as possible. The passed in distribution
@@ -328,7 +354,11 @@ If we distribute the artists with fewer tracks first, there might not be room
 left to properly spread the ones with more tracks. We'll create another function
 to distribute a whole list taking this into account.
 
-## Distributing all Tracks by Artist
+--------------------------------------------------------------------------------
+:type :section
+:title Distributing all Tracks by Artist
+:theme :dark1
+:body
 
 Next up is a function that takes a playlist and "shuffles" it by evenly
 distributing tracks from the same artist. This is how we'll do it:
@@ -534,10 +564,14 @@ func ReifyDistribution(distribution []string, groups GroupedItems) []Item {
 }
 ```
 
-## Random Much?
+--------------------------------------------------------------------------------
+:type :section
+:title Random Much?
+:body
 
-This is all fine and dandy, but a "shuffle" should have _some_ randomness to it,
-right? Yes. We can introduce two levels of randomness:
+We now have a completely deterministic shuffler. This is all fine and dandy, but
+a "shuffle" should have _some_ randomness to it, right? Yes. We can introduce
+two levels of randomness:
 
 1. Randomize the initial playlist
 2. Randomize the starting point
@@ -598,7 +632,11 @@ func ShuffleByArtist(items []Item) []Item {
 And there you have it - a playlist shuffler that respects the listeners desire
 for a random, but balanced listening experience.
 
-## Parting Thoughts
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:title Parting Thoughts
+:body
 
 While we've come some way from `randomize(playlist)`, our implementation still
 has weakenesses. Let's consider an example output from our shuffler:
@@ -673,4 +711,5 @@ DistributeBy(playlist, []func(Item) string{
 It would first create a distribution of genres. Before reifying the distribution
 with the tracks in that genre, it would recursively distribute all the songs in
 each genre by artist. If you're curious how the code needs to change to support
-this, check out the [Go shuffle code on Github](https://github.com/cjohansen/shufflify/blob/2e07478078d69b7a1a5fddeecd6819f82133f453/spotify-service/shuffle/shuffle.go).
+this, check out the [Go shuffle code on
+Github](https://github.com/cjohansen/shufflify/blob/2e07478078d69b7a1a5fddeecd6819f82133f453/spotify-service/shuffle/shuffle.go).

@@ -1,4 +1,20 @@
-# An introduction to Emacs Lisp
+--------------------------------------------------------------------------------
+:type :meta
+:title An introduction to Emacs Lisp
+:published #time/ldt "2012-07-01T12:00"
+:updated #time/ldt "2017-07-17T12:00"
+:tags [:elisp :emacs]
+:description
+
+A long, thorough introduction to programming in Lisp in general, and Emacs Lisp
+in particular
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title An introduction to Emacs Lisp
+
+:body
 
 As a long-time passionate Emacs user, I've been curious about Lisp in general
 and Emacs Lisp in particular for quite some time. Until recently I had not
@@ -10,12 +26,10 @@ summer. A year later, I have finally written some Lisp, and I thought I'd share
 the code as an introduction to others out there curious about Lisp and extending
 Emacs.
 
-A word of warning: The code ahead is written by an absolute beginner in Lisp,
-and may violate any number of best-practices and idioms, but it is somewhat
-working code. If you spot something that's wrong or something you just don't
-like, please tell me what and why so I can improve.
-
-## Who is this for?
+--------------------------------------------------------------------------------
+:type :section
+:title Who is this for?
+:body
 
 This article is intended to help you get started with 1) Lisp, and 2) extending
 Emacs using Emacs Lisp (elisp). My hope is that it will help you go from being
@@ -24,6 +38,14 @@ Emacs. If you are curious about the code we will develop, check out
 the [full code-listing](#full-code-listing) at the end of this article.
 
 <div class="toc" id="toc"></div>
+
+### A word of warning
+
+The code ahead is written by an absolute beginner in Lisp, and may violate any
+number of best-practices and idioms, but it is somewhat working code. If you
+spot something that's wrong or something you just don't like, please tell me
+what and why so I can improve.
+
 
 ## The task
 <a name="task"></a>
@@ -354,7 +376,7 @@ part of the buffer to determine what test we are in. That way our utility will
 stay fast and usable.
 
 ### The "algorithm"
-<a name="goto-algorithm"></a<
+<a name="goto-algorithm"></a>
 
 To figure out the start position of the current test, we will:
 

@@ -1,4 +1,19 @@
-# Annotating Datomic transactions
+--------------------------------------------------------------------------------
+:type :meta
+:title Annotating Datomic transactions
+:published #time/ldt "2017-06-17T12:00"
+:tags [:clojure :datomic]
+:description
+
+Datomic creates a transaction entity every time you transact data. These
+entities can be freely extended for a multitude of use cases.
+
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Annotating Datomic transactions
+:body
 
 When [Datomic](http://www.datomic.com/) processes a transaction, it creates a
 transaction entity and stores it along your other entities. The transaction has
@@ -7,7 +22,10 @@ the transaction. The transaction entity tells you which facts where inserted at
 the same time, and when it happened. If that isn't enough, you can freely extend
 this model.
 
-## Back-dating initial import
+--------------------------------------------------------------------------------
+:type :section
+:title Back-dating initial import
+:body
 
 Transaction ids are handled by Datomic. Transaction timestamps are also handled
 by Datomic, and will reflect the clock by default. however, can be
@@ -90,7 +108,12 @@ for increased insight into "who did what, when, and from where?":
 This creates a highly detailed audit trail (per fact) with a reasonably small
 overhead.
 
-## Where does all the info come from?
+--------------------------------------------------------------------------------
+:type :section
+:theme :light1
+:title Where does all the info come from?
+:body
+
 
 You might be thinking that having this data would be useful, but that writing it
 would be cumbersome at best. You probably do not want your entire model to have
@@ -123,7 +146,3 @@ problems. Quite useful indeed.
 
 I have written another post on how we
 [process commands](/referentially-transparent-crud/) in our system.
-
-June 17th 2017
-
-[Follow me (@cjno) on Twitter](http://twitter.com/cjno)

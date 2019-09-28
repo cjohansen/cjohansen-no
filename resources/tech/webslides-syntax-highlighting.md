@@ -1,10 +1,24 @@
-# Webslides Syntax Highlighting with Prism
+--------------------------------------------------------------------------------
+:type :meta
+:title Webslides Syntax Highlighting with Prism
+:published #time/ldt "2018-04-04T10:00"
+:tags [:css]
+--------------------------------------------------------------------------------
+:type :section
+:section-type :centered
+:theme :dark1
+:title Webslides Syntax Highlighting with Prism
+:body
 
 I recently discovered [Webslides](https://webslides.tv/), yet another HTML slide
 framework. It is *really* well designed and comes with an impressively
 comprehensive toolkit for composing slides. The only thing missing out of the
 box was easy syntax highlighting of code snippets. Luckily, adding that with
 [Prism.js](http://prismjs.com) is a breeze.
+
+--------------------------------------------------------------------------------
+:type :section
+:body
 
 Download and unpack the
 [Webslides bundle](https://webslides.tv/webslides-latest.zip). Then go to
