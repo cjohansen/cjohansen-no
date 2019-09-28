@@ -30,12 +30,11 @@
           response)))))
 
 (defn get-assets []
-  (assets/load-assets "public" [#".*"]))
-
-(defn markdown-pages [pages]
-  (zipmap (map #(str/replace % #"\.md$" "/") (keys pages))
-          (map #(fn [req] (html/layout-page req (md/to-html % html/pegdown-options)))
-               (vals pages))))
+  (assets/load-assets "public" [#".*\.css$"
+                                #".*\.png$"
+                                #".*\.svg$"
+                                #".*\.ico$"
+                                #".*\.js$"]))
 
 (defn tech-pages [conn]
   (let [posts (tech/load-posts (d/db conn))]
@@ -43,24 +42,10 @@
             (map tech/render-page posts))))
 
 (defn get-raw-pages []
-  (let [fermentations (fermentations/load-fermentations (stasis/slurp-directory "resources/fermentations" #"\.md$"))
-        conn (ingest/db-conn)]
+  (let [conn (ingest/db-conn)]
     (stasis/merge-page-sources
      {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
-      :bread-images (stasis/slurp-directory "resources/public/images/bread" #".\.jpg$")
-      ;;:markdown (markdown-pages (stasis/slurp-directory "resources/md" #"\.md$"))
-      :tech-pages (tech-pages conn)
-      :fermentation-pages (fermentations/prepare-pages fermentations)
-      :frontpage {"/index.html" #(html/layout-page % (md/to-html (slurp (io/resource "index.md")) html/pegdown-options) {:page-title "Christian Johansen"})}
-      :fermentations {"/fermentations/" #(html/layout-page % (md/to-html (slurp (io/resource "fermentations.md")) html/pegdown-options)
-                                                           {:page-title "Fermentations - Christian Johansen"
-                                                            :page-fn (partial fermentations/render-blurbs fermentations)})}
-      :ferm-tags (->> fermentations
-                      (mapcat :tags)
-                      distinct
-                      (map #(fermentations/prepare-tag-page % fermentations))
-                      (into {}))
-      })))
+      :tech-pages (tech-pages conn)})))
 
 (defn prepare-page [page req]
   (-> (if (string? page) page (page req))
