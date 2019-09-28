@@ -1,0 +1,16 @@
+@import url("cjohansen-vs.css");
+
+/* Syntax highlighting */
+
+.codehilite code {
+  background: var(--code-bg);
+  display: block;
+  padding: 12px 6px;
+  overflow: scroll;
+}
+
+code, .code, .codehilite {
+  font-family: "Source Code Pro", monospace;
+}
+
+.codehilite {font-size: 0.7rem;}

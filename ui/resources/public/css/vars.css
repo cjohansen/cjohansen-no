@@ -1,0 +1,25 @@
+:root {
+  --jet: #363636;
+  --smoky: #0A0908;
+  --athens: #e6e9f0;
+  --athens-tr: rgba(230, 233, 240, 0.7);
+  --mystic: #eef1f5;
+
+  --ruby: #e8175d;
+  --lima: #72B01D;
+  --denim: #1384e2;
+  --fulvors: #e28413;
+  --lightbw: #f9f9fc;
+  --manatee: #999ca0;
+
+  --fg-color: var(--smoky);
+  --dark-fg-color: var(--lightbw);
+  --section-bg: #fff;
+  --section-fg: var(--smoky);
+  --link-color: var(--denim);
+  --code-bg: var(--lightbw);
+  --code-contrast: var(--lima);
+  --header-bg: var(--mystic);
+  --header-fg: var(--fg-color);
+  --code-high-contrast: var(--jet);
+}
