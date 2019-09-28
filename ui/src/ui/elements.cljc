@@ -39,8 +39,8 @@
      (when (or (:published meta) (:updated meta))
        [:p.subtle.text-s
         (if (and (:published meta) (:updated meta))
-          (format "Published %s, updated %s" (:published meta) (:updated meta))
-          (format "Published %s" (:published meta)))])]]])
+          (str "Published " (:published meta) ", updated " (:updated meta))
+          (str "Published " (:published meta)))])]]])
 
 (defn centered [params]
   (section (assoc params :class "centered")))
@@ -72,6 +72,29 @@
      [:li [:a {:href "/"} "Tech"]]
      [:li [:a {:href "/fermentations/"} "Fermentations"]]
      [:li [:a {:href "/about/"} "About" [:span.hide-mobile " me"]]]]]])
+
+(defn now-year []
+  #?(:clj (.getYear (java.time.LocalDate/ofInstant (java.time.Instant/now) (java.time.ZoneId/of "Europe/Oslo")))
+     :cljs (.getFullYear (js/Date.))))
+
+(defn footer []
+  [:div.footer
+   [:div.footer-content
+    [:p.license
+     [:a {:href "https://creativecommons.org/licenses/by-nc-sa/3.0/"
+          :rel "license"
+          :title "Creative Commons License"}
+      [:span.cc-logo [:img {:src "/images/cc_icon_white_x2.png"}]]
+      [:span.cc-logo [:img {:src "/images/attribution_icon_white_x2.png"}]]
+      [:span.cc-logo [:img {:src "/images/nc_white_x2.png"}]]
+      [:span.cc-logo [:img {:src "/images/sa_white_x2.png"}]]]
+     (str "2006 - " (now-year))]
+    [:p.twitter
+     [:a {:href "https://twitter.com/cjno"}
+      "Follow me (@cjno) on Twitter"]]
+    [:p.email
+     [:a {:href "mailto:christian@cjohansen.no"}
+      "christian@cjohansen.no"]]]])
 
 (defn blockquote [quote & [source]]
   [:blockquote.bq.text-content

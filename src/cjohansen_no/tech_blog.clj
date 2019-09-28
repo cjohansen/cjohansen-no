@@ -60,7 +60,8 @@
           (->> (:tech-blog/sections post)
                (sort-by :section/number)
                (add-byline (or now (java.time.Instant/now)) post)
-               (map post-section))]})
+               (map post-section))
+          (e/footer)]})
 
 (defn render-page [post]
   (fn [req]

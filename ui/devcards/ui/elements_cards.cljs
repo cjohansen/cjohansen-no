@@ -52,7 +52,7 @@
    "AWS Docs"))
 
 (defcard dark-blockquote
-  [:div.dark-theme1
+  [:div.theme-dark1
    (e/section
      {:content
       (e/blockquote
@@ -73,7 +73,10 @@
   (e/header))
 
 (defcard dark-header
-  [:div.dark-theme1 (e/header)])
+  [:div.theme-dark1 (e/header)])
+
+(defcard footer
+  (e/footer))
 
 (defcard ingredient-list
   (e/ingredient-list
