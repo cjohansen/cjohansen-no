@@ -44,11 +44,17 @@
     (zipmap (map :browsable/url posts)
             (map #(fn [req] (ingest-and-render-tech conn % req)) posts))))
 
+(defn tech-tag-pages [db]
+  (let [tags (tech/load-tags db)]
+    (zipmap (map tech/tag-url tags)
+            (map #(fn [req] (tech/tag-page req %)) tags))))
+
 (defn get-raw-pages []
   (let [conn (ingest/db-conn)]
     (stasis/merge-page-sources
      {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
-      :tech-pages (tech-pages conn)})))
+      :tech-pages (tech-pages conn)
+      :tech-tag-pages (tech-tag-pages (d/db conn))})))
 
 (defn prepare-page [page req]
   (-> (if (string? page) page (page req))
@@ -87,4 +93,8 @@
 (comment
   (index (ingest/db-conn))
   (tech/load-posts (d/db (ingest/db-conn)))
+
+  (def tag (first (tech/load-tags (d/db (ingest/db-conn)))))
+  (:tech-blog/_tags tag)
+
 )

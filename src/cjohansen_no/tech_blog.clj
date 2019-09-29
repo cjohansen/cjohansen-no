@@ -1,16 +1,25 @@
 (ns cjohansen-no.tech-blog
   (:require [cjohansen-no.html :as html]
+            [clojure.string :as str]
             [datomic.api :as d]
             [me.raynes.cegdown :as md]
             [ui.elements :as e])
-  (:import java.time.LocalDateTime
-           java.time.format.DateTimeFormatter))
+  (:import java.time.format.DateTimeFormatter
+           java.time.LocalDateTime))
 
 (defn load-posts [db]
   (->> (d/q '[:find ?e
               :in $
               :where
               [?e :tech-blog/published]]
+            db)
+       (map #(d/entity db (first %)))))
+
+(defn load-tags [db]
+  (->> (d/q '[:find ?e
+              :in $
+              :where
+              [?e :tag/name]]
             db)
        (map #(d/entity db (first %)))))
 
@@ -21,6 +30,9 @@
               [?e :browsable/url ?url]]
             db url)
        (d/entity db)))
+
+(defn tag-url [tag]
+  (str "/" (str/replace (str/lower-case (:tag/name tag)) #"[^a-z0-9]+" "-") "/"))
 
 (defmulti post-section (fn [section] (or (:section/type section) :section)))
 
@@ -71,6 +83,28 @@
                (map post-section))
           (e/footer)]})
 
+(defn teaser [{:tech-blog/keys [short-title title published] :browsable/keys [url]}]
+  {:title (or short-title title)
+   :published (ymd (->ldt published))
+   :url url})
+
+(defn tag-page [req tag]
+  (html/layout-page-new
+   req
+   {:open-graph/title (:tag/name tag)
+    :page-title (:tag/name tag)
+    :body [:div
+           (e/header)
+           (e/teaser-section
+            {:title (:tag/name tag)
+             :teasers (->> tag
+                           :tech-blog/_tags
+                           (filter :tech-blog/published)
+                           (sort-by :tech-blog/published)
+                           reverse
+                           (map teaser))})
+           (e/footer)]}))
+
 (defn render-page [req post]
   (html/layout-page-new req (tech-blog-page post)))
 
@@ -79,6 +113,7 @@
 
   (load-posts (d/db conn))
 
+  (tag-url {:tag/name "tools.deps"})
 
   (let [db (d/db conn)]
     (->> (d/q '[:find ?e
