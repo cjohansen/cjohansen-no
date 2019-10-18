@@ -29,11 +29,17 @@
 (defn parse-val [v]
   (try
     (let [val (read-string v)]
-      ;; A symbol probably means we read the first word of an unquoted text.
-      ;; Return the full text string instead.
-      (if (symbol? val)
+      (cond
+        ;; A symbol probably means we read the first word of an unquoted text.
+        ;; Return the full text string instead.
+        (symbol? val) v
+
+        ;; A sentence starting with a number, e.g. "50% Whole wheat" will be
+        ;; read as a number, try to detect this mistake
+        (and (number? val) (not= (str/trim v) (str val)))
         v
-        val))
+
+        :default val))
     (catch Exception e
       v)))
 
@@ -41,7 +47,11 @@
   (->> data
        (map (fn [[k v]]
               (let [k (if (= :type k) :ingredient k)]
-                [(keyword "step-ingredient" (name k)) v])))
+                [(keyword "step-ingredient" (name k))
+                 (cond
+                   (= :ingredient k) [:ingredient/id v]
+                   (= :amount k) (float v)
+                   :default v)])))
        (into {})))
 
 (defn refine-val
@@ -148,9 +158,9 @@
 (defn tag-txes [content]
   (map (fn [[k v]] {:db/ident k, :tag/name v}) content))
 
-(defn slurp-tech-posts []
-  (->> (stasis/slurp-directory (io/resource "tech") #"\.md$")
-       (mapcat (fn [[file-name content]] (tech-post-txes (str "tech" file-name) content)))))
+(defn slurp-posts [dir txes-f]
+  (->> (stasis/slurp-directory (io/resource dir) #"\.md$")
+       (mapcat (fn [[file-name content]] (txes-f (str dir file-name) content)))))
 
 (defn db-conn []
   (d/create-database "datomic:mem://blog")
@@ -161,7 +171,8 @@
 (defn ingest-everything []
   [(tag-txes (read-string (slurp (io/resource "tags.edn"))))
    (read-string (slurp (io/resource "ingredients.edn")))
-   (slurp-tech-posts)])
+   (slurp-posts "tech" tech-post-txes)
+   (slurp-posts "fermentations" bread-post-txes)])
 
 (comment
   (d/delete-database "datomic:mem://blog")
