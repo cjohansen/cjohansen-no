@@ -50,3 +50,18 @@ dipped in egg wash and then either sesame seeds or wheat bran, then proofed on
 the counter for an hour.
 
 --------------------------------------------------------------------------------
+:type :section
+:title Baking
+:time 40
+:body
+
+The rolls where baked at 245C in a deep pan covered with foil for 20 minutes,
+then further 20 minutes uncovered. Unfortunately, this dough is rather loose,
+and free rising didn't produce the nicest rolls ever - they were quite flat and
+flabby. Despite their looks though, they were still nice and light with a thin
+crispy crust.
+
+The batard was then baked in an oval dutch oven, pre-heated for just 20 minutes,
+and came out spectacular.
+
+--------------------------------------------------------------------------------
