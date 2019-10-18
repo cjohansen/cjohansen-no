@@ -1,65 +1,103 @@
-[{:db/ident :fine-whole-wheat
+[{:ingredient/id :fine-whole-wheat
   :ingredient/type :flour
+  :ingredient/flour-weight 1.0
   :ingredient/name "Fine whole wheat flour"}
- {:db/ident :coarse-whole-wheat
+ {:ingredient/id :wheat-00
   :ingredient/type :flour
+  :ingredient/flour-weight 1.0
+  :ingredient/name "00 Wheat flour"}
+ {:ingredient/id :coarse-whole-wheat
+  :ingredient/type :flour
+  :ingredient/flour-weight 1.0
   :ingredient/name "Coarse whole wheat flour"}
- {:db/ident :white-wheat
+ {:ingredient/id :white-wheat
   :ingredient/type :flour
+  :ingredient/flour-weight 1.0
   :ingredient/name "White wheat flour"}
- {:db/ident :white-rye
+ {:ingredient/id :white-rye
   :ingredient/type :flour
+  :ingredient/flour-weight 1.0
   :ingredient/name "White rye flour"}
- {:db/ident :coarse-whole-rye
+ {:ingredient/id :coarse-whole-rye
   :ingredient/type :flour
+  :ingredient/flour-weight 1.0
   :ingredient/name "Coarse whole rye flour"}
- {:db/ident :water
+ {:ingredient/id :water
   :ingredient/type :liquid
+  :ingredient/liquid-weight 1.0
   :ingredient/name "Water"}
- {:db/ident :milk
+ {:ingredient/id :milk
   :ingredient/type :liquid
+  :ingredient/liquid-weight 1.0
   :ingredient/name "Milk"}
- {:db/ident :salt
+ {:ingredient/id :milk-powder
+  :ingredient/type :flour
+  :ingredient/flour-weight 1.0
+  :ingredient/name "Milk powder"}
+ {:ingredient/id :salt
   :ingredient/name "Salt"}
- {:db/ident :yeast
+ {:ingredient/id :yeast
   :ingredient/type :leven
   :ingredient/name "Yeast"}
- {:db/ident :sugar
+ {:ingredient/id :sourdough-starter
+  :ingredient/type :leven
+  :ingredient/flour-weight 0.5
+  :ingredient/liquid-weight 0.5
+  :ingredient/name "Sourdough starter"}
+ {:ingredient/id :levain
+  :ingredient/type :leven
+  :ingredient/flour-weight 0.5
+  :ingredient/liquid-weight 0.5
+  :ingredient/name "Levain"}
+ {:ingredient/id :sugar
   :ingredient/type :sugar
   :ingredient/name "Sugar"}
- {:db/ident :neutral-oil
+ {:ingredient/id :pearl-sugar
+  :ingredient/type :pearl-sugar
+  :ingredient/name "Pearl sugar"}
+ {:ingredient/id :neutral-oil
   :ingredient/type :fat
   :ingredient/name "Neutral oil"}
- {:db/ident :butter
+ {:ingredient/id :butter
   :ingredient/type :fat
   :ingredient/name "Butter"}
- {:db/ident :honey
+ {:ingredient/id :honey
   :ingredient/type :sugar
   :ingredient/name "Honey"}
- {:db/ident :malt-syrup
+ {:ingredient/id :malt-syrup
   :ingredient/type :sugar
   :ingredient/name "Malt syrup"}
- {:db/ident :flaked-oats
+ {:ingredient/id :flaked-oats
   :ingredient/type :grain
   :ingredient/name "Flaked oats"}
- {:db/ident :flaked-rye
+ {:ingredient/id :flaked-rye
   :ingredient/type :grain
   :ingredient/name "Flaked rye"}
- {:db/ident :flaked-wheat
+ {:ingredient/id :flaked-wheat
   :ingredient/type :grain
   :ingredient/name "Flaked wheat"}
- {:db/ident :whole-wheat
+ {:ingredient/id :whole-wheat
   :ingredient/type :grain
   :ingredient/name "Whole wheat"}
- {:db/ident :sunflower
+ {:ingredient/id :sunflower
   :ingredient/type :seed
   :ingredient/name "Sunflower seeds"}
- {:db/ident :flax
+ {:ingredient/id :flax
   :ingredient/type :seed
   :ingredient/name "Flax seeds"}
- {:db/ident :poppy
+ {:ingredient/id :poppy
   :ingredient/type :seed
   :ingredient/name "Poppy seeds"}
- {:db/ident :sesame
+ {:ingredient/id :sesame
   :ingredient/type :seed
-  :ingredient/name "Sesame seeds"}]
+  :ingredient/name "Sesame seeds"}
+ {:ingredient/id :cardamom
+  :ingredient/type :spice
+  :ingredient/name "Cardamom"}
+ {:ingredient/id :cinnamon
+  :ingredient/type :spice
+  :ingredient/name "Cinnamon"}
+ {:ingredient/id :egg
+  :ingredient/type :fat
+  :ingredient/liquid-weight 0.8
+  :ingredient/name "Egg"}]

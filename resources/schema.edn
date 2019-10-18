@@ -30,6 +30,10 @@
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one}
 
+ {:db/ident :section/image-alt
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
  {:db/ident :section/type
   :db/valueType :db.type/keyword
   :db/cardinality :db.cardinality/one}
@@ -110,6 +114,11 @@
   :db/cardinality :db.cardinality/many}
 
  ;; Ingredients
+ {:db/ident :ingredient/id
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity}
+
  {:db/ident :ingredient/type
   :db/valueType :db.type/keyword
   :db/cardinality :db.cardinality/one}
@@ -118,17 +127,29 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
+ {:db/ident :ingredient/flour-weight
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :ingredient/liquid-weight
+  :db/valueType :db.type/float
+  :db/cardinality :db.cardinality/one}
+
  ;; Recipe step ingredient
  {:db/ident :step-ingredient/ingredient
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :step-ingredient/amount
-  :db/valueType :db.type/long
+  :db/valueType :db.type/float
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :step-ingredient/temperature
   :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :step-ingredient/indirect-use?
+  :db/valueType :db.type/boolean
   :db/cardinality :db.cardinality/one}
 
  ;; Bread recipes
