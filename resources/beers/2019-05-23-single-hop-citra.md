@@ -1,11 +1,22 @@
+--------------------------------------------------------------------------------
+:type :meta
+:title Single Hop Citra
+:description
+
+A nice and simple single hop pale ale with Citra hops.
+
+:published #time/ldt "2019-05-23T12:00:00"
+--------------------------------------------------------------------------------
+
+
 :published 2019-05-23
 :tags #{:beer :pale-ale :citra :single-hop}
 :type :beer
 :og 1.055
 :fg 1.012
-:title Single Hop Citra
+:title
 
-A nice and simple single hop pale ale with Citra hops.
+
 
 :body
 
