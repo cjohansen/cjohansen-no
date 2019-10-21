@@ -63,7 +63,7 @@
     (let [v (parse-val v)]
       (cond
         (instance? java.time.LocalDateTime v) (->inst v)
-        (= :tags k) (map #(keyword "tag" (name %)) v)
+        (= :tags k) (map (fn [t] [:tag/id (keyword "tag" (name t))]) v)
         (= :image k) (->image-map v)
         (= :ingredients k) (map step-ingredient v)
         :default v))))
@@ -147,20 +147,57 @@
 (defn bread-blog-post [parsed]
   (blog-post (str "/" (-> parsed :meta :url)) parsed bread-keys))
 
-(defn tech-post-txes
-  ([file-name] (tech-post-txes file-name (slurp (io/resource file-name))))
-  ([file-name content] [(tech-blog-post (parse-mapdown-db-file file-name content))]))
+(defn tag-tx-data [content]
+  (->> content
+       read-string
+       (map (fn [[k v]] {:tag/id k, :tag/name v}))))
 
-(defn bread-post-txes
-  ([file-name] (bread-post-txes file-name (slurp (io/resource file-name))))
-  ([file-name content] [(bread-blog-post (parse-mapdown-db-file file-name content))]))
+(defn unique-attrs [db]
+  (->> (d/q '[:find ?a
+              :in $
+              :where
+              [?a :db/unique :db.unique/identity]]
+            db)
+       (map first)
+       set))
 
-(defn tag-txes [content]
-  (map (fn [[k v]] {:db/ident k, :tag/name v}) content))
+(defn resource-retractions [db resource]
+  (let [attrs (unique-attrs db)]
+    (->> (d/q '[:find ?e ?a ?v
+                :in $ [?attr ...] ?f
+                :where
+                [?e ?attr _ ?t]
+                [?t :tx/source-file ?f]
+                [?e ?a ?v ?t]]
+              db
+              attrs
+              (.getPath resource))
+         (remove (comp attrs second)))))
 
-(defn slurp-posts [dir txes-f]
+(defn file-tx
+  ([db file-name]
+   (file-tx file-name identity))
+  ([db file-name f]
+   (let [resource (io/resource file-name)]
+     (file-tx db resource (slurp resource) f)))
+  ([db resource content f]
+   (->>
+    [(map (fn [[e a v]] [:db/retract e a v]) (resource-retractions db resource))
+     (concat
+      [[:db/add "datomic.tx" :tx/source-file (.getPath resource)]]
+      (f content))]
+    (filter (comp seq first)))))
+
+(defn slurp-posts [db dir tx-data-f]
   (->> (stasis/slurp-directory (io/resource dir) #"\.md$")
-       (mapcat (fn [[file-name content]] (txes-f (str dir file-name) content)))))
+       (mapcat
+        (fn [[file-name content]]
+          (let [path (str dir file-name)]
+            (file-tx
+             db
+             (io/resource path)
+             (parse-mapdown-db-file path content)
+             (comp vector tx-data-f)))))))
 
 (defn db-conn []
   (d/create-database "datomic:mem://blog")
@@ -168,11 +205,12 @@
     (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
     conn))
 
-(defn ingest-everything []
-  [(tag-txes (read-string (slurp (io/resource "tags.edn"))))
-   (read-string (slurp (io/resource "ingredients.edn")))
-   (slurp-posts "tech" tech-post-txes)
-   (slurp-posts "fermentations" bread-post-txes)])
+(defn ingest-everything [db]
+  (concat
+   (file-tx db "tags.edn" tag-tx-data)
+   (file-tx db "ingredients.edn" read-string)
+   (slurp-posts db "tech" tech-blog-post)
+   (slurp-posts db "fermentations" bread-blog-post)))
 
 (comment
   (d/delete-database "datomic:mem://blog")
@@ -180,9 +218,19 @@
   (def conn (d/connect "datomic:mem://blog"))
   (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
 
-  (ingest-everything)
+  (doseq [tx-data (ingest-everything (d/db conn))]
+    @(d/transact conn tx-data))
 
-  (d/transact conn (tag-txes (read-string (slurp (io/resource "tags.edn")))))
-  (d/transact conn (read-string (slurp (io/resource "ingredients.edn"))))
+  (doseq [tx-data (file-tx (d/db conn) "tags.edn" tag-tx-data)]
+    @(d/transact conn tx-data))
+
+  (into {} (d/entity (d/db conn) 17592186045424)) ;; EFS
+
+  (->> (d/q '[:find ?e ?title
+              :in $
+              :where
+              [?e :tech-blog/title ?title]]
+            (d/db conn))
+       (into {}))
 
   )
