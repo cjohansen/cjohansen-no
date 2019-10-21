@@ -174,6 +174,18 @@
               (.getPath resource))
          (remove (comp attrs second)))))
 
+(defn resource-ingested-at [db resource]
+  (d/q '[:find ?txi .
+         :in $ ?f
+         :where
+         [?attr :db/unique :db.unique/identity]
+         [?e ?attr]
+         [?e _ _ ?t]
+         [?t :tx/source-file ?f]
+         [?t :db/txInstant ?txi]]
+       db
+       (.getPath resource)))
+
 (defn file-tx
   ([db file-name]
    (file-tx file-name identity))
@@ -181,12 +193,16 @@
    (let [resource (io/resource file-name)]
      (file-tx db resource (slurp resource) f)))
   ([db resource content f]
-   (->>
-    [(map (fn [[e a v]] [:db/retract e a v]) (resource-retractions db resource))
-     (concat
-      [[:db/add "datomic.tx" :tx/source-file (.getPath resource)]]
-      (f content))]
-    (filter (comp seq first)))))
+   (let [ingested-at (resource-ingested-at (d/db conn) resource)]
+     (if (and ingested-at
+              (<= (.lastModified (io/file (.getFile resource))) (.getTime ingested-at)))
+       []
+       (->>
+        [(map (fn [[e a v]] [:db/retract e a v]) (resource-retractions db resource))
+         (concat
+          [[:db/add "datomic.tx" :tx/source-file (.getPath resource)]]
+          (f content))]
+        (filter (comp seq first)))))))
 
 (defn slurp-posts [db dir tx-data-f]
   (->> (stasis/slurp-directory (io/resource dir) #"\.md$")
@@ -223,6 +239,8 @@
 
   (doseq [tx-data (file-tx (d/db conn) "tags.edn" tag-tx-data)]
     @(d/transact conn tx-data))
+
+  (file-tx (d/db conn) "tags.edn" tag-tx-data)
 
   (into {} (d/entity (d/db conn) 17592186045424)) ;; EFS
 

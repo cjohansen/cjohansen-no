@@ -68,7 +68,7 @@
   (prepare-pages (get-raw-pages)))
 
 (defn index [conn]
-  (let [txes (ingest/ingest-everything (d/db conn))]
+  (when-let [txes (seq (ingest/ingest-everything (d/db conn)))]
     (println "Ingesting" (count (into [] cat txes)) "txes")
     (doseq [tx-data txes]
       (d/transact conn tx-data))))
