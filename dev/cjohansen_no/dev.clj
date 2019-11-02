@@ -23,6 +23,10 @@
 
 (defn restart []
   (stop)
+  (start))
+
+(defn reload []
+  (stop)
   (repl/refresh :after 'cjohansen-no.dev/start))
 
 (defn -main [& args]
