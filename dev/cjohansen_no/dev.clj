@@ -5,6 +5,8 @@
             [prone.middleware :as prone]
             [ring.adapter.jetty :as jetty]))
 
+(repl/set-refresh-dirs "src" "dev")
+
 (defstate server
   :start (jetty/run-jetty
           (-> (web/app-handler)
