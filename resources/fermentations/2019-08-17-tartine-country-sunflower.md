@@ -3,7 +3,6 @@
 :title Tartine Country Bread with Flax and Sunflower Seeds
 :description
 
-
 My kids' favorite bread is a sunflower seed and flax seed bread from [Hamelman's
 Bread](https://www.amazon.com/dp/1118132718/). This is an attempt at creating a
 similar style of bread, using the Tartine Country Bread as a base.
@@ -53,7 +52,7 @@ pleasant tang you expect from an active culture.
 :type :section
 :title Seeds
 :ingredients
-[{:type :sunflower :amount 130}
+[{:type :sunflower-seeds :amount 130}
  {:type :flax :amount 75}
  {:type :water :amount 150}]
 :time 5

@@ -31,7 +31,7 @@ Combined and placed under a lid at the same time as the starter.
 :type :section
 :title Sunflower seeds
 :ingredients
-[{:type :sunflower :amount 64}]
+[{:type :sunflower-seeds :amount 64}]
 :body
 
 Roasted at 190C for about 15 minutes

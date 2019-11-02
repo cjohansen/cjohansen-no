@@ -79,16 +79,19 @@
  {:ingredient/id :whole-wheat
   :ingredient/type :grain
   :ingredient/name "Whole wheat"}
- {:ingredient/id :sunflower
+ {:ingredient/id :sunflower-seeds
   :ingredient/type :seed
   :ingredient/name "Sunflower seeds"}
+ {:ingredient/id :pumpkin-seeds
+  :ingredient/type :seed
+  :ingredient/name "Pumpkin seeds"}
  {:ingredient/id :flax
   :ingredient/type :seed
   :ingredient/name "Flax seeds"}
  {:ingredient/id :poppy
   :ingredient/type :seed
   :ingredient/name "Poppy seeds"}
- {:ingredient/id :sesame
+ {:ingredient/id :sesame-seeds
   :ingredient/type :seed
   :ingredient/name "Sesame seeds"}
  {:ingredient/id :cardamom
