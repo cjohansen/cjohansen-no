@@ -1,7 +1,9 @@
 (ns cjohansen-no.web
   (:require [cjohansen-no.ingest :as ingest]
+            [cjohansen-no.live-reload :refer [wrap-live-reload]]
             [cjohansen-no.page :as page]
             [cjohansen-no.tech-blog :as tech]
+            [cjohansen-no.fermentation-blog :as ferments]
             [clojure.string :as str]
             [datomic.api :as d]
             [optimus.assets :as assets]
@@ -12,18 +14,32 @@
             [ring.middleware.content-type :refer [wrap-content-type]]
             [stasis.core :as stasis]))
 
+(defn header-key [res n]
+  (let [header-name (str/lower-case n)]
+    (->> (keys (:headers res))
+         (filter #(= header-name (str/lower-case %)))
+         first)))
+
+(defn make-utf-8 [res]
+  (when res
+    (let [k (header-key res "Content-Type")
+          content-type (get-in res [:headers k])]
+      (if (or (nil? k)
+              (empty? content-type)
+              (.contains content-type ";")
+              (not (string? (:body res))))
+        res
+        (update-in res [:headers k] #(str % "; charset=utf-8"))))))
+
 (defn wrap-utf-8
   "This function works around the fact that Ring simply chooses the default JVM
   encoding for the response encoding. This is not desirable, we always want to
   send UTF-8."
   [handler]
-  (fn [request]
-    (when-let [response (handler request)]
-      (if (.contains (get-in response [:headers "Content-Type"]) ";")
-        response
-        (if (string? (:body response))
-          (update-in response [:headers "Content-Type"] #(str % "; charset=utf-8"))
-          response)))))
+  (fn middleware
+    ([req] (-> req handler make-utf-8))
+    ([req respond raise]
+     (handler req #(-> % make-utf-8 respond) raise))))
 
 (defn get-assets []
   (assets/load-assets "public" [#".*\.css$"
@@ -32,29 +48,26 @@
                                 #".*\.ico$"
                                 #".*\.js$"]))
 
-(defn ingest-and-render-tech [conn post req]
-  (let [url (str/replace (:uri req) #"\/index\.html$" "/")
-        path (str "tech" (str/replace url #"/$" ".md"))]
-    (d/transact conn [[:db/retractEntity (:db/id post)]])
-    (d/transact conn (ingest/tech-post-txes path))
-    (tech/render-page req (tech/find-by-url (d/db conn) url))))
-
-(defn tech-pages [conn]
-  (let [posts (tech/load-posts (d/db conn))]
-    (zipmap (map :browsable/url posts)
-            (map #(fn [req] (ingest-and-render-tech conn % req)) posts))))
-
-(defn tech-tag-pages [db]
-  (let [tags (tech/load-tags db)]
-    (zipmap (map tech/tag-url tags)
-            (map #(fn [req] (tech/tag-page req %)) tags))))
+(defn database-pages [db]
+  (let [pages (->> (d/q '[:find ?e
+                          :in $
+                          :where
+                          [?e :browsable/url]]
+                        db)
+                   (map #(d/entity db (first %))))]
+    (zipmap (map :browsable/url pages)
+            (map #(fn [req]
+                    (case (:browsable/kind %)
+                      :page/tech-post (tech/render-page req %)
+                      :page/tech-tag (tech/tag-page req %)
+                      :page/bread-post (ferments/render-page req %))) pages))))
 
 (defn get-raw-pages []
-  (let [conn (ingest/db-conn)]
+  (let [conn (ingest/db-conn)
+        db (d/db conn)]
     (stasis/merge-page-sources
      {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
-      :tech-pages (tech-pages conn)
-      :tech-tag-pages (tech-tag-pages (d/db conn))})))
+      :db-pages (database-pages db)})))
 
 (defn prepare-page [page req]
   (-> (if (string? page) page (page req))
@@ -78,6 +91,7 @@
     (index conn)
     (-> (stasis/serve-pages get-pages)
         (optimus/wrap get-assets optimizations/none serve-live-assets)
+        (wrap-live-reload {:before-reload (fn [e] (index (ingest/db-conn)))})
         wrap-content-type
         wrap-utf-8)))
 

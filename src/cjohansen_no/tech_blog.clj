@@ -7,33 +7,6 @@
   (:import java.time.format.DateTimeFormatter
            java.time.LocalDateTime))
 
-(defn load-posts [db]
-  (->> (d/q '[:find ?e
-              :in $
-              :where
-              [?e :tech-blog/published]]
-            db)
-       (map #(d/entity db (first %)))))
-
-(defn load-tags [db]
-  (->> (d/q '[:find ?e
-              :in $
-              :where
-              [?e :tag/name]]
-            db)
-       (map #(d/entity db (first %)))))
-
-(defn find-by-url [db url]
-  (->> (d/q '[:find ?e .
-              :in $ ?url
-              :where
-              [?e :browsable/url ?url]]
-            db url)
-       (d/entity db)))
-
-(defn tag-url [tag]
-  (str "/" (str/replace (str/lower-case (:tag/name tag)) #"[^a-z0-9]+" "-") "/"))
-
 (defmulti post-section (fn [section] (or (:section/type section) :section)))
 
 (defmethod post-section :default [{:section/keys [body title sub-title theme type] :as opt}]
