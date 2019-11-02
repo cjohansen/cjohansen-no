@@ -84,12 +84,17 @@
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one}
 
- ;; Tech blog posts
+ ;; Navigatable pages
  {:db/ident :browsable/url
   :db/valueType :db.type/string
   :db/unique :db.unique/identity
   :db/cardinality :db.cardinality/one}
 
+ {:db/ident :browsable/kind
+  :db/valueType :db.type/keyword
+  :db/cardinality :db.cardinality/one}
+
+ ;; Tech blog posts
  {:db/ident :tech-blog/title
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
