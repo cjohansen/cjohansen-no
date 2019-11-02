@@ -1,5 +1,6 @@
 {:paths ["src" "resources" "ui/resources" "ui/src"]
  :deps {org.clojure/clojure {:mvn/version "1.10.1"}
+        org.clojure/core.async {:mvn/version "0.4.500"}
         org.clojure/core.match {:mvn/version "0.3.0"}
         org.clojure/tools.namespace {:mvn/version "0.3.1"}
         com.datomic/datomic-free {:mvn/version "0.9.5697"}
@@ -7,6 +8,7 @@
         cjohansen/dumdom {:mvn/version "2019.09.16"}
         cjohansen/imagine {:mvn/version "2019.09.09"}
         clygments {:mvn/version "2.0.0"}
+        hawk {:mvn/version "0.2.11"}
         java-time-literals {:mvn/version "2018-04-06"}
         mapdown {:mvn/version "0.2.1"}
         me.raynes/cegdown {:mvn/version "0.1.1"}

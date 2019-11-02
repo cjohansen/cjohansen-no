@@ -12,6 +12,7 @@
           (-> (web/app-handler)
               prone/wrap-exceptions)
           {:port 3030
+           :async? true
            :join? false})
   :stop (.stop server))
 
