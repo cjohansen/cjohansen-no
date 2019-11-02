@@ -135,22 +135,26 @@
    :ingredients :section/ingredients
    :time :section/time})
 
-(defn blog-post [url {:keys [meta sections]} ks]
+(defn blog-post [kind url {:keys [meta sections]} ks]
   (-> (pick-keys meta ks)
       (assoc :browsable/url url)
+      (assoc :browsable/kind kind)
       (assoc :db/id url)
       (assoc (:sections ks) (map #(pick-keys % section-keys) sections))))
 
 (defn tech-blog-post [parsed]
-  (blog-post (str/replace (-> parsed :meta :url) #"^tech" "") parsed blog-post-keys))
+  (blog-post :page/tech-post (str/replace (-> parsed :meta :url) #"^tech" "") parsed blog-post-keys))
 
 (defn bread-blog-post [parsed]
-  (blog-post (str "/" (-> parsed :meta :url)) parsed bread-keys))
+  (blog-post :page/bread-post (str "/" (-> parsed :meta :url)) parsed bread-keys))
 
 (defn tag-tx-data [content]
   (->> content
        read-string
-       (map (fn [[k v]] {:tag/id k, :tag/name v}))))
+       (map (fn [[k v]] {:tag/id k,
+                         :tag/name v
+                         :browsable/url (str "/" (str/replace (str/lower-case v) #"[^a-z0-9]+" "-") "/")
+                         :browsable/kind :page/tech-tag}))))
 
 (defn unique-attrs [db]
   (->> (d/q '[:find ?a
@@ -193,7 +197,7 @@
    (let [resource (io/resource file-name)]
      (file-tx db resource (slurp resource) f)))
   ([db resource content f]
-   (let [ingested-at (resource-ingested-at (d/db conn) resource)]
+   (let [ingested-at (resource-ingested-at db resource)]
      (if (and ingested-at
               (<= (.lastModified (io/file (.getFile resource))) (.getTime ingested-at)))
        []
