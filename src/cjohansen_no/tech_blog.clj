@@ -13,12 +13,12 @@
   (let [el (e/section
                {:title title
                 :sub-title sub-title
+                :heading-level 2
                 :meta (when (or (:published opt) (:updated opt))
                         {:published (:published opt) :updated (:updated opt)})
                 :content (md/to-html body html/pegdown-options)
-                :class (str (some-> type name)
-                            (when theme
-                              (str " theme-" (name theme))))})]
+                :theme theme
+                :type type})]
     el))
 
 (defn ->ldt [inst]

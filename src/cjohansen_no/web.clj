@@ -1,11 +1,13 @@
 (ns cjohansen-no.web
-  (:require [cjohansen-no.ingest :as ingest]
+  (:require [cjohansen-no.fermentation-blog :as ferments]
+            [cjohansen-no.images :as images]
+            [cjohansen-no.ingest :as ingest]
             [cjohansen-no.live-reload :refer [wrap-live-reload]]
             [cjohansen-no.page :as page]
             [cjohansen-no.tech-blog :as tech]
-            [cjohansen-no.fermentation-blog :as ferments]
             [clojure.string :as str]
             [datomic.api :as d]
+            [imagine.core :as imagine]
             [optimus.assets :as assets]
             optimus.export
             [optimus.optimizations :as optimizations]
@@ -70,8 +72,8 @@
       :db-pages (database-pages db)})))
 
 (defn prepare-page [page req]
-  (-> (if (string? page) page (page req))
-      page/finalize-page))
+  (->> (if (string? page) page (page req))
+       (page/finalize-page req)))
 
 (defn prepare-pages [pages]
   (zipmap (keys pages)
@@ -87,9 +89,10 @@
       (d/transact conn tx-data))))
 
 (defn app-handler []
-  (let [conn (ingest/db-conn)]
+    (let [conn (ingest/db-conn)]
     (index conn)
     (-> (stasis/serve-pages get-pages)
+        (imagine/wrap-images images/image-asset-config)
         (optimus/wrap get-assets optimizations/none serve-live-assets)
         (wrap-live-reload {:before-reload (fn [e] (index (ingest/db-conn)))})
         wrap-content-type

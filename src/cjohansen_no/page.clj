@@ -1,9 +1,12 @@
 (ns cjohansen-no.page
   (:require [cjohansen-no.html-walker :as html-walker]
             [clojure.java.io :as io]
+            [cjohansen-no.images :as images]
             [clojure.string :as str]
             [clygments.core :as pygments]
-            [dumdom.string :as dumdom]))
+            [dumdom.string :as dumdom]
+            [imagine.core :as imagine]
+            [optimus.link :as link]))
 
 (defn- extract-code [highlighted]
   (.getInnerHTML (first (html-walker/find highlighted [:pre]))))
@@ -56,11 +59,24 @@
          [:span.anchor-marker "¶"]
          (.getInnerHTML node)])))))
 
-(defn finalize-page [page]
+(defn- optimize-path-fn [req]
+  (fn [src]
+    (let [[url skigard] (str/split src #"#")]
+      (str
+       (or (not-empty (link/file-path req url))
+           (imagine/realize-url images/image-asset-config url)
+           (throw (Exception. (str "Image not loaded: " url))))
+       (some->> skigard (str "#"))))))
+
+(defn update-attr [node attr f]
+  (.setAttribute node attr (f (.getAttribute node attr))))
+
+(defn finalize-page [req page]
   (if (string? page)
     (html-walker/replace
      page
      {[:pre] maybe-highlight
+      [:img] #(update-attr % "src" (optimize-path-fn req))
       [:h2] add-anchor
       [:h3] add-anchor
       [:h4] add-anchor})

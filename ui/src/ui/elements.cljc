@@ -13,6 +13,8 @@
 (def h4 (partial el :h4))
 (def h5 (partial el :h5))
 
+(def headings [nil :h1.h1 :h2.h2 :h3.h3 :h4.h4 :h5.h5])
+
 (defn byline [{:keys [published updated tags]}]
   [:p.byline
    (cond
@@ -25,22 +27,42 @@
                           [:a {:href url} title])
                         (interpose ", "))])])
 
-(defn section [{:keys [title sub-title content class media meta] :as props}]
-  [:div.section {:className class}
-   [:div.content
-    (when media
-      [:div.media
-       media])
-    [:div.section-content.text-content
-     (when title (h1 {} title))
-     (when (:byline props) (byline (:byline props)))
-     (when sub-title (h2 {} sub-title))
-     (when content content)
-     (when (or (:published meta) (:updated meta))
-       [:p.subtle.text-s
-        (if (and (:published meta) (:updated meta))
-          (str "Published " (:published meta) ", updated " (:updated meta))
-          (str "Published " (:published meta)))])]]])
+(defn theme-class [theme]
+  (if (keyword? theme)
+    (str " theme-" (name theme))
+    " theme-default"))
+
+(defn type-class [type]
+  (when (keyword? type)
+    (name type)))
+
+(defn section-class [{:keys [class theme type]} & [class-name]]
+  (str/join " " (remove empty? [class-name class (theme-class theme) (type-class type)])))
+
+(defn section [{:keys [title sub-title content media meta heading-level note] :as props}]
+  (let [heading-level (or heading-level 1)]
+    [:div.section {:className (section-class props)}
+     [:div.content
+      (when media
+        [:div.media
+         media])
+      [:div.section-content
+       [:div.text-content
+        (when title [(nth headings heading-level) title])
+        (when note [:p.note.text-s note])
+        (when (:byline props) (byline (:byline props)))
+        (when sub-title [(nth headings (inc heading-level)) sub-title])
+        (when content content)
+        (when (or (:published meta) (:updated meta))
+          [:p.subtle.text-s
+           (if (and (:published meta) (:updated meta))
+             (str "Published " (:published meta) ", updated " (:updated meta))
+             (str "Published " (:published meta)))])]]]]))
+
+(defn split [{:keys [front back]}]
+  [:div.split
+   [:div.front front]
+   [:div.back back]])
 
 (defn centered [params]
   (section (assoc params :class "centered")))
@@ -51,10 +73,14 @@
 (defn section-media-back [params]
   (section (assoc params :class "media-back")))
 
-(defn section-media [{:keys [media title size]}]
-  [:div.media-wide {:className (if size
-                                 (str "s-" (name size))
-                                 "section")}
+(defn section-media [{:keys [media title size] :as props}]
+  [:div.media-wide
+   {:className
+    (section-class
+     props
+     (if size
+       (str "s-" (name size))
+       "section"))}
    [:div.content
     [:div.media media]
     (when title [:div.title (h1 {} title)])]])
@@ -104,14 +130,20 @@
    [:div.bq-quote
     [:p quote]]])
 
+(defn kv-table [items]
+  [:table.table.text-xs
+   (for [{:keys [label val]} items]
+     [:tr
+      [:th label]
+      [:td [:strong val]]])])
+
 (defn ingredient-list [ingredients]
   [:table.table.text-xs
    (for [{:keys [amount percent temp title]} ingredients]
      [:tr
       [:th title (when temp [:span.subtle (str " (" temp ")")])]
       [:td amount]
-      [:td [:strong percent]]
-      ])])
+      [:td [:strong percent]]])])
 
 (defn captioned [{:keys [content caption class]}]
   [:div.captioned {:className class}

@@ -165,18 +165,23 @@
        (map first)
        set))
 
-(defn resource-retractions [db resource]
-  (let [attrs (unique-attrs db)]
-    (->> (d/q '[:find ?e ?a ?v
-                :in $ [?attr ...] ?f
-                :where
-                [?e ?attr _ ?t]
-                [?t :tx/source-file ?f]
-                [?e ?a ?v ?t]]
-              db
-              attrs
-              (.getPath resource))
-         (remove (comp attrs second)))))
+(def attrs-to-keep #{:db/ident
+                     :db/txInstant})
+
+(defn retract-tx [db resource]
+  (when-let [tx-id (d/q '[:find ?e .
+                          :in $ ?f
+                          :where
+                          [?e :tx/source-file ?f]]
+                        db
+                        (.getPath resource))]
+    (keep
+     (fn [[e a v t]]
+       (when (= tx-id t)
+         (let [attr (:ident (d/attribute db a))]
+           (when (not (attrs-to-keep attr))
+             [:db/retract e attr v]))))
+     (d/datoms db :eavt))))
 
 (defn resource-ingested-at [db resource]
   (d/q '[:find ?txi .
@@ -190,6 +195,13 @@
        db
        (.getPath resource)))
 
+(defn file-txes [db resource content f]
+  (->> [(retract-tx db resource)
+        (concat
+         [[:db/add "datomic.tx" :tx/source-file (.getPath resource)]]
+         (f content))]
+       (filter (comp seq first))))
+
 (defn file-tx
   ([db file-name]
    (file-tx file-name identity))
@@ -201,12 +213,7 @@
      (if (and ingested-at
               (<= (.lastModified (io/file (.getFile resource))) (.getTime ingested-at)))
        []
-       (->>
-        [(map (fn [[e a v]] [:db/retract e a v]) (resource-retractions db resource))
-         (concat
-          [[:db/add "datomic.tx" :tx/source-file (.getPath resource)]]
-          (f content))]
-        (filter (comp seq first)))))))
+       (file-txes db resource content f)))))
 
 (defn slurp-posts [db dir tx-data-f]
   (->> (stasis/slurp-directory (io/resource dir) #"\.md$")
@@ -225,10 +232,17 @@
     (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
     conn))
 
+(defn ingredients [edn]
+  (->> (read-string edn)
+       (map (fn [ingredient]
+              (-> ingredient
+                  (assoc :browsable/url (str "/ingredient/" (name (:ingredient/id ingredient)) "/"))
+                  (assoc :browsable/kind :page/ingredient))))))
+
 (defn ingest-everything [db]
   (concat
    (file-tx db "tags.edn" tag-tx-data)
-   (file-tx db "ingredients.edn" read-string)
+   (file-tx db "ingredients.edn" ingredients)
    (slurp-posts db "tech" tech-blog-post)
    (slurp-posts db "fermentations" bread-blog-post)))
 
@@ -237,6 +251,13 @@
   (d/create-database "datomic:mem://blog")
   (def conn (d/connect "datomic:mem://blog"))
   (d/transact conn (read-string (slurp (io/resource "schema.edn"))))
+
+  (def db (d/db conn))
+
+  (file-txes db (io/resource "ingredients.edn") (slurp (io/resource "ingredients.edn")) ingredients)
+
+  (doseq [tx-data (file-txes db (io/resource "ingredients.edn") (slurp (io/resource "ingredients.edn")) ingredients)]
+    @(d/transact conn tx-data))
 
   (doseq [tx-data (ingest-everything (d/db conn))]
     @(d/transact conn tx-data))
@@ -254,5 +275,49 @@
               [?e :tech-blog/title ?title]]
             (d/db conn))
        (into {}))
+
+
+
+
+(def path "fermentations/lol.md")
+(def resource (io/resource path))
+(def conn (d/connect "datomic:mem://blog"))
+(def db (d/db conn))
+(file-txes db resource (md/parse (slurp resource)) bread-blog-post)
+
+(def tx (first (file-tx
+                db
+                resource
+                (parse-mapdown-db-file path (slurp resource))
+                (comp vector bread-blog-post))))
+
+(file-tx
+ (d/with db tx)
+ resource
+ (parse-mapdown-db-file path (slurp resource))
+ (comp vector bread-blog-post))
+
+(d/q '[:find ?e
+       :in $ ?p
+       :where
+       [?e :bread/title _ ?t]
+       [?t :tx/source-file ?p]]
+     db
+     (.getPath resource))
+
+(into {} (d/entity db 17592186046282))
+
+(into {} (d/entity db 17592186046308))
+(into {} (d/entity db 17592186046309))
+(into {} (d/entity db 17592186046322))
+(into {} (d/entity db 17592186046310))
+(into {} (d/entity db 17592186046287))
+(into {} (d/entity db 17592186046320))
+(into {} (d/entity db 17592186046309))
+(into {} (d/entity db 17592186046321))
+(into {} (d/entity db 17592186046286))
+(into {} (d/entity db 17592186046285))
+
+(retract-tx db resource)
 
   )

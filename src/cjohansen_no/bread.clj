@@ -43,6 +43,12 @@
 (defn liquid? [step-ingredient]
   (= :liquid (-> step-ingredient :ingredient :ingredient/type)))
 
+(defn step-ingredients [ingredients]
+  (map (fn [{:step-ingredient/keys [ingredient amount temperature]}]
+         {:ingredient ingredient
+          :amount amount
+          :temperature temperature}) ingredients))
+
 (defn prepare-ingredients
   ([ingredients] (prepare-ingredients ingredients ingredients))
   ([ingredients full-ingredients]
@@ -52,9 +58,11 @@
            (filter flour? sorted)
            (filter liquid? sorted)
            (remove #(or (flour? %) (liquid? %)) sorted))
-          (map (fn [{:keys [ingredient amount]}]
+          (map (fn [{:keys [ingredient amount temperature]}]
                  {:ingredient (:ingredient/name ingredient)
+                  :url (:browsable/url ingredient)
                   :amount amount
+                  :temperature temperature
                   :bakers-ratio (/ amount flour-weight)}))))))
 
 (defn total-time [bread-post]

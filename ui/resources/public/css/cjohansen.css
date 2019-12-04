@@ -234,15 +234,16 @@ dd code {
 
 .table td:first-child,
 .table th:first-child {
-  padding-left: 2rem;
+  padding-left: 0;
 }
 
 .table td:last-child,
 .table th:last-child {
-  padding-right: 2rem;
+  padding-right: 0;
 }
 
-.table strong {
+.table strong,
+strong.v2 {
   font-weight: normal;
   color: var(--fulvors);
 }
@@ -382,6 +383,16 @@ dd code {
   transition: opacity 0.25s;
 }
 
+.note,
+.text-content .note {
+  margin-top: -1rem;
+}
+
+.note strong,
+.text-content .note strong {
+  color: var(--fulvors);
+}
+
 @media not all and (hover: none) {
   .captioned-pop .caption:after {
     opacity: 1;
@@ -435,6 +446,11 @@ dd code {
   display: none;
 }
 
+/* Split */
+.split .front {
+  margin-bottom: 2rem;
+}
+
 /* Sections */
 .section {
   background: var(--section-bg);
@@ -448,10 +464,15 @@ dd code {
 }
 
 h1 a:link,
+h1 a:visited,
 h2 a:link,
+h2 a:visited,
 h3 a:link,
+h3 a:visited,
 h4 a:link,
-h5 a:link {
+h4 a:visited,
+h5 a:link,
+h5 a:visited {
   color: var(--fg-color);
 }
 
@@ -515,6 +536,7 @@ body .text-content :last-child {
 /* Image media */
 .media .img {
   display: block;
+  margin: 0 auto;
 }
 
 /* Media left/above */
@@ -545,6 +567,11 @@ body .text-content :last-child {
 
 .s-mega-wide .content {
   max-width: 1400px;
+  padding: 0;
+}
+
+.s-mega-wide .media {
+  margin-bottom: 0;
 }
 
 .s-wide .content {
@@ -581,6 +608,7 @@ body .text-content :last-child {
   .h5, .text-content h5 {font-size: 1.25rem; }
   .codehilite {font-size: 0.7rem;}
   .section .content {padding: 4rem 40px;}
+  .theme-default + .theme-default .content {padding-top: 0;}
   .section:last-child .content {padding-bottom: 100px;}
   div.hide-mobile {display: block;}
   span.hide-mobile {display: inline;}
@@ -639,11 +667,19 @@ body .text-content :last-child {
 
   .media + .teaser-content {
     margin: 0 0 0 1rem;
+    max-width: calc(60% - 1rem);
   }
 
   .teaser .media {
     margin: 0;
     max-width: calc(40% - 1rem);
+  }
+
+  /* Split */
+  .split {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-gap: 0 2rem;
   }
 }
 
