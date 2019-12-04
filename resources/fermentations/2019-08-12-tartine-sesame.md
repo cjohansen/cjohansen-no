@@ -74,7 +74,6 @@ hours later.
 :type :section
 :title Bake
 :time 50
-:image /images/bread/IMG_1471.jpg
 :body
 
 The sesame country bread was quite a success. It's not exactly "WOW, open

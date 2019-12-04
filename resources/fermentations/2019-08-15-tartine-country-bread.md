@@ -80,7 +80,8 @@ keep baking.
 :type :section
 :title Loaf #2
 :image-alt Second bread
-:image /images/bread/IMG_1480.jpg
+:section-type :media-back
+:image /vert-wide/images/bread/IMG_1480.jpg
 :body
 
 The second loaf spent about 12 hours in the fridge and came out very similar to

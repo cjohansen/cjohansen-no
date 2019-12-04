@@ -66,7 +66,8 @@ seeds were soaked.
 :type :section
 :title Shaping
 :image-alt Fermenting dough
-:image /images/bread/IMG_1496.jpg
+:section-type :media-back
+:image /vert/images/bread/IMG_1496.jpg
 :time 400
 :body
 

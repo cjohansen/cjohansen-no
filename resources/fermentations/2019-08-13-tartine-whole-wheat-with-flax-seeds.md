@@ -86,8 +86,9 @@ so I would be able to transfer the breads into Dutch ovens to cook.
 --------------------------------------------------------------------------------
 :type :section
 :title Bake
+:section-type :media-back
 :time 50
-:image /images/bread/IMG_1471.jpg
+:image /vert/images/bread/IMG_1471.jpg
 :body
 
 I baked these after 12 hours, and they turned out better than feared, if
