@@ -1325,7 +1325,7 @@ header[role='banner'] {
 .logo {
   text-transform: lowercase; }
   .logo a {
-    background: url("../images/logos/logo.svg") no-repeat 0 0;
+    background: url("logo.svg") no-repeat 0 0;
     background-size: 4.8rem;
     float: left;
     height: 4.8rem;
@@ -1650,7 +1650,7 @@ a#previous {
   #navigation {
     -webkit-animation: fadeIn 6s;
             animation: fadeIn 6s;
-    background: url("../images/swipe.svg") no-repeat center top;
+    background: url("swipe.svg") no-repeat center top;
     background-size: 4.8rem; }
   #navigation a,
   #counter {
@@ -2812,10 +2812,10 @@ button:disabled:hover {
       margin-top: .8rem; } }
 
 .badge-ios {
-  background-image: url("../images/bt-appstore.png"); }
+  background-image: url("bt-appstore.png"); }
 
 .badge-android {
-  background-image: url("../images/bt-playstore.png"); }
+  background-image: url("bt-playstore.png"); }
 
 /*=========================================
 15. Longform
