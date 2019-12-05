@@ -2,7 +2,7 @@
   (:require [cjohansen-no.html :as html]
             [clojure.string :as str]
             [datomic.api :as d]
-            [me.raynes.cegdown :as md]
+            [markdown.core :as md]
             [ui.elements :as e])
   (:import java.time.format.DateTimeFormatter
            java.time.LocalDateTime))
@@ -16,7 +16,7 @@
                 :heading-level 2
                 :meta (when (or (:published opt) (:updated opt))
                         {:published (:published opt) :updated (:updated opt)})
-                :content (md/to-html body html/pegdown-options)
+                :content (md/md-to-html-string body)
                 :theme theme
                 :type type})]
     el))

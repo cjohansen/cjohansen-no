@@ -4,7 +4,7 @@
             [cjohansen-no.bread :as bread]
             [clojure.string :as str]
             [datomic.api :as d]
-            [me.raynes.cegdown :as md]
+            [markdown.core :as md]
             [ui.elements :as e])
   (:import java.time.format.DateTimeFormatter
            java.time.LocalDateTime))
@@ -33,7 +33,7 @@
     :else (str (int (/ min 60)) " hours, " (mod min 60) " minutes")))
 
 (defn section-props [bread {:section/keys [body time ingredients title sub-title theme type] :as params}]
-  (let [content (some-> body (md/to-html html/pegdown-options))]
+  (let [content (some-> body md/md-to-html-string)]
     {:heading-level 2
      :title title
      :sub-title sub-title
@@ -81,7 +81,7 @@
   (e/section
    {:title title
     :theme :dark1
-    :content (some-> description (md/to-html html/pegdown-options))
+    :content (some-> description md/md-to-html-string)
     :meta (byline now bread)}))
 
 (defn recipe-section [{:bread/keys [title image] :as bread}]

@@ -4,14 +4,14 @@
             [clojure.string :as str]
             [dumdom.string :as dumdom]
             [mapdown.core :as mapdown]
-            [me.raynes.cegdown :as md]))
+            [markdown.core :as md]))
 
 (defn load-fermentations [ferms]
   (let [ferms (->> ferms
                    (map (fn [[path v]]
                           (-> (mapdown/parse v)
                               (assoc :url (str "/fermentations" (str/replace path #"\.md$" "/")))
-                              (update :body md/to-html html/pegdown-options)
+                              (update :body md/md-to-html-string)
                               (update :published #(when % (java.time.LocalDate/parse %)))
                               (update :type read-string)
                               (update :tags #(and % (read-string %)))))))]
