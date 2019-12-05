@@ -1040,5 +1040,3 @@ buster-disable-test"
 
 Big thanks to Ala'a Mohammad for cleaning up/improving several aspects of this
 article.
-
-[Follow me (@cjno) on Twitter](http://twitter.com/cjno)

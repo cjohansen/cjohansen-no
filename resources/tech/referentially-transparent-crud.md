@@ -413,7 +413,3 @@ Did I mention that our app handles emails and sms messages the same way? Add
 stuff to `:command/emails`, and `process-results` will send 'em off for you.
 
 Clojure. Datomic. You gotta love 'em.
-
-June 17th 2017
-
-[Follow me (@cjno) on Twitter](http://twitter.com/cjno)

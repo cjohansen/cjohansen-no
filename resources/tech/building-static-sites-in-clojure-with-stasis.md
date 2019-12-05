@@ -1186,8 +1186,6 @@ hope you will consider Clojure and Stasis for your next semi-static web project.
 
 Big thanks to Magnar Sveen for proof-reading and correcting this post.
 
-[Follow me (@cjno) on Twitter](http://twitter.com/cjno)
-
 ## Discuss
 
 - [Hacker News discussion](https://news.ycombinator.com/item?id=7375425)

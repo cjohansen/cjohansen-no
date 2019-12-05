@@ -245,8 +245,6 @@ choose and position the placeholder yourself.
 These are just some of the details I love about Clojure, but I use them a lot,
 and they are for me a big part of what makes Clojure so effortless to work with.
 
-[Follow me (@cjno) on Twitter](http://twitter.com/cjno)
-
 ## Discuss
 
 - [Hacker News discussion](https://news.ycombinator.com/item?id=7377684)
