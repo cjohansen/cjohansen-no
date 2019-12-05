@@ -4,6 +4,11 @@
 :published #time/ldt "2019-01-19T10:00"
 :updated #time/ldt "2019-06-11T12:00"
 :tags [:clojure :clojurescript :figwheel :devcards :emacs]
+:description
+
+A primer on setting up a ClojureScript project with tools.deps, figwheel.main,
+devcards, and optionally Emacs.
+
 --------------------------------------------------------------------------------
 :type :section
 :section-type :centered

@@ -3,6 +3,9 @@
 :title Git Subtree for Multiple Directories
 :published #time/ldt "2018-05-03T12:00"
 :tags [:git]
+:description
+
+How to split Git repos.
 --------------------------------------------------------------------------------
 :type :section
 :section-type :centered

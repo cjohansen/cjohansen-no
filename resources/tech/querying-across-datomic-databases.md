@@ -4,6 +4,13 @@
 :published #time/ldt "2017-06-17T12:00"
 :updated #time/ldt "2019-03-27T12:00"
 :tags [:clojure :datomic]
+:description
+
+Among its many, many unique and interesting features, [Datomic](http://www.datomic.com/)
+supports [datalog](http://docs.datomic.com/query.html) queries across multiple
+databases. I recently had a chance to actually use this feature, and thought I'd
+share an actual example of it.
+
 --------------------------------------------------------------------------------
 :type :section
 :section-type :centered
@@ -124,5 +131,3 @@ And there you go. A reusable query that can be used to find a user's activity in
 any time duration using database filtering functions like `(d/as-of db time)`
 and `(d/since db time)` (or a combination), and that performs a join across
 databases. Did I mention that I love working with Datomic?
-
-[Follow me (@cjno) on Twitter](http://twitter.com/cjno)
