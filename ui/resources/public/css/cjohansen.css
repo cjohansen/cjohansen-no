@@ -294,7 +294,11 @@ strong.v2 {
   left: 0;
 }
 
-.logo-name {padding-top: 7px;}
+.facebox .img.hover {display: none}
+a:hover .facebox .img {display: none}
+a:hover .facebox .img.hover {display: block}
+
+.logo-name {color: var(--fg-color); padding-top: 7px;}
 .logo-firstname, .logo-lastname {display: inline-block;}
 .logo-firstname:first-letter {font-weight: bold;}
 .logo-lastname {margin-left: 5px;}
@@ -302,6 +306,19 @@ strong.v2 {
 .header .menu {margin-left: 120px; margin-top: -43px; font-size: 0.9rem;}
 .menu {display: flex;}
 .menu li + li {margin-left: 10px;}
+
+/* Simple header */
+.simple-header {
+  background: var(--header-bg);
+  --fg-color: var(--header-fg);
+}
+
+.simple-header a,
+.simple-header a:link,
+.simple-header a:visited {
+  font-size: 1.5rem;
+  color: var(--fg-color);
+}
 
 /* Footer */
 .footer {

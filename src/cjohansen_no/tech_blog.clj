@@ -49,7 +49,7 @@
    :open-graph/image (:tech-blog/image post)
    :page-title (:tech-blog/title post)
    :body [:div
-          (e/header)
+          (e/simple-header)
           (->> (:tech-blog/sections post)
                (sort-by :section/number)
                (add-byline (or now (java.time.Instant/now)) post)

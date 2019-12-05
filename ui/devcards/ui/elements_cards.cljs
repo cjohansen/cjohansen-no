@@ -75,6 +75,9 @@
 (defcard dark-header
   [:div.theme-dark1 (e/header)])
 
+(defcard simple-header
+  (e/simple-header))
+
 (defcard footer
   (e/footer))
 

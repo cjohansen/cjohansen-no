@@ -88,9 +88,10 @@
 (defn header []
   [:div.header
    [:div.header-content
-    [:div.logo
+    [:a.logo {:href "/"}
      [:div.facebox
-      [:img.img {:src "/images/christian-bw.png" :width 100}]]
+      [:img.img {:src "/images/christian-bw.png" :width 100}]
+      [:img.img.hover {:src "/images/christian.png" :width 100}]]
      [:div.logo-name
       [:div.logo-firstname "Christian"]
       [:div.logo-lastname "Johansen"]]]
@@ -98,6 +99,11 @@
      [:li [:a {:href "/"} "Tech"]]
      [:li [:a {:href "/fermentations/"} "Fermentations"]]
      [:li [:a {:href "/about/"} "About" [:span.hide-mobile " me"]]]]]])
+
+(defn simple-header []
+  [:div.simple-header
+   [:div.header-content
+    [:a {:href "/"} "Christian Johansen"]]])
 
 (defn now-year []
   #?(:clj (.getYear (java.time.LocalDate/ofInstant (java.time.Instant/now) (java.time.ZoneId/of "Europe/Oslo")))
