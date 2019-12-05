@@ -56,7 +56,8 @@
                           :where
                           [?e :browsable/url]]
                         db)
-                   (map #(d/entity db (first %))))]
+                   (map #(d/entity db (first %)))
+                   (remove (comp #{:page/bread-post :page/ingredient} :browsable/kind)))]
     (zipmap (map :browsable/url pages)
             (map #(fn [req]
                     (case (:browsable/kind %)
