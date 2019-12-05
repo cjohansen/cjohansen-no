@@ -10,16 +10,15 @@
 (defmulti post-section (fn [section] (or (:section/type section) :section)))
 
 (defmethod post-section :default [{:section/keys [body title sub-title theme type] :as opt}]
-  (let [el (e/section
-               {:title title
-                :sub-title sub-title
-                :heading-level 2
-                :meta (when (or (:published opt) (:updated opt))
-                        {:published (:published opt) :updated (:updated opt)})
-                :content (md/md-to-html-string body)
-                :theme theme
-                :type type})]
-    el))
+  (e/section
+      {:title title
+       :sub-title sub-title
+       :heading-level 2
+       :meta (when (or (:published opt) (:updated opt))
+               {:published (:published opt) :updated (:updated opt)})
+       :content (md/md-to-html-string body)
+       :theme theme
+       :type type}))
 
 (defn ->ldt [inst]
   (when inst
@@ -56,10 +55,15 @@
                (map post-section))
           (e/footer)]})
 
-(defn teaser [{:tech-blog/keys [short-title title published] :browsable/keys [url]}]
+(defn teaser [{:tech-blog/keys [short-title title description published tags] :browsable/keys [url]}]
   {:title (or short-title title)
    :published (ymd (->ldt published))
-   :url url})
+   :url url
+   :description (md/md-to-html-string description)
+   :tags (->> tags
+              (sort-by :tag/name)
+              (map (fn [tag] {:title (:tag/name tag)
+                              :url (:browsable/url tag)})))})
 
 (defn tag-page [req tag]
   (html/layout-page-new
@@ -67,7 +71,7 @@
    {:open-graph/title (:tag/name tag)
     :page-title (:tag/name tag)
     :body [:div
-           (e/header)
+           (e/simple-header)
            (e/teaser-section
             {:title (:tag/name tag)
              :teasers (->> tag
@@ -80,6 +84,29 @@
 
 (defn render-page [req post]
   (html/layout-page-new req (tech-blog-page post)))
+
+(defn blog-posts [db]
+  (->> (d/q '[:find ?e ?p
+              :in $
+              :where
+              [?e :browsable/kind :page/tech-post]
+              [?e :tech-blog/published ?p]]
+            db)
+       (sort-by second)
+       reverse
+       (map #(d/entity db (first %)))))
+
+(defn frontpage [req page]
+  (html/layout-page-new
+   req
+   {:open-graph/title (:frontpage/title page)
+    :page-title (:frontpage/title page)
+    :body [:div
+           (e/section {:content (md/md-to-html-string (:frontpage/description page))})
+           (e/teaser-section
+            {:title "Blog posts"
+             :teasers (map teaser (blog-posts (d/entity-db page)))})
+           (e/footer)]}))
 
 (comment
   (def conn (d/connect "datomic:mem://blog"))
