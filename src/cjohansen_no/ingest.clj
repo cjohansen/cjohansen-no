@@ -156,6 +156,13 @@
                          :browsable/url (str "/" (str/replace (str/lower-case v) #"[^a-z0-9]+" "-") "/")
                          :browsable/kind :page/tech-tag}))))
 
+(defn frontpage-tx-data [content]
+  [(->> content
+        md/parse
+        (map (fn [[k v]] [(keyword "frontpage" (name k)) v]))
+        (into {:browsable/kind :page/frontpage
+               :browsable/url "/"}))])
+
 (defn unique-attrs [db]
   (->> (d/q '[:find ?a
               :in $
@@ -241,10 +248,11 @@
 
 (defn ingest-everything [db]
   (concat
+   ;;(file-tx db "ingredients.edn" ingredients)
+   ;;(slurp-posts db "fermentations" bread-blog-post)
    (file-tx db "tags.edn" tag-tx-data)
-   (file-tx db "ingredients.edn" ingredients)
-   (slurp-posts db "tech" tech-blog-post)
-   (slurp-posts db "fermentations" bread-blog-post)))
+   (file-tx db "index.md" frontpage-tx-data)
+   (slurp-posts db "tech" tech-blog-post)))
 
 (comment
   (d/delete-database "datomic:mem://blog")
@@ -254,10 +262,21 @@
 
   (def db (d/db conn))
 
+  (->> (d/q '[:find ?e ?p
+              :in $
+              :where
+              [?e :browsable/kind :page/tech-post]
+              [?e :tech-blog/published ?p]]
+            db)
+       (sort-by second)
+       reverse)
+
   (file-txes db (io/resource "ingredients.edn") (slurp (io/resource "ingredients.edn")) ingredients)
 
   (doseq [tx-data (file-txes db (io/resource "ingredients.edn") (slurp (io/resource "ingredients.edn")) ingredients)]
     @(d/transact conn tx-data))
+
+  (file-tx db "tags.edn" tag-tx-data)
 
   (doseq [tx-data (ingest-everything (d/db conn))]
     @(d/transact conn tx-data))

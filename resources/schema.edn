@@ -14,6 +14,15 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
+ ;; Frontpage
+ {:db/ident :frontpage/title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :frontpage/description
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
  ;; Sections
  {:db/ident :section/id
   :db/valueType :db.type/string

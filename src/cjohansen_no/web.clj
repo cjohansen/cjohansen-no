@@ -56,14 +56,14 @@
                           :where
                           [?e :browsable/url]]
                         db)
-                   (map #(d/entity db (first %)))
-                   (remove (comp #{:page/bread-post :page/ingredient} :browsable/kind)))]
+                   (map #(d/entity db (first %))))]
     (zipmap (map :browsable/url pages)
             (map #(fn [req]
                     (case (:browsable/kind %)
                       :page/tech-post (tech/render-page req %)
                       :page/tech-tag (tech/tag-page req %)
-                      :page/bread-post (ferments/render-page req %))) pages))))
+                      :page/bread-post (ferments/render-page req %)
+                      :page/frontpage (tech/frontpage req %))) pages))))
 
 (defn get-raw-pages []
   (let [conn (ingest/db-conn)
