@@ -44,11 +44,11 @@
      (handler req #(-> % make-utf-8 respond) raise))))
 
 (defn get-assets []
-  (assets/load-assets "public" [#".*\.css$"
-                                #".*\.png$"
-                                #".*\.svg$"
-                                #".*\.ico$"
-                                #".*\.js$"]))
+  (assets/load-assets "public" [#".*cjohansen.css$"
+                                #".*images/.*\.png$"
+                                #".*images/.*\.jpg$"
+                                #".*images/.*\.svg$"
+                                #".*\.ico$"]))
 
 (defn database-pages [db]
   (let [pages (->> (d/q '[:find ?e
@@ -69,7 +69,9 @@
   (let [conn (ingest/db-conn)
         db (d/db conn)]
     (stasis/merge-page-sources
-     {:public (stasis/slurp-directory "resources/public" #".*\.(html)$")
+     {:four-in-a-row (stasis/slurp-directory "resources/public" #"four-in-a-row/(index\.html|bundle\.js|game\.css)")
+      :webslides-pygments-demo (stasis/slurp-directory "resources/public" #"webslides-pygments-demo/.*")
+      :yahtzee (stasis/slurp-directory "resources/public" #"yahtzee/.*")
       :db-pages (database-pages db)})))
 
 (defn prepare-page [page req]
@@ -107,6 +109,9 @@
     (stasis/empty-directory! export-dir)
     (optimus.export/save-assets assets export-dir)
     (stasis/export-pages (get-pages) export-dir {:optimus-assets assets})))
+
+(defn -main [& args]
+  (export))
 
 (comment
   (index (ingest/db-conn))

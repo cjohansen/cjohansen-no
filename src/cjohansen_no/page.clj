@@ -72,7 +72,7 @@
   (.setAttribute node attr (f (.getAttribute node attr))))
 
 (defn finalize-page [req page]
-  (if (string? page)
+  (if (and (re-find #"\.html$" (:uri req)) (string? page))
     (html-walker/replace
      page
      {[:pre] maybe-highlight
