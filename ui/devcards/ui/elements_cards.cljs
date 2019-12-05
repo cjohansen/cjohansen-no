@@ -168,3 +168,12 @@
     :published "August 31st 2019"
     :pitch "Previous"
     :url "/fermentations/2019-08-31-fwsy-5050/"}))
+
+(defcard teaser-tags
+  (e/teaser
+   {:title "Variations on Flour Water Salt Yeast 50% Whole Wheat"
+    :description "This is some really exciting stuff"
+    :tags [{:title "Flour" :url "/ingredients/flour/"}
+           {:title "Water" :url "/ingredients/water/"}]
+    :published "September 1st 2019"
+    :url "/fermentations/2019-09-01-fwsy-5050/"}))

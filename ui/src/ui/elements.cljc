@@ -16,7 +16,7 @@
 (def headings [nil :h1.h1 :h2.h2 :h3.h3 :h4.h4 :h5.h5])
 
 (defn byline [{:keys [published updated tags]}]
-  [:p.byline
+  [:p.byline.text-s
    (cond
      (and published updated)
      [:span.date (str updated " (published " published ")")]
@@ -169,17 +169,18 @@
     :caption caption
     :class (str (caption-themes theme) (when pop? " captioned-pop"))}))
 
-(defn teaser [{:keys [url media title published pitch]}]
+(defn teaser [{:keys [url media title description pitch] :as props}]
   [:div.teaser
    (when media [:div.media [:a {:href url} media]])
    [:div.teaser-content
     (when pitch
       (h5 {:className "subtle"} pitch))
     (h4 {} [:a {:href url} title])
-    [:span.subtle.text-s published]]])
+    description
+    (byline props)]])
 
-(defn teaser-section [{:keys [title sub-title teasers class]}]
-  [:div.section {:className (str "teasers" (when class (str " " class)))}
+(defn teaser-section [{:keys [title sub-title teasers] :as props}]
+  [:div.section {:className (section-class props "teasers")}
    [:div.content
     [:div.section-content
      (when title (h2 {} title))

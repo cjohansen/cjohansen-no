@@ -363,7 +363,6 @@ a:hover .facebox .img.hover {display: block}
 .byline {
   border-bottom: 1px solid var(--athens);
   color: var(--manatee);
-  font-size: 0.9rem;
   padding: 10px 0 20px;
 }
 
@@ -462,6 +461,8 @@ a:hover .facebox .img.hover {display: block}
 .teaser .h5 {
   display: none;
 }
+
+.teaser .byline {border: none; padding-bottom: 0px;}
 
 /* Split */
 .split .front {
