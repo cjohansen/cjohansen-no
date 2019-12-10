@@ -93,7 +93,6 @@
       [:meta {:property "og:image" :content (str (get-in request [:headers "host"]) (:image/url image))}])
 
     [:title (or (:page-title page) "Tech blog")]
-    [:link {:rel "stylesheet" :href "https://fonts.googleapis.com/css?family=Lato|Source+Sans+Pro|Source+Code+Pro|Source+Serif+Pro&display=swap"}]
     [:link {:rel "stylesheet" :href (link/file-path request "/css/cjohansen.css")}]]
    [:body
     (:body page)]))
