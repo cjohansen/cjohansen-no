@@ -13,3 +13,5 @@ js/compiled
 .nrepl-port
 ui/resources/public/js
 build
+infrastructure/.zip
+infrastructure/.terraform/
