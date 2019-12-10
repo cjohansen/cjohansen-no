@@ -48,7 +48,8 @@
                                 #".*images/.*\.png$"
                                 #".*images/.*\.jpg$"
                                 #".*images/.*\.svg$"
-                                #".*\.ico$"]))
+                                #".*\.ico$"
+                                #"fonts/.*\.*$"]))
 
 (defn database-pages [db]
   (let [pages (->> (d/q '[:find ?e
@@ -101,7 +102,7 @@
         wrap-content-type
         wrap-utf-8)))
 
-(def export-dir "build")
+(def export-dir "target")
 
 (defn export []
   (let [assets (optimizations/all (get-assets) {})]
