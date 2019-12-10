@@ -13,7 +13,7 @@
         mapdown {:mvn/version "0.2.1"}
         markdown-clj {:mvn/version "1.10.0"}
         mount {:mvn/version "0.1.16"}
-        optimus {:mvn/version "0.20.2"}
+        optimus {:mvn/version "1.0.0-rc3"}
         prone {:mvn/version "2019-07-08"}
         ring {:mvn/version "1.7.1"}
         stasis {:mvn/version "2.5.0"}}
