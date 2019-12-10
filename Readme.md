@@ -1,33 +1,20 @@
 # cjohansen-no
 
-This is a demonstration app that shows how to put together a static website with
-Clojure and these libraries:
-
-* [Stasis](http://github.com/magnars/stasis)
-* [Optimus](http://github.com/magnars/optimus)
-* [hiccup](https://github.com/weavejester/hiccup)
-* [cegdown](https://github.com/Raynes/cegdown)
-* [clygments](https://github.com/bfontaine/clygments)
-* [Midje](https://github.com/marick/Midje)
-
-The hows and whys are explained in thorough detail in
-[this post](http://cjohansen.no/building-static-sites-in-clojure-with-stasis).
-
-This repo will eventually evolve into my new website.
+This is my website. It contains some blog posts.
 
 ## Usage
 
 Export site to disk
 
 ```sh
-lein build-site
+make target
 ```
 
-Run the live server
+## Post
 
-```sh
-lein ring server-headless
-```
+When I originally wrote this site, I wrote a post detailing its structure, but
+it has departed quite a bit from [this
+post](http://cjohansen.no/building-static-sites-in-clojure-with-stasis).
 
 ## License
 
