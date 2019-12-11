@@ -60,6 +60,7 @@
    :published (ymd (->ldt published))
    :url url
    :description (md/md-to-html-string description)
+   :kind :article
    :tags (->> tags
               (sort-by :tag/name)
               (map (fn [tag] {:title (:tag/name tag)

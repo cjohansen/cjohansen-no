@@ -169,8 +169,8 @@
     :caption caption
     :class (str (caption-themes theme) (when pop? " captioned-pop"))}))
 
-(defn teaser [{:keys [url media title description pitch] :as props}]
-  [:div.teaser
+(defn teaser [{:keys [url media title description pitch kind] :as props}]
+  [:div.teaser {:className (when kind (str "teaser-" (name kind)))}
    (when media [:div.media [:a {:href url} media]])
    [:div.teaser-content
     (when pitch

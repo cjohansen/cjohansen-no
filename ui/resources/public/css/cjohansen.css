@@ -455,6 +455,10 @@ a:hover .facebox .img.hover {display: block}
   flex-direction: column-reverse;
 }
 
+.teaser-article .teaser-content {
+  flex-direction: column;
+}
+
 .teaser .media {
   margin-bottom: 1rem;
 }

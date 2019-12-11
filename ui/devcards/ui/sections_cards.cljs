@@ -136,3 +136,25 @@ Both Stasis and Optimus are written by my good friend and colleague, "
               {:title "A Unified Specification"
                :published "January 3rd 2019"
                :url "/a-unified-specification/"}]}))
+
+(defcard teaser-section-no-images
+  (e/teaser-section
+   {:title "Blog Posts"
+    :teasers [{:title "AWS Free Tier"
+               :published "July 24 2019"
+               :url "/clojure-in-production-tools-deps/"
+               :description "Dette er en liten historie om hvordan EFS nærmest tok livet av Kubernetes-clusteret vårt, og hvordan du kan unngå å havne i samme knipa — selvom du ikke bruker EFS."
+               :kind :article}
+              {:title "tools.deps, figwheel-main, Devcards, and Emacs"
+               :published "May 14th 2019"
+               :url "/tools-deps-figwheel-main-devcards-emacs/"
+               :description "A primer on setting up a ClojureScript project with tools.deps, figwheel.main, devcards, and optionally Emacs."
+               :kind :article}
+              {:title "Optimized Optimus Asset Paths from ClojureScript"
+               :published "February 18th 2019"
+               :url "/optimized-optimus-asset-paths-clojurescript/"
+               :kind :article}
+              {:title "A Unified Specification"
+               :published "January 3rd 2019"
+               :url "/a-unified-specification/"
+               :kind :article}]}))
