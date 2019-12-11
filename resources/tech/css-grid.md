@@ -78,14 +78,14 @@ plass:
 </style>
 
 <div class="grid-ex">
-  <div class="grid-container1">
-    <div class="child1"><p>Dette er element #1</p></div>
-    <div class="child2"><p>Dette er element #2</p></div>
-    <div class="child3"><p>Dette er element #3</p></div>
-    <div class="child4"><p>Dette er element #4</p></div>
-    <div class="child5"><p>Dette er element #5</p></div>
-    <div class="child6"><p>Dette er element #6</p></div>
-  </div>
+ <div class="grid-container1">
+  <div class="child1"><p>Dette er element #1</p></div>
+  <div class="child2"><p>Dette er element #2</p></div>
+  <div class="child3"><p>Dette er element #3</p></div>
+  <div class="child4"><p>Dette er element #4</p></div>
+  <div class="child5"><p>Dette er element #5</p></div>
+  <div class="child6"><p>Dette er element #6</p></div>
+ </div>
 </div>
 
 ## Rader
@@ -111,14 +111,14 @@ beskriver vil påfølgende rader opptre som om de var spesifisert med `auto`.
 </style>
 
 <div class="grid-ex">
-  <div class="grid-container2">
-    <div class="child1"><p>Dette er element #1</p></div>
-    <div class="child2"><p>Dette er element #2</p></div>
-    <div class="child3"><p>Dette er element #3</p></div>
-    <div class="child4"><p>Dette er element #4</p></div>
-    <div class="child5"><p>Dette er element #5</p></div>
-    <div class="child6"><p>Dette er element #6</p></div>
-  </div>
+ <div class="grid-container2">
+  <div class="child1"><p>Dette er element #1</p></div>
+  <div class="child2"><p>Dette er element #2</p></div>
+  <div class="child3"><p>Dette er element #3</p></div>
+  <div class="child4"><p>Dette er element #4</p></div>
+  <div class="child5"><p>Dette er element #5</p></div>
+  <div class="child6"><p>Dette er element #6</p></div>
+ </div>
 </div>
 
 ## Tables go home
@@ -159,14 +159,14 @@ justering i begge retninger:
 </style>
 
 <div class="grid-ex">
-  <div class="grid-container3">
-    <div class="child1"><p>Dette er element #1</p></div>
-    <div class="child2"><p>Dette er element #2</p></div>
-    <div class="child3"><p>Dette er element #3</p></div>
-    <div class="child4"><p>Dette er element #4</p></div>
-    <div class="child5"><p>Dette er element #5</p></div>
-    <div class="child6"><p>Dette er element #6</p></div>
-  </div>
+ <div class="grid-container3">
+  <div class="child1"><p>Dette er element #1</p></div>
+  <div class="child2"><p>Dette er element #2</p></div>
+  <div class="child3"><p>Dette er element #3</p></div>
+  <div class="child4"><p>Dette er element #4</p></div>
+  <div class="child5"><p>Dette er element #5</p></div>
+  <div class="child6"><p>Dette er element #6</p></div>
+ </div>
 </div>
 
 Den midterste kolonnen over får `auto` bredde, ikke 50%. På denne måten blir det
@@ -197,14 +197,14 @@ tredjedel av plassen:
 </style>
 
 <div class="grid-ex">
-  <div class="grid-container4">
-    <div class="child1"><p>Dette er element #1</p></div>
-    <div class="child2"><p>Dette er element #2</p></div>
-    <div class="child3"><p>Dette er element #3</p></div>
-    <div class="child4"><p>Dette er element #4</p></div>
-    <div class="child5"><p>Dette er element #5</p></div>
-    <div class="child6"><p>Dette er element #6</p></div>
-  </div>
+ <div class="grid-container4">
+  <div class="child1"><p>Dette er element #1</p></div>
+  <div class="child2"><p>Dette er element #2</p></div>
+  <div class="child3"><p>Dette er element #3</p></div>
+  <div class="child4"><p>Dette er element #4</p></div>
+  <div class="child5"><p>Dette er element #5</p></div>
+  <div class="child6"><p>Dette er element #6</p></div>
+ </div>
 </div>
 
 For å lage en grid på 2 + 1 + 3 kan du bare fordele flere `fr`-enheter:
@@ -224,14 +224,14 @@ For å lage en grid på 2 + 1 + 3 kan du bare fordele flere `fr`-enheter:
 </style>
 
 <div class="grid-ex">
-  <div class="grid-container5">
-    <div class="child1"><p>Dette er element #1</p></div>
-    <div class="child2"><p>Dette er element #2</p></div>
-    <div class="child3"><p>Dette er element #3</p></div>
-    <div class="child4"><p>Dette er element #4</p></div>
-    <div class="child5"><p>Dette er element #5</p></div>
-    <div class="child6"><p>Dette er element #6</p></div>
-  </div>
+ <div class="grid-container5">
+  <div class="child1"><p>Dette er element #1</p></div>
+  <div class="child2"><p>Dette er element #2</p></div>
+  <div class="child3"><p>Dette er element #3</p></div>
+  <div class="child4"><p>Dette er element #4</p></div>
+  <div class="child5"><p>Dette er element #5</p></div>
+  <div class="child6"><p>Dette er element #6</p></div>
+ </div>
 </div>
 
 ## Full fleks
@@ -264,8 +264,7 @@ du elementene dine plassert akkurat hvor du vil.
 .grid-container6 {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-areas: "child5 child1 child4"
-                       "child2 child6 child3"
+  grid-template-areas: "child5 child1 child4" "child2 child6 child3";
 }
 
 .grid-container6 .child1 { grid-area: child1; }
@@ -277,14 +276,14 @@ du elementene dine plassert akkurat hvor du vil.
 </style>
 
 <div class="grid-ex">
-  <div class="grid-container6">
-    <div class="child1"><p>Dette er element #1</p></div>
-    <div class="child2"><p>Dette er element #2</p></div>
-    <div class="child3"><p>Dette er element #3</p></div>
-    <div class="child4"><p>Dette er element #4</p></div>
-    <div class="child5"><p>Dette er element #5</p></div>
-    <div class="child6"><p>Dette er element #6</p></div>
-  </div>
+ <div class="grid-container6">
+  <div class="child1"><p>Dette er element #1</p></div>
+  <div class="child2"><p>Dette er element #2</p></div>
+  <div class="child3"><p>Dette er element #3</p></div>
+  <div class="child4"><p>Dette er element #4</p></div>
+  <div class="child5"><p>Dette er element #5</p></div>
+  <div class="child6"><p>Dette er element #6</p></div>
+ </div>
 </div>
 
 Som om ikke dete var stilig nok i seg selv kan du også bruke dette til å veldig
@@ -308,20 +307,20 @@ visuelt og fint få elementer til å bre seg over flere rader og/eller kolonner:
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr 1fr 1fr;
   grid-template-areas: "child5 child1 child1"
-                       "child5 child2 child2"
-                       "child4 child2 child2"
-                       "child3 child3 child6";
+  "child5 child2 child2"
+  "child4 child2 child2"
+  "child3 child3 child6";
 }
 
 @media screen and (max-width: 800px) {
-  .grid-container7 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "child3 child4"
-                         "child3 child1"
-                         "child2 child1"
-                         "child6 child5";
-  }
+ .grid-container7 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "child3 child4"
+   "child3 child1"
+   "child2 child1"
+   "child6 child5";
+ }
 }
 
 .grid-container7 .child1 { grid-area: child1; }
@@ -333,14 +332,14 @@ visuelt og fint få elementer til å bre seg over flere rader og/eller kolonner:
 </style>
 
 <div class="grid-ex">
-  <div class="grid-container7">
-    <div class="child1"><p>Dette er element #1</p></div>
-    <div class="child2"><p>Dette er element #2</p></div>
-    <div class="child3"><p>Dette er element #3</p></div>
-    <div class="child4"><p>Dette er element #4</p></div>
-    <div class="child5"><p>Dette er element #5</p></div>
-    <div class="child6"><p>Dette er element #6</p></div>
-  </div>
+ <div class="grid-container7">
+  <div class="child1"><p>Dette er element #1</p></div>
+  <div class="child2"><p>Dette er element #2</p></div>
+  <div class="child3"><p>Dette er element #3</p></div>
+  <div class="child4"><p>Dette er element #4</p></div>
+  <div class="child5"><p>Dette er element #5</p></div>
+  <div class="child6"><p>Dette er element #6</p></div>
+ </div>
 </div>
 
 <strong>NB!</strong> Dette eksempelet får en layout med to kolonner (se
