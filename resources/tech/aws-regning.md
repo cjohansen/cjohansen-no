@@ -5,7 +5,7 @@
 :published #time/ldt "2019-09-25T12:00"
 :tags [:aws]
 :description
-x
+
 Det er fort gjort å komme opp og gå i skyen, men før du får sukk for deg har du
 en løsning der du nærmest skuffer penger i retning Amazon. Hva gjør du den dagen
 du oppdager at AWS-regninga er **mye** høyere enn du hadde forventet?
