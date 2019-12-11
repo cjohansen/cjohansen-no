@@ -13,6 +13,7 @@
  :tag/efs "EFS"
  :tag/css "CSS"
  :tag/git "Git"
+ :tag/javascript "JavaScript"
  :tag/haproxy "HAProxy"
  :tag/letsencrypt "Letsencrypt"
  :tag/https "TLS/HTTPS"
