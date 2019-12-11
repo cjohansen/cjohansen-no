@@ -158,6 +158,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
   is_ipv6_enabled = true
   comment = "${local.app_name} distribution"
   default_root_object = "index.html"
+  aliases = ["${local.domain_name}"]
 
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
