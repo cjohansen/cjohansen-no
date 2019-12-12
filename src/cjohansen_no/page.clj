@@ -5,11 +5,17 @@
             [clojure.string :as str]
             [clygments.core :as pygments]
             [dumdom.string :as dumdom]
+            [glow.core :as glow]
             [imagine.core :as imagine]
             [optimus.link :as link]))
 
 (defn- extract-code [highlighted]
   (.getInnerHTML (first (html-walker/find highlighted [:pre]))))
+
+(defn highlight-code-str [lang code]
+  (if (#{:clj :cljs :clojure :clojurescript :edn} lang)
+    (glow/highlight-html code)
+    (pygments/highlight code (or lang "text") :html)))
 
 (defn highlight [^ch.digitalfondue.jfiveparse.Node node]
   (let [lang (some-> node (.getAttribute "class") not-empty keyword)
@@ -20,14 +26,13 @@
     ;; Certain code samples (like a 14Kb HTML string embedded in JSON) trips up
     ;; Pygments (too much recursion). When that happens, skip highlighting
     (try
-      (.setInnerHTML node
-                     (-> code
-                         (pygments/highlight (or lang "text") :html)
-                         (extract-code)))
-      (catch Exception _))))
+      (.setInnerHTML node (->> code (highlight-code-str lang) extract-code))
+      (catch Exception e
+        (println "Failed syntax highlighting")
+        (println (.getMessage e))))))
 
 (def skip-pygments?
-  (= (System/getProperty "kodemaker.skip.pygments") "true"))
+  (= (System/getProperty "cjohansen.skip.pygments") "true"))
 
 (defn maybe-highlight [^ch.digitalfondue.jfiveparse.Node node]
   (when-not (or skip-pygments? (= "ignore" (some-> node (.getAttribute "data-pygments"))))

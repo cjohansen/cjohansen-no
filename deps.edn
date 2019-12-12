@@ -16,7 +16,8 @@
         optimus {:mvn/version "1.0.0-rc3"}
         prone {:mvn/version "2019-07-08"}
         ring {:mvn/version "1.7.1"}
-        stasis {:mvn/version "2.5.0"}}
+        stasis {:mvn/version "2.5.0"}
+        venantius/glow {:mvn/version "0.1.6"}}
  :aliases
  {:dev {:extra-paths ["dev"]
         :extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.3"}}}

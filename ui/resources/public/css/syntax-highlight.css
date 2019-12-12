@@ -46,3 +46,23 @@ code, .code, .codehilite {
 .codehilite .sr { color: var(--ruby) } /* Literal.String.Regex */
 .codehilite .s1 { color: var(--ruby) } /* Literal.String.Single */
 .codehilite .ss { color: var(--ruby) } /* Literal.String.Symbol */
+
+/* Clojure syntax */
+.codehilite .definition,
+.codehilite .macro {color: var(--ruby);}
+.codehilite .core-fn {color: var(--denim)}
+.codehilite .variable {color: var(--denim)}
+.codehilite .number {color: var(--denim)}
+/* .codehilite .s-exp {color: var(--ruby)} */
+.codehilite .special-form {color: var(--lima)}
+.codehilite .string {color: var(--fulvors)}
+.codehilite .keyword {color: var(--denim);}
+.codehilite .reader-char {color: var(--ruby)}
+.codehilite .nil {color: var(--denim)}
+.codehilite .comment {color: var(--fulvors);}
+.codehilite .repeat {color: var(--lima)}
+.codehilite .regex {color: var(--ruby)}
+.codehilite .exception {color: var(--lima)}
+.codehilite .boolean {color: var(--lima)}
+.codehilite .character {color: var(--denim)}
+.codehilite .conditional {color: var(--lima);}
