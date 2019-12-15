@@ -35,9 +35,8 @@ running tests and deploying your ClojureScript project as a
 
 ## 1. Install tools.deps
 
-The official docs already have very good [getting started
-instructions](https://clojure.org/guides/getting_started), refer to them for
-details. On OSX:
+The official docs already have very good [getting started instructions](https://clojure.org/guides/getting_started),
+refer to them for details. On OSX:
 
 ```sh
 brew install clojure
