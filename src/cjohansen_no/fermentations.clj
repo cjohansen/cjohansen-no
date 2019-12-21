@@ -1,17 +1,17 @@
 (ns cjohansen-no.fermentations
   (:require [cjohansen-no.html :as html]
+            [cjohansen-no.markdown :as md]
             [clojure.java.io :as io]
             [clojure.string :as str]
             [dumdom.string :as dumdom]
-            [mapdown.core :as mapdown]
-            [markdown.core :as md]))
+            [mapdown.core :as mapdown]))
 
 (defn load-fermentations [ferms]
   (let [ferms (->> ferms
                    (map (fn [[path v]]
                           (-> (mapdown/parse v)
                               (assoc :url (str "/fermentations" (str/replace path #"\.md$" "/")))
-                              (update :body md/md-to-html-string)
+                              (update :body md/to-html)
                               (update :published #(when % (java.time.LocalDate/parse %)))
                               (update :type read-string)
                               (update :tags #(and % (read-string %)))))))]

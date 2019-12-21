@@ -1,8 +1,8 @@
 (ns cjohansen-no.tech-blog
   (:require [cjohansen-no.html :as html]
+            [cjohansen-no.markdown :as md]
             [clojure.string :as str]
             [datomic.api :as d]
-            [markdown.core :as md]
             [ui.elements :as e])
   (:import java.time.format.DateTimeFormatter
            java.time.LocalDateTime))
@@ -16,7 +16,7 @@
        :heading-level 2
        :meta (when (or (:published opt) (:updated opt))
                {:published (:published opt) :updated (:updated opt)})
-       :content (md/md-to-html-string body)
+       :content (md/to-html body)
        :theme theme
        :type type}))
 
@@ -59,7 +59,7 @@
   {:title (or short-title title)
    :published (ymd (->ldt published))
    :url url
-   :description (md/md-to-html-string description)
+   :description (md/to-html description)
    :kind :article
    :tags (->> tags
               (sort-by :tag/name)
@@ -103,7 +103,7 @@
    {:open-graph/title (:frontpage/title page)
     :page-title (:frontpage/title page)
     :body [:div
-           (e/section {:content (md/md-to-html-string (:frontpage/description page))})
+           (e/section {:content (md/to-html (:frontpage/description page))})
            (e/teaser-section
             {:title "Blog posts"
              :teasers (map teaser (blog-posts (d/entity-db page)))})

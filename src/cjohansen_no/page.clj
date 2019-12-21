@@ -18,7 +18,7 @@
     (pygments/highlight code (or lang "text") :html)))
 
 (defn highlight [^ch.digitalfondue.jfiveparse.Node node]
-  (let [lang (some-> node (.getAttribute "class") not-empty keyword)
+  (let [lang (some-> node (.getAttribute "class") not-empty (str/replace #"language-" "") keyword)
         pygments-info (some-> node (.getAttribute "data-pygments"))
         code (-> (.getInnerHTML node)
                  (str/replace "&lt;" "<")
