@@ -125,7 +125,7 @@ process. It's amazing. In the root of your project, create the
 (defn render []
   (devcards.core/start-devcard-ui!))
 
-(defn ^:after-load render-on-relaod []
+(defn ^:after-load render-on-reload []
   (render))
 
 (render)
@@ -289,7 +289,7 @@ The test runner needs to load the library and all your tests. Add
    (display/init! "app-tests")
    my-app-ns.core-test))
 
-(defn ^:after-load render-on-relaod []
+(defn ^:after-load render-on-reload []
   (test-run))
 
 (test-run)
