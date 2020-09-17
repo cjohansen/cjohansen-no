@@ -90,7 +90,10 @@
   (when-let [txes (seq (ingest/ingest-everything (d/db conn)))]
     (println "Ingesting" (count (into [] cat txes)) "txes")
     (doseq [tx-data txes]
-      (d/transact conn tx-data))))
+      (try
+        @(d/transact conn tx-data)
+        (catch Exception e
+          (throw (ex-info (format "Problems with transaction from file %s: %s" (-> tx-data first last) (.getMessage e)) {:error e})))))))
 
 (defn app-handler []
     (let [conn (ingest/db-conn)]

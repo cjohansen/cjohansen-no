@@ -76,27 +76,30 @@
 (defn parse-mapdown-db-file
   ([file-name] (parse-mapdown-db-file file-name (slurp (io/resource file-name))))
   ([file-name content]
-   (let [[_ url] (re-find #"^(.*)\.md$" file-name)
-         sections (->> content md/parse (map parse-md-section))
-         section? (comp #{:section} :type)
-         max-sections (count (filter section? sections))]
-     (loop [post {:sections []}
-            [section & sections] sections]
-       (if section
-         (recur
-          (match (:type section)
-            :meta (let [locale (or (some-> (:locale section) keyword) :en/US)
-                        meta-section (-> section
-                                         (dissoc :type :locale)
-                                         (assoc :url (str url "/"))
-                                         (assoc :i18n/locale locale))]
-                    (assoc post :meta meta-section))
-            :section (let [id (- max-sections (count (filter section? sections)))]
-                       (update post :sections conj (-> section
-                                                       (assoc :number id)
-                                                       (assoc :id (str url "#" id))))))
-          sections)
-         post)))))
+   (try
+     (let [[_ url] (re-find #"^(.*)\.md$" file-name)
+           sections (->> content md/parse (map parse-md-section) vec)
+           section? (comp #{:section} :type)
+           max-sections (count (filter section? sections))]
+       (loop [post {:sections []}
+              [section & sections] sections]
+         (if section
+           (recur
+            (match (:type section)
+              :meta (let [locale (or (some-> (:locale section) keyword) :en/US)
+                          meta-section (-> section
+                                           (dissoc :type :locale)
+                                           (assoc :url (str url "/"))
+                                           (assoc :i18n/locale locale))]
+                      (assoc post :meta meta-section))
+              :section (let [id (- max-sections (count (filter section? sections)))]
+                         (update post :sections conj (-> section
+                                                         (assoc :number id)
+                                                         (assoc :id (str url "#" id))))))
+            sections)
+           post)))
+     (catch Exception e
+       (throw (ex-info (format "Failed to parse markdown file %s: %s" file-name (.getMessage e)) {:error e}))))))
 
 (defn pick-keys [m ks]
   (set/rename-keys
