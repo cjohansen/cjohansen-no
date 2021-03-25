@@ -2,6 +2,7 @@
 :type :meta
 :title Optimized Optimus Asset Paths from ClojureScript
 :published #time/ldt "2018-03-31T12:00"
+:updated #time/ldt "2021-03-25T10:00"
 :tags [:clojure]
 --------------------------------------------------------------------------------
 :type :section
@@ -29,7 +30,8 @@ two worlds. To access Optimus asset paths in ClojureScript, we will load some
 assets, provide a function that finds the preferred path to an asset, and
 finally expose it via a ClojureScript macro.
 
-In a Clojure namespace, load some assets with Optimus:
+In a Clojure namespace (e.g. in a file with a clj extension), load some assets
+with Optimus:
 
 ```clj
 (ns myapp.assets
@@ -60,7 +62,9 @@ Finally, provide a macro that calls the `preferred-path` function:
   (preferred-path path))
 ```
 
-From a ClojureScript namespace, require and use the macro:
+From a ClojureScript namespace, require and use the macro (make sure that
+optimus is on the classpath of the process compiling ClojureScript - e.g. your
+build process, your figwheel server, etc):
 
 ```clj
 (ns myapp.core
@@ -69,8 +73,53 @@ From a ClojureScript namespace, require and use the macro:
 (asset-path "/images/logo.png") ;;=> /images/0951812be272/logo.png
 ```
 
-Voila! That's pretty much it. Apart from this, there are two gotchas you need to
-account for when wiring your app together.
+Voila! That's pretty much it. Apart from this, there are some gotchas you need
+to account for when wiring your app together.
+
+## Resolving Dynamic Paths
+
+Because ClojureScript macros are resolved compile-time, this only works with
+inline paths as shown above. This will not work:
+
+```clj
+(ns myapp.core
+  (:require-macros [myapp.assets :refer [asset-path]]))
+
+(let [path "/images/logo.png"]
+  (asset-path path))
+```
+
+This will literally look up the symbol `path`, which will not match anything,
+and then `path` will be evaluated runtime and resolved to `"/images/logo.png"`.
+
+There is no way to fix this, but we can build the macro a little bit differently
+and make it work:
+
+```clj
+(defmacro get-asset-paths []
+  (->> assets
+       (map (juxt :original-path :path))
+       (into {})))
+```
+
+This macro will return a map of asset paths to optimized asset paths (these will
+be the same when there are no optimizations). You can then provide a
+ClojureScript function to look it up. Create `assets.cljs` like so:
+
+```clj
+(ns ui.assets
+  (:require-macros [ui.assets :refer [get-asset-paths]]))
+
+(def asset-paths (get-asset-paths))
+
+(defn get-asset-path [asset]
+  (get asset-paths asset asset))
+```
+
+This `get-asset-path` function can be used just like any other function, with
+dynamic paths, and what have you. The trade-off is that your build will contain
+a list of all the assets you expect to look up, so you want to use this with
+care if you have lots of assets.
 
 ## Avoid Circular Dependencies
 
@@ -103,7 +152,8 @@ determine what optimizations to enable.
 There are many ways to resolve optimizations compile-time. Environment variables
 and system properties are two obvious choices. I will detail a solution that
 defaults to the production settings, while allowing overrides via system
-properties, which can be set via e.g. Leiningen profiles.
+properties, which can be set via e.g. Leiningen profiles or tools.deps JVM
+options.
 
 ### Asset Config
 
@@ -165,15 +215,10 @@ ClojureScript macro to resolve paths:
 ```clj
 (def assets (optimize-assets (get-assets)))
 
-(defn preferred-path [path]
-  (or (->> assets
-           (filter #(= path (:original-path %)))
-           first
-           :path)
-      path))
-
-(defmacro asset-path [path]
-  (preferred-path path))
+(defmacro get-asset-paths []
+  (->> assets
+       (map (juxt :original-path :path))
+       (into {})))
 ```
 
 In `project.clj`, you can set system properties in the dev profile to skip
@@ -189,7 +234,6 @@ costly optimizations during development:
 
 Beware that the dev profile is loaded by default, so you'll want to provide a
 profile to use for building your production bundles:
-
 
 ```clj
 (defproject myapp "0.1.0-SNAPSHOT"
@@ -208,6 +252,12 @@ And use that for building:
 lein with-profile prod cljsbuild once min
 ```
 
+If you use tools.deps, you can set properties like so:
+
+```sh
+clojure -J'-Doptimus.assets.optimize=false' -A:dev
+```
+
 ## A Note on Compile-time vs Runtime
 
 One drawback with this solution is that optimization settings is a compile-time
@@ -219,7 +269,7 @@ be a huge problem, but it is a potential pitfall.
 
 ## Full Listing
 
-For reference, here is the full assets namespace:
+For reference, here is the full `src/myapp/assets.clj`:
 
 ```clj
 (ns myapp.assets
@@ -266,15 +316,22 @@ For reference, here is the full assets namespace:
 
 (def assets (optimize-assets (get-assets)))
 
-(defn preferred-path [path]
-  (or (->> assets
-           (filter #(= path (:original-path %)))
-           first
-           :path)
-      path))
+(defmacro get-asset-paths []
+  (->> assets
+       (map (juxt :original-path :path))
+       (into {})))
+```
 
-(defmacro asset-path [path]
-  (preferred-path path))
+And the full `src/myapp/assets.cljs`:
+
+```clj
+(ns ui.assets
+  (:require-macros [ui.assets :refer [get-asset-paths]]))
+
+(def asset-paths (get-asset-paths))
+
+(defn get-asset-path [asset]
+  (get asset-paths asset asset))
 ```
 
 ## Acknowledgements
