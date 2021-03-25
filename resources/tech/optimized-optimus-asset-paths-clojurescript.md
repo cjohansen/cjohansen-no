@@ -48,11 +48,10 @@ path:
 
 ```clj
 (defn preferred-path [path]
-  (or (->> assets
-           (filter #(= path (:original-path %)))
-           first
-           :path)
-      path))
+  (->> assets
+       (filter #(= path (assets/original-path %)))
+       first
+       :path))
 ```
 
 Finally, provide a macro that calls the `preferred-path` function:
@@ -98,6 +97,7 @@ and make it work:
 ```clj
 (defmacro get-asset-paths []
   (->> assets
+       (filter :original-path)
        (map (juxt :original-path :path))
        (into {})))
 ```
