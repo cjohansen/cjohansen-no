@@ -4,6 +4,7 @@
             [cjohansen-no.ingest :as ingest]
             [cjohansen-no.live-reload :refer [wrap-live-reload]]
             [cjohansen-no.page :as page]
+            [cjohansen-no.recipe :as recipe]
             [cjohansen-no.tech-blog :as tech]
             [clojure.string :as str]
             [datomic.api :as d]
@@ -62,6 +63,8 @@
             (map #(fn [req]
                     (case (:browsable/kind %)
                       :page/tech-post (tech/render-page req %)
+                      :page/recipe-post (recipe/render-page req %)
+                      :page/recipe-listing (recipe/render-listing req %)
                       :page/tech-tag (tech/tag-page req %)
                       :page/bread-post (ferments/render-page req %)
                       :page/frontpage (tech/frontpage req %))) pages))))

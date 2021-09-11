@@ -18,6 +18,10 @@
   --code-high-contrast: var(--manatee);
 }
 
+.theme-colorized {
+  --link-color: var(--ruby);
+}
+
 html,
 body {
   background: #fff;;
@@ -317,8 +321,11 @@ a:hover .facebox .img.hover {display: block}
 .simple-header a,
 .simple-header a:link,
 .simple-header a:visited {
-  font-size: 1.5rem;
   color: var(--fg-color);
+}
+
+.header-title {
+  font-size: 1.5rem;
 }
 
 /* Footer */

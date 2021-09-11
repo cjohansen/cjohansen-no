@@ -23,6 +23,15 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
+ ;; Markdown page
+ {:db/ident :page/title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :page/body
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
  ;; Sections
  {:db/ident :section/id
   :db/valueType :db.type/string
@@ -198,6 +207,37 @@
   :db/cardinality :db.cardinality/one}
 
  {:db/ident :bread/sections
+  :db/valueType :db.type/ref
+  :db/isComponent true
+  :db/cardinality :db.cardinality/many}
+
+ ;; Recipe blog posts
+
+ {:db/ident :recipe/title
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :recipe/description
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :recipe/published
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :recipe/updated
+  :db/valueType :db.type/instant
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :recipe/tags
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/many}
+
+ {:db/ident :recipe/image
+  :db/valueType :db.type/ref
+  :db/cardinality :db.cardinality/one}
+
+ {:db/ident :recipe/sections
   :db/valueType :db.type/ref
   :db/isComponent true
   :db/cardinality :db.cardinality/many}

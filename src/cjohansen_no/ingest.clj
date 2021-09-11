@@ -126,6 +126,15 @@
    :tags :tech-blog/tags
    :sections :tech-blog/sections})
 
+(def recipe-keys
+  {:title :recipe/title
+   :description :recipe/description
+   :image :recipe/image
+   :published :recipe/published
+   :updated :recipe/updated
+   :tags :recipe/tags
+   :sections :recipe/sections})
+
 (def section-keys
   {:id :section/id
    :number :section/number
@@ -148,6 +157,10 @@
 (defn tech-blog-post [parsed]
   (blog-post :page/tech-post (str/replace (-> parsed :meta :url) #"^tech" "") parsed blog-post-keys))
 
+(defn recipe-blog-post [parsed]
+  (prn (-> parsed :meta :url))
+  (blog-post :page/recipe-post (str "/" (-> parsed :meta :url)) parsed recipe-keys))
+
 (defn bread-blog-post [parsed]
   (blog-post :page/bread-post (str "/" (-> parsed :meta :url)) parsed bread-keys))
 
@@ -165,6 +178,13 @@
         (map (fn [[k v]] [(keyword "frontpage" (name k)) v]))
         (into {:browsable/kind :page/frontpage
                :browsable/url "/"}))])
+
+(defn recipes-tx-data [content]
+  [(->> content
+        md/parse
+        (map (fn [[k v]] [(keyword "page" (name k)) v]))
+        (into {:browsable/kind :page/recipe-listing
+               :browsable/url "/oppskrifter/"}))])
 
 (defn unique-attrs [db]
   (->> (d/q '[:find ?a
@@ -255,7 +275,9 @@
    ;;(slurp-posts db "fermentations" bread-blog-post)
    (file-tx db "tags.edn" tag-tx-data)
    (file-tx db "index.md" frontpage-tx-data)
-   (slurp-posts db "tech" tech-blog-post)))
+   (slurp-posts db "tech" tech-blog-post)
+   (slurp-posts db "oppskrifter" recipe-blog-post)
+   (file-tx db "oppskrifter.md" recipes-tx-data)))
 
 (comment
   (d/delete-database "datomic:mem://blog")
@@ -273,6 +295,15 @@
             db)
        (sort-by second)
        reverse)
+
+  (->> (d/q '[:find ?e ?u
+              :in $
+              :where
+              [?e :browsable/kind]
+              [?e :browsable/url ?u]
+              ]
+            (d/db (db-conn)))
+       (map second))
 
   (file-txes db (io/resource "ingredients.edn") (slurp (io/resource "ingredients.edn")) ingredients)
 

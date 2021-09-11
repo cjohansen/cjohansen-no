@@ -103,6 +103,7 @@
    {:open-graph/title (:frontpage/title page)
     :page-title (:frontpage/title page)
     :body [:div
+           (e/header)
            (e/section {:content (md/to-html (:frontpage/description page))})
            (e/teaser-section
             {:title "Blog posts"

@@ -96,14 +96,15 @@
       [:div.logo-firstname "Christian"]
       [:div.logo-lastname "Johansen"]]]
     [:ul.nav-list.menu {:role "nav"}
-     [:li [:a {:href "/"} "Tech"]]
-     [:li [:a {:href "/fermentations/"} "Fermentations"]]
-     [:li [:a {:href "/about/"} "About" [:span.hide-mobile " me"]]]]]])
+     [:li [:a {:href "/#blog-posts"} "Tech"]]
+     [:li [:a {:href "/oppskrifter/"} "Oppskrifter"]]]]])
 
 (defn simple-header []
   [:div.simple-header
    [:div.header-content
-    [:a {:href "/"} "Christian Johansen"]]])
+    [:a.header-title {:href "/"} "Christian Johansen"]
+    [:ul.header-links
+     [:a {:href "/oppskrifter/"} "Oppskrifter"]]]])
 
 (defn now-year []
   #?(:clj (.getYear (java.time.LocalDate/ofInstant (java.time.Instant/now) (java.time.ZoneId/of "Europe/Oslo")))
