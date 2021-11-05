@@ -2,7 +2,7 @@
 :type :meta
 :title tools.deps, figwheel-main, Devcards, and Emacs
 :published #time/ldt "2019-01-19T10:00"
-:updated #time/ldt "2019-06-11T12:00"
+:updated #time/ldt "2021-11-05T09:45"
 :tags [:clojure :clojurescript :figwheel :devcards :emacs]
 :description
 
