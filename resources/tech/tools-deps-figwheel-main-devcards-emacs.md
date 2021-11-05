@@ -287,7 +287,7 @@ The test runner needs to load the library and all your tests. Add
 (defn test-run []
   (test/run-tests
    (display/init! "app-tests")
-   my-app-ns.core-test))
+   'my-app-ns.core-test))
 
 (defn ^:after-load render-on-reload []
   (test-run))
