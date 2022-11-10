@@ -122,9 +122,7 @@
       [:span.cc-logo [:img {:src "/images/nc_white_x2.png"}]]
       [:span.cc-logo [:img {:src "/images/sa_white_x2.png"}]]]
      (str "2006 - " (now-year))]
-    [:p.twitter
-     [:a {:href "https://twitter.com/cjno"}
-      "Follow me (@cjno) on Twitter"]]
+    [:p [:a {:href "https://deff.no/@christian" :rel "me"} "I'm on Mastodon"]]
     [:p.email
      [:a {:href "mailto:christian@cjohansen.no"}
       "christian@cjohansen.no"]]]])
