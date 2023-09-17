@@ -34,6 +34,8 @@ there's a button that should only be enabled when the entire form is valid.
 In summary: there are several pieces of state, and more than one component need
 to access the same state.
 
+All [code is available on Github](https://github.com/cjohansen/form-app).
+
 --------------------------------------------------------------------------------
 :type :section
 :title The source of complexity
