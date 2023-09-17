@@ -459,6 +459,32 @@ tricky stuff to get right, but there are [a bunch of
 tests](https://github.com/cjohansen/form-app/blob/main/test/form_app/form_test.cljs),
 and those are easy to write, since it's just a plain old pure function.
 
+--------------------------------------------------------------------------------
+:type :section
+:body
+
+## Preparing the button
+
+The rest of the functions to prepare UI data are quite similar. Because all of
+them have access to the same global state, it is not a big problem that multiple
+components need to work on data from several fields. As an example, consider how
+we prepare the button, which should only be clickable when all fields are valid:
+
+```clj
+(defn prepare-button [state]
+  (let [ready? (and (valid-date-format?
+                     (get-in state [:fields/date :value]))
+
+                    (valid-range?
+                     (get-in state [:fields/range-from :value])
+                     (get-in state [:fields/range-to :value])))]
+    {:text "Submit"
+     :enabled? ready?
+     :actions (when ready?
+                [[:action/save [:fields/date] nil]
+                 [:action/save [:fields/range-from] nil]
+                 [:action/save [:fields/range-to] nil]])}))
+```
 
 --------------------------------------------------------------------------------
 :type :section
