@@ -4,6 +4,7 @@
 :published #time/ldt "2023-09-17T12:00"
 :tags [:clojurescript :frontend]
 :description A practical example of how to write stateless, data-driven UIs
+:image /images/button.png
 --------------------------------------------------------------------------------
 :type :section
 :theme :dark1

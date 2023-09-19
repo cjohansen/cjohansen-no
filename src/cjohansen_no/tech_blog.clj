@@ -44,6 +44,8 @@
 (defn tech-blog-page [post & [now]]
   {:open-graph/title (or (:tech-blog/short-title post)
                          (:tech-blog/title post))
+   :open-graph/description (or (:tech-blog/short-description post)
+                               (:tech-blog/description post))
    :open-graph/image (:tech-blog/image post)
    :page-title (:tech-blog/title post)
    :body [:div

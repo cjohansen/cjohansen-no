@@ -120,6 +120,7 @@
   {:title :tech-blog/title
    :short-title :tech-blog/short-title
    :description :tech-blog/description
+   :short-description :tech-blog/short-description
    :image :tech-blog/image
    :published :tech-blog/published
    :updated :tech-blog/updated

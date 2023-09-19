@@ -125,6 +125,10 @@
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one}
 
+ {:db/ident :tech-blog/short-description
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one}
+
  {:db/ident :tech-blog/published
   :db/valueType :db.type/instant
   :db/cardinality :db.cardinality/one}
