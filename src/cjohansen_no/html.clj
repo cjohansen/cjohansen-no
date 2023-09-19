@@ -85,7 +85,7 @@
 
     (when-let [title (:open-graph/title page)]
       [:meta {:property "og:title" :content title}])
-    [:meta {:property "og:title" :content (or (:open-graph/type page) "article")}]
+    [:meta {:property "og:type" :content (or (:open-graph/type page) "article")}]
     [:meta {:property "og:url" :content (str (get-in request [:headers "host"]) (:uri request))}]
     (when-let [image (:open-graph/image page)]
       [:meta {:property "og:image" :content (str (get-in request [:headers "host"]) (:image/url image))}])
