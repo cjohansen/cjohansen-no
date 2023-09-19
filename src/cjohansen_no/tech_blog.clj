@@ -1,11 +1,10 @@
 (ns cjohansen-no.tech-blog
   (:require [cjohansen-no.html :as html]
             [cjohansen-no.markdown :as md]
-            [clojure.string :as str]
             [datomic.api :as d]
             [ui.elements :as e])
-  (:import java.time.format.DateTimeFormatter
-           java.time.LocalDateTime))
+  (:import (java.time LocalDateTime)
+           (java.time.format DateTimeFormatter)))
 
 (defmulti post-section (fn [section] (or (:section/type section) :section)))
 
