@@ -77,7 +77,9 @@
       [:script "var _gaq=_gaq||[];_gaq.push(['_setAccount','UA-20457026-1']);_gaq.push(['_trackPageview']);(function(b){var c=b.createElement('script');c.type='text/javascript';c.async=true;c.src='http://www.google-analytics.com/ga.js';var a=b.getElementsByTagName('script')[0];a.parentNode.insertBefore(c,a)})(document);"]])))
 
 (defn layout-page-new [request page]
-  (let [base-url (str (name (:scheme request)) "://" (get-in request [:headers "host"]))]
+  (let [base-url (str (or (some-> request :scheme name) "https")
+                      "://"
+                      (or (get-in request [:headers "host"]) "cjohansen.no"))]
     (html5
      [:head
       [:meta {:charset "utf-8"}]
